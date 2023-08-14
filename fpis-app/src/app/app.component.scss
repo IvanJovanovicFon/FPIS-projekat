@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(255, 244, 244);
+    color: rgb(96, 108, 93);
+  }
+  
+  app-home {
+    display: block;
+  }
+
+  :host {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
