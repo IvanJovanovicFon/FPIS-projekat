@@ -1,0 +1,96 @@
+.add-contractor-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background-image: url('../../../assets/wp2752752-buildings-wallpapers.jpg'); 
+    background-size: cover;
+    background-position: center;
+    opacity: 0.9; 
+}
+  
+  .add-contractor-form {
+    background-color: rgb(96, 108, 93);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .text-on-form {
+    color: rgb(247, 230, 196);
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .form-group {
+    color: rgb(247, 230, 196);
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    flex-direction: column; 
+  }
+  .form-group label {
+    margin-right: 5px; 
+  }
+  
+  .combobox-row {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid rgb(247, 230, 196);
+    padding: 15px; 
+    border-radius: 5px;
+    flex: 1;
+    margin: 0 5px;
+  }
+  
+  select {
+    padding: 5px;
+    background-color: rgb(255, 244, 244);
+    border: 1px solid rgb(96, 108, 93);
+    border-radius: 5px;
+  }
+  
+  .btn-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .btn-addC,
+  .btn-ponisti {
+    padding: 8px 15px;
+    background-color: rgb(247, 230, 196);
+    border: none;
+    border-radius: 5px;
+    color: rgb(96, 108, 93);
+    cursor: pointer;
+  }
+  
+  .btn-ponisti {
+    background-color: transparent;
+    color: rgb(247, 230, 196);
+    border: 1px solid rgb(247, 230, 196);
+  }
+  
+  .btn-addC:hover,
+  .btn-ponisti:hover {
+    background-color: rgb(255, 244, 244);
+    color: rgb(96, 108, 93);
+  }
+  
+  .validators{
+    color: rgb(225, 152, 152);
+    font-size: small;
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: italic;
+  }
+  .btn-addC[disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  

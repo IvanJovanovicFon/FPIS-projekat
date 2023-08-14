@@ -10,12 +10,17 @@ nav {
     justify-content: right;
   }
   
-  li {
-    margin: 0 15px;
-  }
-  
+li {
+  margin: 0 15px;
+  transition: background-color 0.3s; 
+}
+
+li:hover {
+  background-color: rgb(170, 200, 167);
+}
+
   a {
-    color:rgb(247, 230, 196);
-    text-decoration: none;
+    color:rgb(255, 217, 183);
+    text-decoration: solid;
   }
   
