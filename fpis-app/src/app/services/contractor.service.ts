@@ -7,12 +7,8 @@ import { Observable, of } from 'rxjs';
 })
 export class ContractorService {
   private contractors: Contractor[] = [
-    new Contractor("684","123456789123456789", "1234567891234", "ivan",
-    "123456789", "ivan") ,
-    new Contractor("684","123456789123456789", "1234567891234", "jovan",
-    "123456789", "jovan") ,
-    new Contractor("684","123456789123456789", "1234567891234", "marko",
-    "123456789", "marko")    ];
+    new Contractor("111111111", "firma", "123456789123456789",
+    "555333", "Pera Peric", "123456678432")  ];
 
     getAllContractors(): Observable<Contractor[]> {
       return of(this.contractors);

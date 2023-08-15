@@ -125,14 +125,15 @@
         
 <div class="search-container">
   <input type="text" formControlName="searchQuery" (input)="onSearch()">
-  <ul *ngIf="searchResults.length > 0">
-    <li *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
+  <ul *ngIf="searchResults.length > 0 && searchForm.value.searchQuery">
+    <li *ngFor="let result of searchResults"
+        (click)="selectSearchResult(result)">
       {{ result.pib }} || {{result.naziv}}
     </li>
-  </ul>  
+  </ul>
 </div>
 
-        <!-- <div class="form-group">       
+        <div class="form-group">       
             <label for="PIB">PIB</label>
           <input type="text" id="pib" class="form-control" formControlName="pib" />
           <div class="validators" *ngIf="contractorForm.controls['pib'].hasError('required') && contractorForm.controls['pib'].dirty">
@@ -233,7 +234,7 @@
                 <option value="option3">Option 3</option>
               </select>
             </div>
-          </div> -->
+          </div> 
 
         <div class="btn-container">
             <button type="submit" class="btn-addC" [disabled]="!contractorForm.valid" (click)="addContractor($event)">Zapamti</button>
