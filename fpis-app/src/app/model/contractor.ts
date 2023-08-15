@@ -1,4 +1,4 @@
-export class Contractor {//treba da se doda adresa
+export class Contractor {//treba da se doda adresa i id;
     pib: string;
     naziv: string;
     tekuciRacun: string;

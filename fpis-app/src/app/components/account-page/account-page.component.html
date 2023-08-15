@@ -1,0 +1,118 @@
+<div class="accounts-page">
+    <div class="add-account-form">
+    <form [formGroup]="addAccountForm">
+        <h4 class="text-on-form">Unesite sledeće podatke za novi račun.</h4>
+        
+      
+        <div class="combobox-row">
+            <div class="form-group">
+              <label for="predracun">Predracun</label>
+              <select id="predracun">
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="izvodjac">Izvođač</label>
+              <select id="izvodajac">
+                <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option>
+              </select>
+            </div>
+            
+            <div class="form-group">       
+                <label for="id">Id racuna</label>
+              <input type="text" id="id" class="form-control" formControlName="id" [readonly]=true />
+            </div>
+
+            <div class="form-group">       
+                <label for="broj">Broj racuna</label>
+              <input type="text" id="broj" class="form-control" formControlName="broj" />
+            </div>
+
+            <div class="form-group">       
+                <label for="objekat">Objekat</label>
+              <input type="text" id="objekat" class="form-control" formControlName="objekat" />
+            </div>
+
+            <div class="form-group">       
+                <label for="id">Investitor</label>
+              <input type="text" id="investitor" class="form-control" formControlName="investitor" />
+            </div>
+
+            <div class="form-group">       
+                <label for="id">Realizacija</label>
+              <input type="text" id="realizacija" class="form-control" formControlName="realizacija" />
+            </div>
+
+            <div class="form-group">
+                <label for="datumIspos">Datum ispostavljanja računa</label>
+                <input type="date" id="datumIspos" class="form-control" formControlName="datumIspos" />
+              </div>
+
+            <div class="form-group">
+                <label for="datumIzdav">Datum izdavanja računa</label>
+                <input type="date" id="datumIzdav" class="form-control" formControlName="datumIzdav" />
+              </div>
+
+            <div class="form-group">
+                <label for="datumPromet">Datum prometa dobara i usluga</label>
+                <input type="date" id="datumPromet" class="form-control" formControlName="datumPromet" />
+              </div>
+
+
+
+              <p class="form-group">Unos posla</p>
+
+              <div class="posao">
+                <div class="combobox-row">
+                    <div class="form-group">
+                        <label for="vrsta">Vrsta posla</label>
+                        <select id="vrsta">
+                            <option value="option1">Option 1</option>
+                            <option value="option2">Option 2</option>
+                            <option value="option3">Option 3</option>
+                        </select>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="podvrsta">Podvrsta posla</label>
+                        <select id="podvrsta">
+                            <option value="option1">Option 1</option>
+                            <option value="option2">Option 2</option>
+                            <option value="option3">Option 3</option>
+                        </select>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="jedinicaMere">Jedinica mere</label>
+                        <select id="jedinicaMere">
+                            <option value="option1">Option 1</option>
+                            <option value="option2">Option 2</option>
+                            <option value="option3">Option 3</option>
+                        </select>
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <label for="kolicina">Količina</label>
+                    <input type="text" id="kolicina" class="form-control" formControlName="kolicina" />
+                </div>
+            
+                <div class="form-group">
+                    <label for="cena">Cena (u dinarima)</label>
+                    <input type="text" id="cena" class="form-control" formControlName="cena" />
+                </div>
+
+                <div class="form-group">
+                <label for="description">Opis</label>
+                <textarea id="description" name="description" rows="4" cols="50"></textarea>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn-addC" >Zapamti račun</button>
+                <button type="reset" class="btn-ponisti" >Poništi</button>
+                <button type="submit" class="btn-addC">Pretrazi račun</button>
+              </div>
+    </div> 
+ </div>
