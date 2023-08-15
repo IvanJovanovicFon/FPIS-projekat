@@ -8,13 +8,18 @@ import { Observable, of } from 'rxjs';
 export class ContractorService {
   private contractors: Contractor[] = [
     new Contractor("111111111", "firma", "123456789123456789",
-    "555333", "Pera Peric", "123456678432")  ];
+    "555333", "Pera Peric", "1234566784321")  ];
 
     getAllContractors(): Observable<Contractor[]> {
       return of(this.contractors);
     }
 
+    editContractor(contractor: Contractor) {
+      console.log("edited:", contractor);
+    }
+
     addContractor(contractor: Contractor) {
+      console.log("added:", contractor);
     this.contractors.push(contractor);
   }
 

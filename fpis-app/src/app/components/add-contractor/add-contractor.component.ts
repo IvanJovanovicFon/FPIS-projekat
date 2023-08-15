@@ -14,10 +14,28 @@ export class ContractorComponent implements OnInit {
   showAddForm = true;
   searchResults: Contractor[] = [];
 
+
   constructor(private fb: FormBuilder, private conService: ContractorService) {}
 
   ngOnInit(): void {
     this.initializeForms();
+  }
+
+  editContractor(event:Event):void{
+    event.preventDefault();
+    if (this.searchForm.valid) {
+      const contractorData = this.searchForm.value;
+      const contractor = new Contractor(
+        contractorData.pib,
+        contractorData.naziv,
+        contractorData.tekracun,
+        contractorData.sifra,
+        contractorData.ime,
+        contractorData.jmbg
+        );
+      this.conService.editContractor(contractor);
+      this.searchForm.reset();
+    }
   }
 
   addContractor(event: Event): void {
@@ -31,8 +49,7 @@ export class ContractorComponent implements OnInit {
         contractorData.sifra,
         contractorData.ime,
         contractorData.jmbg
-      );
-      console.log(contractor);
+        );
       this.conService.addContractor(contractor);
       this.contractorForm.reset();
     }
@@ -59,8 +76,17 @@ export class ContractorComponent implements OnInit {
   selectSearchResult(result: any) {
     this.searchResults = [];
     console.log('Selected:', result);
+  
+    this.searchForm.patchValue({//fali
+      pib: result.pib,
+      naziv: result.naziv,
+      tekracun: result.tekuciRacun,
+      sifra: result.sifra,
+      ime:result.imeIprezime,
+      jmbg: result.jmbg
+    });
   }
-
+  
   toggleForm() {
     this.showAddForm = !this.showAddForm;
   }
