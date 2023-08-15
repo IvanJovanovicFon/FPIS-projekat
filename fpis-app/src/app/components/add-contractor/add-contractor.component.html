@@ -1,7 +1,8 @@
 <div class="add-contractor-page">
-    <div class="add-contractor-form">
-      <h4 class="text-on-form">Unesite sledeće podatke za novog izvođača</h4>
-      <form [formGroup]="contractorForm">
+  <div class="add-contractor-form">
+
+      <form [formGroup]="contractorForm"  *ngIf="showAddForm">
+        <h4 class="text-on-form">Unesite sledeće podatke za novog izvođača.</h4>
         
         <div class="form-group">       
             <label for="PIB">PIB</label>
@@ -38,9 +39,6 @@
               Tekući račun se sastoji samo od cifara!
             </div>
           </div>
-          
-          
-          
 
           <div class="form-group">
             <label for="SIFRA">Šifra delatnosti</label>
@@ -52,7 +50,6 @@
               Šifra delatnosti je obavezna!
               </div>
           </div>
-          
 
           <div class="form-group">
             <label for="ime">Ime i prezime direktora</label>
@@ -111,12 +108,142 @@
             </div>
           </div>
 
-
         <div class="btn-container">
-            <button type="submit" class="btn-addC" [disabled]="!contractorForm.valid" (click)="addConstractor($event)">Zapamti</button>
+            <button type="submit" class="btn-addC" [disabled]="!contractorForm.valid" (click)="addContractor($event)">Zapamti</button>
             <button type="reset" class="btn-ponisti" >Poništi</button>
+            <button type="submit" class="btn-addC" (click)="toggleForm()" >Pronađi izvođača</button>
           </div>
       </form>
+
+
+
+
+
+
+      <form [formGroup]="searchForm"  *ngIf="!showAddForm">
+        <h4 class="text-on-form">Unesite PIB ili naziv da pretražite izvođače u sistemu.</h4>
+        
+<div class="search-container">
+  <input type="text" formControlName="searchQuery" (input)="onSearch()">
+  <ul *ngIf="searchResults.length > 0">
+    <li *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
+      {{ result.pib }} || {{result.naziv}}
+    </li>
+  </ul>  
+</div>
+
+        <!-- <div class="form-group">       
+            <label for="PIB">PIB</label>
+          <input type="text" id="pib" class="form-control" formControlName="pib" />
+          <div class="validators" *ngIf="contractorForm.controls['pib'].hasError('required') && contractorForm.controls['pib'].dirty">
+            PIB je obavezan!
+          </div>
+          <div class="validators" *ngIf="contractorForm.controls['pib'].hasError('minlength') || contractorForm.controls['pib'].hasError('maxlength')">
+            PIB se sastoji od 9 cifara!
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="NAZIV">Naziv</label>
+          <input type="text" id="naziv" class="form-control" formControlName="naziv" />
+          <div class="validators" *ngIf="contractorForm.controls['naziv'].hasError('required') && contractorForm.controls['naziv'].dirty">
+           Naziv je obavezan!
+          </div>
+        </div>
+
+        <div class="form-group">
+            <label for="TEKRACUN">Tekući racun</label>
+            <input type="text" id="tekracun" class="form-control" formControlName="tekracun" />
+            <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('required') && contractorForm.controls['tekracun'].dirty">
+              Tekući račun je obavezno polje!
+            </div>
+            <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('minlength') && contractorForm.controls['tekracun'].dirty">
+              Tekući račun se sastoji od tačno 18 cifara!
+            </div>
+            <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('maxlength') && contractorForm.controls['tekracun'].dirty">
+              Tekući račun se sastoji od tačno 18 cifara!
+            </div>
+            <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('pattern') && contractorForm.controls['tekracun'].dirty">
+              Tekući račun se sastoji samo od cifara!
+            </div>
+          </div>  
+
+          <div class="form-group">
+            <label for="SIFRA">Šifra delatnosti</label>
+            <input type="text" id="sifra" class="form-control" formControlName="sifra" />
+            <div class="validators" *ngIf="contractorForm.controls['sifra'].hasError('pattern') && contractorForm.controls['sifra'].dirty">
+              Šifra delatnosti se sastoji samo od cifara!
+            </div>
+            <div class="validators" *ngIf="contractorForm.controls['sifra'].hasError('required') && contractorForm.controls['sifra'].dirty">
+              Šifra delatnosti je obavezna!
+              </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="ime">Ime i prezime direktora</label>
+            <input type="text" id="ime" class="form-control" formControlName="ime" />
+            <div class="validators" *ngIf="contractorForm.controls['ime'].hasError('pattern') && contractorForm.controls['ime'].dirty">
+              Ime i prezime se sastoji od više od slova!
+            </div>
+            <div class="validators" *ngIf="contractorForm.controls['ime'].hasError('required') && contractorForm.controls['ime'].dirty">
+                Ime i prezime direktora je obavezno!
+                </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="JMBG">JMBG direktora</label>
+            <input type="text" id="jmbg" class="form-control" formControlName="jmbg" />
+            <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('pattern') && contractorForm.controls['jmbg'].dirty">
+              JMBG se sastoji od 13 cifara!
+            </div>
+            <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('required') && contractorForm.controls['jmbg'].dirty">
+               JMBG direktora je obavezan!
+                </div>
+                <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('minlength') && contractorForm.controls['jmbg'].dirty">
+                    JMBG se sastoji od tačno 13 cifara!
+                  </div>
+                  <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('maxlength') && contractorForm.controls['jmbg'].dirty">
+                    JMBG se sastoji od tačno 13 cifara!
+                  </div>
+          </div>
+        <p class="form-group">Adresa</p>
+        
+        <div class="combobox-row">
+            <div class="form-group">
+              <label for="mesto">Mesto  </label>
+              <select id="mesto">
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ulica">Ulica  </label>
+              <select id="ulica">
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="broj">Broj  </label>
+              <select id="broj">
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+              </select>
+            </div>
+          </div> -->
+
+        <div class="btn-container">
+            <button type="submit" class="btn-addC" [disabled]="!contractorForm.valid" (click)="addContractor($event)">Zapamti</button>
+            <button type="reset" class="btn-ponisti" >Poništi</button>
+            <button type="submit" class="btn-addC" (click)="toggleForm()" >Dodaj novog izvođača</button>
+          </div>
+      </form>
+
+
+
     </div>
   </div>
   
