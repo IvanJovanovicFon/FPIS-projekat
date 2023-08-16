@@ -2,8 +2,8 @@ export class Job {//fali id
     vrsta: string;
     podvrsta: string;
     jedinicaMere: string;
-    kolicina: string;
-    cena: string;
+    kolicina: number;
+    cena: number;
     opis: string;
     
   
@@ -11,8 +11,8 @@ export class Job {//fali id
         vrsta: string,
         podvrsta: string,
         jedinicaMere: string,
-        kolicina: string,
-        cena: string,
+        kolicina: number,
+        cena: number,
         opis: string,
         ) {
       this.vrsta = vrsta;

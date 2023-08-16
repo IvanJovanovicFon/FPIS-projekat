@@ -12,7 +12,7 @@ export class Account {
     datumIspostavljanja: Date;
     datumIzdavanja: Date;
     datumPrometaDobaraIUsluga: Date;
-    posao: Job;
+    poslovi: Job[];
     
   
     constructor( 
@@ -26,7 +26,7 @@ export class Account {
     datumIspostavljanja: Date,
     datumIzdavanja: Date,
     datumPrometaDobaraIUsluga: Date,
-    posao: Job
+    poslovi: Job[]
         ) {
       this.predracun = predracun;
       this.izvodjac = izvodjac;
@@ -38,7 +38,7 @@ export class Account {
       this.datumIspostavljanja = datumIspostavljanja;
       this.datumIzdavanja = datumIzdavanja;
       this.datumPrometaDobaraIUsluga = datumPrometaDobaraIUsluga;
-      this.posao = posao;
+      this.poslovi = poslovi;
  
     }
   }

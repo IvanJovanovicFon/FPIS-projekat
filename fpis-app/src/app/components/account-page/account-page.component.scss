@@ -70,3 +70,56 @@
     background-color: rgb(255, 244, 244);
     color: rgb(96, 108, 93);
   }
+
+  .validators{
+    color: rgb(225, 152, 152);
+    font-size: small;
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: italic;
+  }
+  .btn-addC[disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .table-of-jobs {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #ddd;
+      color: rgb(247, 230, 196);
+      margin-top: 20px;
+      
+      th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid rgb(96, 108, 93);
+      }
+  
+      th {
+        background-color: rgb(96, 108, 93);
+      }
+  
+      tr:nth-child(even) {
+        background-color: #7C9070;
+  
+      tr:hover {
+        background-color: rgb(247, 230, 196);
+      }
+  
+      button {
+        background-color: rgb(96, 108, 93);
+        border: none;
+        color: rgb(247, 230, 196);
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: rgb(247, 230, 196);
+        }
+      }
+    }
+  }
+}
