@@ -1,196 +1,431 @@
 <div class="accounts-page">
-    <div class="add-account-form">
-    <form [formGroup]="addAccountForm">
+   
+    <form [formGroup]="addAccountForm" class="add-account-form"  *ngIf="showAddForm">
         <h4 class="text-on-form">Unesite sledeće podatke za novi račun.</h4>
-        
-      
+   
         <div class="combobox-row">
-            <div class="form-group">
-              <label for="predracun">Predracun</label>
-              <select id="predracun">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </select>
+          <div class="form-group">
+            <label for="predracun">Predracun</label>
+            <select id="predracun">
+              <option value="option1">Option 1</option>
+              <option value="option2">Option 2</option>
+              <option value="option3">Option 3</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="izvodjac">Izvođač</label>
+            <select id="izvodajac" formControlName="izvodjac">
+              <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option>
+            </select>
+            <div class="validators" *ngIf="addAccountForm.controls['izvodjac'].hasError('required') && addAccountForm.controls['izvodjac'].dirty">
+              {{ validationMessages.izvodjac.required }}
             </div>
-
-            <div class="form-group">
-              <label for="izvodjac">Izvođač</label>
-              <select id="izvodajac">
-                <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option>
-              </select>
-            </div>
-            
-            <div class="form-group">       
-                <label for="id">Id racuna</label>
-              <input type="text" id="id" class="form-control" formControlName="id" [readonly]=true />
-              <div class="validators" *ngIf="addAccountForm.controls['id'].hasError('required') && addAccountForm.controls['id'].dirty">
-                Id je obavezan!
-              </div>          
-            </div>
-
-            <div class="form-group">       
-                <label for="broj">Broj racuna</label>
-              <input type="text" id="broj" class="form-control" formControlName="broj" />
-              <div class="validators" *ngIf="addAccountForm.controls['broj'].hasError('required') && addAccountForm.controls['broj'].dirty">
-                Broj računa je obavezan!
-              </div>
-              <div class="validators" *ngIf="addAccountForm.controls['broj'].hasError('pattern') && addAccountForm.controls['broj'].dirty">
-                Broj računa se sastoji samo od cifara!
-              </div>
-            </div>
-            </div>
-
-            <div class="form-group">       
-                <label for="objekat">Objekat</label>
-                <input type="text" id="objekat" class="form-control" formControlName="objekat" />
-                <div class="validators" *ngIf="addAccountForm.controls['objekat'].hasError('required') && addAccountForm.controls['objekat'].dirty">
-                  Objekat je obavezan!
-                </div>
-              </div>
-
-            <div class="form-group">       
-                <label for="id">Investitor</label>
-              <input type="text" id="investitor" class="form-control" formControlName="investitor" />
-              <div class="validators" *ngIf="addAccountForm.controls['investitor'].hasError('required') && addAccountForm.controls['investitor'].dirty">
-                Investitor je obavezan!
-              </div>          
-            </div>
-
-            <div class="form-group">       
-                <label for="id">Realizacija</label>
-              <input type="number" id="realizacija" class="form-control" formControlName="realizacija" />
-              <div class="validators" *ngIf="addAccountForm.controls['realizacija'].hasError('required') && addAccountForm.controls['realizacija'].dirty">
-                Realizacija je obavezna!
-              </div>
-              <div class="validators" *ngIf="addAccountForm.controls['realizacija'].hasError('pattern') && addAccountForm.controls['realizacija'].dirty">
-                Realizacija se sastoji samo od cifara!
-              </div>
-              <div  class="validators" *ngIf="addAccountForm.controls['realizacija'].hasError('min') && addAccountForm.controls['realizacija'].dirty">
-                Realizacija mora biti pozitivan broj!
-              </div>
-            </div>
-
-            <div class="form-group">
-                <label for="datumIspos">Datum ispostavljanja računa</label>
-                <input type="date" id="datumIspos" class="form-control" formControlName="datumIspos" />
-                <div class="validators" *ngIf="addAccountForm.controls['datumIspos'].hasError('required') && addAccountForm.controls['datumIspos'].dirty">
-                  Datum ispostavljanja je obavezan!
-                </div>
-              </div>
-
-            <div class="form-group">
-                <label for="datumIzdav">Datum izdavanja računa</label>
-                <input type="date" id="datumIzdav" class="form-control" formControlName="datumIzdav" />
-                <div class="validators" *ngIf="addAccountForm.controls['datumIzdav'].hasError('required') && addAccountForm.controls['datumIzdav'].dirty">
-                  Datun izdavanja je obavezan!
-                </div>
-              </div>
-
-            <div class="form-group">
-                <label for="datumPromet">Datum prometa dobara i usluga</label>
-                <input type="date" id="datumPromet" class="form-control" formControlName="datumPromet" />
-                <div class="validators" *ngIf="addAccountForm.controls['datumPromet'].hasError('required') && addAccountForm.controls['datumPromet'].dirty">
-                  Datum prometa dobara i usluga je obavezan!
-                </div>
-              </div>
-
-
-
-              <p class="form-group">Unos posla</p>
-
-              <div class="posao" >
-                <div class="combobox-row">
-                    <div class="form-group">
-                        <label for="vrsta">Vrsta posla</label>
-                        <select id="vrsta">
-                            <option value="option1">Option 1</option>
-                            <option value="option2">Option 2</option>
-                            <option value="option3">Option 3</option>
-                        </select>
-                    </div>
-            
-                    <div class="form-group">
-                        <label for="podvrsta">Podvrsta posla</label>
-                        <select id="podvrsta">
-                            <option value="option1">Option 1</option>
-                            <option value="option2">Option 2</option>
-                            <option value="option3">Option 3</option>
-                        </select>
-                    </div>
-            
-                    <div class="form-group">
-                        <label for="jedinicaMere">Jedinica mere</label>
-                        <select id="jedinicaMere">
-                            <option value="option1">Option 1</option>
-                            <option value="option2">Option 2</option>
-                            <option value="option3">Option 3</option>
-                        </select>
-                    </div>
-                </div>
-            
-                <div class="form-group" formGroupName="posao">
-                  <label for="kolicina">Količina</label>
-                  <input type="number" id="kolicina" class="form-control" formControlName="kolicina" />
-                  <!-- <div class="validators" *ngIf="addAccountForm.get('posao.kolicina')?.hasError('required') && addAccountForm.get('posao.kolicina')?.dirty">
-                    Količina je obavezna!
-                  </div>     u slucaju da oni samio hoce da postoji mogucnost da bude cena i kol nula-->
-                  <div  class="validators" *ngIf="addAccountForm.get('posao.kolicina')?.hasError('min') && addAccountForm.get('posao.kolicina')?.dirty">
-                    Količina mora biti pozitivan broj!
-                  </div>
-                </div>
-                
-                <div class="form-group" formGroupName="posao">
-                  <label for="cena">Cena (u dinarima)</label>
-                  <input type="number" id="cena" class="form-control" formControlName="cena" />
-                  <!-- <div class="validators" *ngIf="addAccountForm.get('posao.cena')?.hasError('required') && addAccountForm.get('posao.cena')?.dirty">
-                    Cena je obavezna!
-                  </div> -->
-                  <div  class="validators" *ngIf="addAccountForm.get('posao.cena')?.hasError('min') && addAccountForm.get('posao.cena')?.dirty">
-                    Cena mora biti pozitivan broj!
-                  </div>
-                </div>
-
-                
-
-                <div class="form-group" formGroupName="posao">
-                <label for="description">Opis</label>
-                <textarea class="form-control" name="description" rows="4" cols="50" formControlName="opis"></textarea>
-                <div class="btn-container">
-                <button type="submit" class="btn-ponisti"   (click)="addJob()">Dodaj stavku posla</button>
-                 </div>
-                 <div class="table-of-jobs">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Vrsta posla</th>
-                        <th>Podvrsta posla</th>
-                        <th>Jedinica mere</th>
-                        <th>Količina</th>
-                        <th>Cena (u dinarima)</th>
-                        <th>Opis</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let job of jobs; let i = index">
-                        <td>{{ job.vrsta }}</td>
-                        <td>{{ job.podvrsta }}</td>
-                        <td>{{ job.jedinicaMere }}</td>
-                        <td>{{ job.kolicina }}</td>
-                        <td>{{ job.cena }}</td>
-                        <td>{{ job.opis }}</td>
-                        <td>
-                          <button (click)="removeJob(i)">Remove</button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                 </div>
-              </div>
-            <div class="btn-container">
-              <button type="submit" class="btn-addC" [disabled]="!addAccountForm.valid" (click)="addAccount()">Zapamti račun</button>
-              <button type="submit" class="btn-addC">Pretraži račun</button>
           </div>
           
-    </div> 
+          
+          <div class="form-group">
+            <label for="id">Id racuna</label>
+            <input type="text" id="id" class="form-control" formControlName="id" [readonly]="true" [ngClass]="{'readonly-field': true}" />
+            <div class="validators" *ngIf="addAccountForm.controls['id'].hasError('required') && addAccountForm.controls['id'].dirty">
+              {{ validationMessages.id.required }}
+            </div>
+          </div>
+
+          <div class="form-group">       
+              <label for="broj">Broj racuna</label>
+            <input type="text" id="broj" class="form-control" formControlName="broj" />
+            <div class="validators" *ngIf="addAccountForm.controls['broj'].hasError('required') && addAccountForm.controls['broj'].dirty">
+              {{ validationMessages.broj.required }}
+            </div>
+            <div class="validators" *ngIf="addAccountForm.controls['broj'].hasError('pattern') && addAccountForm.controls['broj'].dirty">
+              {{ validationMessages.broj.pattern }}
+            </div>
+          </div>
+          </div>
+
+          <div class="form-group">       
+              <label for="objekat">Objekat</label>
+              <input type="text" id="objekat" class="form-control" formControlName="objekat" />
+              <div class="validators" *ngIf="addAccountForm.controls['objekat'].hasError('required') && addAccountForm.controls['objekat'].dirty">
+                {{ validationMessages.objekat.required }}
+              </div>
+            </div>
+
+          <div class="form-group">       
+              <label for="id">Investitor</label>
+            <input type="text" id="investitor" class="form-control" formControlName="investitor" />
+            <div class="validators" *ngIf="addAccountForm.controls['investitor'].hasError('required') && addAccountForm.controls['investitor'].dirty">
+              {{ validationMessages.investitor.required }}
+            </div>          
+          </div>
+
+          <div class="form-group">       
+              <label for="id">Realizacija</label>
+            <input type="number" id="realizacija" class="form-control" formControlName="realizacija" />
+            <div class="validators" *ngIf="addAccountForm.controls['realizacija'].hasError('required') && addAccountForm.controls['realizacija'].dirty">
+              {{ validationMessages.realizacija.required }}
+            </div>
+            <div class="validators" *ngIf="addAccountForm.controls['realizacija'].hasError('pattern') && addAccountForm.controls['realizacija'].dirty">
+              {{ validationMessages.realizacija.pattern }}
+            </div>
+            <div  class="validators" *ngIf="addAccountForm.controls['realizacija'].hasError('min') && addAccountForm.controls['realizacija'].dirty">
+              {{ validationMessages.realizacija.min }}
+            </div>
+          </div>
+
+          <div class="form-group">
+              <label for="datumIspos">Datum ispostavljanja računa</label>
+              <input type="date" id="datumIspos" class="form-control" formControlName="datumIspos" />
+            </div>
+
+          <div class="form-group">
+              <label for="datumIzdav">Datum izdavanja računa</label>
+              <input type="date" id="datumIzdav" class="form-control" formControlName="datumIzdav" />
+            </div>
+
+          <div class="form-group">
+              <label for="datumPromet">Datum prometa dobara i usluga</label>
+              <input type="date" id="datumPromet" class="form-control" formControlName="datumPromet" />
+            </div>
+
+
+
+            <p class="form-group">Unos posla</p>
+
+            <div class="posao" >
+              <div class="combobox-row">
+                  <div class="form-group">
+                      <label for="vrsta">Vrsta posla</label>
+                      <select id="vrsta">
+                          <option value="option1">Option 1</option>
+                          <option value="option2">Option 2</option>
+                          <option value="option3">Option 3</option>
+                      </select>
+                  </div>
+          
+                  <div class="form-group">
+                      <label for="podvrsta">Podvrsta posla</label>
+                      <select id="podvrsta">
+                          <option value="option1">Option 1</option>
+                          <option value="option2">Option 2</option>
+                          <option value="option3">Option 3</option>
+                      </select>
+                  </div>
+          
+                  <div class="form-group">
+                      <label for="jedinicaMere">Jedinica mere</label>
+                      <select id="jedinicaMere">
+                          <option value="option1">Option 1</option>
+                          <option value="option2">Option 2</option>
+                          <option value="option3">Option 3</option>
+                      </select>
+                  </div>
+              </div>
+          
+              <div class="form-group" formGroupName="posao">
+                <label for="kolicina">Količina</label>
+                <input type="number" id="kolicina" class="form-control" formControlName="kolicina" />
+                <div class="validators" *ngIf="addAccountForm.get('posao.kolicina')?.hasError('required') && addAccountForm.get('posao.kolicina')?.dirty">
+                  {{ validationMessages.kolicina.required }}
+                </div> 
+                <div  class="validators" *ngIf="addAccountForm.get('posao.kolicina')?.hasError('min') && addAccountForm.get('posao.kolicina')?.dirty">
+                  {{ validationMessages.kolicina.min }}
+                </div>
+              </div>
+              
+              <div class="form-group" formGroupName="posao">
+                <label for="cena">Cena (u dinarima)</label>
+                <input type="number" id="cena" class="form-control" formControlName="cena" />
+                <div class="validators" *ngIf="addAccountForm.get('posao.cena')?.hasError('required') && addAccountForm.get('posao.cena')?.dirty">
+                  {{ validationMessages.cena.required }}
+                </div> 
+                <div  class="validators" *ngIf="addAccountForm.get('posao.cena')?.hasError('min') && addAccountForm.get('posao.cena')?.dirty">
+                  {{ validationMessages.cena.min }}
+                </div>
+              </div>
+
+              
+
+              <div class="form-group" formGroupName="posao">
+              <label for="description">Opis</label>
+              <textarea class="form-control" name="description" rows="4" cols="50" formControlName="opis"></textarea>
+              <div class="btn-container">
+              <button type="submit" class="btn-addC" (click)="addJob()"
+               [disabled]="false" >Dodaj stavku posla</button>
+               </div>
+               <div class="table-of-jobs">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rb</th>
+                      <th>Vrsta posla</th>
+                      <th>Podvrsta posla</th>
+                      <th>Jedinica mere</th>
+                      <th>Količina</th>
+                      <th>Cena (u dinarima)</th>
+                      <th>Opis</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let job of jobs; let i = index">
+                      <td>{{ i+1 }}</td>
+                      <td>{{ job.vrsta }}</td>
+                      <td>{{ job.podvrsta }}</td>
+                      <td>{{ job.jedinicaMere }}</td>
+                      <td>{{ job.kolicina }}</td>
+                      <td>{{ job.cena }}</td>
+                      <td>{{ job.opis }}</td>
+                      <td>
+                        <button (click)="removeJob(i)">Remove</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+               </div>
+            </div>
+          <div class="btn-container">
+            <button type="submit" class="btn-addC" [disabled]="!addedJobs || !addAccountForm.get('broj')?.valid || !addAccountForm.get('objekat')?.valid 
+            || !addAccountForm.get('investitor')?.valid || !addAccountForm.get('realizacija')?.valid
+            || !addAccountForm.get('datumIspos')?.valid || !addAccountForm.get('datumIzdav')?.valid
+            || !addAccountForm.get('datumPromet')?.valid || !addAccountForm.get('izvodjac')?.valid"
+               (click)="addAccount()">Zapamti račun</button>
+               <button type="submit" class="btn-addC" (click)="toggleForm()">Pretraži račun</button> 
+
+          </div>
+          </div>
+
+              </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form [formGroup]="editAccountForm"   *ngIf="!showAddForm" class="add-account-form" >
+       
+                <h4 class="text-on-form">Pretrazite racun.</h4>
+
+                <div class="search-container">
+                  <input type="text" formControlName="searchQuery" (input)="onSearch()">
+                  <ul *ngIf="searchResults.length > 0 && editAccountForm.value.searchQuery">
+                    <li *ngFor="let result of searchResults"
+                        (click)="selectSearchResult(result)">
+                      {{ result.idRacuna }} 
+                    </li>
+                  </ul>
+                </div>
+                
+              
+                <div class="combobox-row">
+                    <div class="form-group">
+                      <label for="predracun">Predracun</label>
+                      <select id="predracun">
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                      </select>
+                    </div>
+        
+                    <div class="form-group">
+                      <label for="izvodjac">Izvođač</label>
+                      <select id="izvodajac" formControlName="izvodjac">
+                        <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option>
+                      </select>
+                      <div class="validators" *ngIf="editAccountForm.controls['izvodjac'].hasError('required') && editAccountForm.controls['izvodjac'].dirty">
+                        {{ validationMessages.izvodjac.required }}
+                      </div>
+                    </div>
+                    
+                    
+                    <div class="form-group">
+                      <label for="id">Id racuna</label>
+                      <input type="text" id="id" class="form-control" formControlName="id" [readonly]="true" [ngClass]="{'readonly-field': true}" />
+                      <div class="validators" *ngIf="editAccountForm.controls['id'].hasError('required') && editAccountForm.controls['id'].dirty">
+                        {{ validationMessages.id.required }}
+                      </div>
+                    </div>
+        
+                    <div class="form-group">       
+                        <label for="broj">Broj racuna</label>
+                      <input type="text" id="broj" class="form-control" formControlName="broj" />
+                      <div class="validators" *ngIf="editAccountForm.controls['broj'].hasError('required') && editAccountForm.controls['broj'].dirty">
+                        {{ validationMessages.broj.required }}
+                      </div>
+                      <div class="validators" *ngIf="editAccountForm.controls['broj'].hasError('pattern') && editAccountForm.controls['broj'].dirty">
+                        {{ validationMessages.broj.pattern }}
+                      </div>
+                    </div>
+                    </div>
+        
+                    <div class="form-group">       
+                        <label for="objekat">Objekat</label>
+                        <input type="text" id="objekat" class="form-control" formControlName="objekat" />
+                        <div class="validators" *ngIf="editAccountForm.controls['objekat'].hasError('required') && editAccountForm.controls['objekat'].dirty">
+                          {{ validationMessages.objekat.required }}
+                        </div>
+                      </div>
+        
+                    <div class="form-group">       
+                        <label for="id">Investitor</label>
+                      <input type="text" id="investitor" class="form-control" formControlName="investitor" />
+                      <div class="validators" *ngIf="editAccountForm.controls['investitor'].hasError('required') && editAccountForm.controls['investitor'].dirty">
+                        {{ validationMessages.investitor.required }}
+                      </div>          
+                    </div>
+        
+                    <div class="form-group">       
+                        <label for="id">Realizacija</label>
+                      <input type="number" id="realizacija" class="form-control" formControlName="realizacija" />
+                      <div class="validators" *ngIf="editAccountForm.controls['realizacija'].hasError('required') && editAccountForm.controls['realizacija'].dirty">
+                        {{ validationMessages.realizacija.required }}
+                      </div>
+                      <div class="validators" *ngIf="editAccountForm.controls['realizacija'].hasError('pattern') && editAccountForm.controls['realizacija'].dirty">
+                        {{ validationMessages.realizacija.pattern }}
+                      </div>
+                      <div  class="validators" *ngIf="editAccountForm.controls['realizacija'].hasError('min') && editAccountForm.controls['realizacija'].dirty">
+                        {{ validationMessages.realizacija.min }}
+                      </div>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="datumIspos">Datum ispostavljanja računa</label>
+                        <input type="date" id="datumIspos" class="form-control" formControlName="datumIspos" />
+                        <div class="validators" *ngIf="editAccountForm.controls['datumIspos'].hasError('required') && editAccountForm.controls['datumIspos'].dirty">
+                          Datum ispostavljanja je obavezan!
+                        </div>
+                      </div>
+        
+                    <div class="form-group">
+                        <label for="datumIzdav">Datum izdavanja računa</label>
+                        <input type="date" id="datumIzdav" class="form-control" formControlName="datumIzdav" />
+                        <div class="validators" *ngIf="editAccountForm.controls['datumIzdav'].hasError('required') && editAccountForm.controls['datumIzdav'].dirty">
+                          Datun izdavanja je obavezan!
+                        </div>
+                      </div>
+        
+                    <div class="form-group">
+                        <label for="datumPromet">Datum prometa dobara i usluga</label>
+                        <input type="date" id="datumPromet" class="form-control" formControlName="datumPromet" />
+                        <div class="validators" *ngIf="editAccountForm.controls['datumPromet'].hasError('required') && editAccountForm.controls['datumPromet'].dirty">
+                          Datum prometa dobara i usluga je obavezan!
+                        </div>
+                      </div>
+        
+        
+        
+                      <p class="form-group">Unos posla</p>
+        
+                      <div class="posao" >
+                        <div class="combobox-row">
+                            <div class="form-group">
+                                <label for="vrsta">Vrsta posla</label>
+                                <select id="vrsta">
+                                    <option value="option1">Option 1</option>
+                                    <option value="option2">Option 2</option>
+                                    <option value="option3">Option 3</option>
+                                </select>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="podvrsta">Podvrsta posla</label>
+                                <select id="podvrsta">
+                                    <option value="option1">Option 1</option>
+                                    <option value="option2">Option 2</option>
+                                    <option value="option3">Option 3</option>
+                                </select>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="jedinicaMere">Jedinica mere</label>
+                                <select id="jedinicaMere">
+                                    <option value="option1">Option 1</option>
+                                    <option value="option2">Option 2</option>
+                                    <option value="option3">Option 3</option>
+                                </select>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group" formGroupName="posao">
+                          <label for="kolicina">Količina</label>
+                          <input type="number" id="kolicina" class="form-control" formControlName="kolicina" />
+                          <div class="validators" *ngIf="editAccountForm.get('posao.kolicina')?.hasError('required') && editAccountForm.get('posao.kolicina')?.dirty">
+                            {{ validationMessages.kolicina.required }}
+                          </div> 
+                          <div  class="validators" *ngIf="editAccountForm.get('posao.kolicina')?.hasError('min') && editAccountForm.get('posao.kolicina')?.dirty">
+                            {{ validationMessages.kolicina.min }}
+                          </div>
+                        </div>
+                        
+                        <div class="form-group" formGroupName="posao">
+                          <label for="cena">Cena (u dinarima)</label>
+                          <input type="number" id="cena" class="form-control" formControlName="cena" />
+                          <div class="validators" *ngIf="editAccountForm.get('posao.cena')?.hasError('required') && editAccountForm.get('posao.cena')?.dirty">
+                            {{ validationMessages.cena.required }}
+                          </div> 
+                          <div  class="validators" *ngIf="editAccountForm.get('posao.cena')?.hasError('min') && editAccountForm.get('posao.cena')?.dirty">
+                            {{ validationMessages.cena.min }}
+                          </div>
+                        </div>
+        
+                        
+        
+                        <div class="form-group" formGroupName="posao">
+                        <label for="description">Opis</label>
+                        <textarea class="form-control" name="description" rows="4" cols="50" formControlName="opis"></textarea>
+                        <div class="btn-container">
+
+                        <button type="submit" class="btn-addC" (click)="addJob()"
+                         [disabled]="false" >Dodaj stavku posla</button>
+                         </div>
+                         
+                         <div class="table-of-jobs" formControlName = "tabela">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Rb</th>
+                                <th>Vrsta posla</th>
+                                <th>Podvrsta posla</th>
+                                <th>Jedinica mere</th>
+                                <th>Količina</th>
+                                <th>Cena (u dinarima)</th>
+                                <th>Opis</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let job of jobs; let i = index">
+                                <td>{{ i+1 }}</td>
+                                <td>{{ job.vrsta }}</td>
+                                <td>{{ job.podvrsta }}</td>
+                                <td>{{ job.jedinicaMere }}</td>
+                                <td>{{ job.kolicina }}</td>
+                                <td>{{ job.cena }}</td>
+                                <td>{{ job.opis }}</td>
+                                <td>
+                                  <button (click)="removeJob(i)">Remove</button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                         </div>
+                      </div>
+                      <div class="btn-container">
+                        <button type="submit" class="btn-addC" [disabled]="!addedJobs || !editAccountForm.get('broj')?.valid || !editAccountForm.get('objekat')?.valid 
+                      || !editAccountForm.get('investitor')?.valid || !editAccountForm.get('realizacija')?.valid
+                      || !editAccountForm.get('datumIspos')?.valid || !editAccountForm.get('datumIzdav')?.valid
+                      || !editAccountForm.get('datumPromet')?.valid || !editAccountForm.get('izvodjac')?.valid"
+                         (click)="addAccount()">Zapamti račun</button>
+                      <button type="submit" class="btn-addC" (click)="toggleForm()">Dodaj novi račun</button>
+                      </div>
+                      </div>
+                      </form>

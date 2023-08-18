@@ -8,10 +8,10 @@
             <label for="PIB">PIB</label>
           <input type="text" id="pib" class="form-control" formControlName="pib" />
           <div class="validators" *ngIf="contractorForm.controls['pib'].hasError('required') && contractorForm.controls['pib'].dirty">
-            PIB je obavezan!
+           {{validationMessages.pib.required}}
           </div>
           <div class="validators" *ngIf="contractorForm.controls['pib'].hasError('minlength') || contractorForm.controls['pib'].hasError('maxlength')">
-            PIB se sastoji od 9 cifara!
+            {{validationMessages.pib.pattern}}
           </div>
         </div>
 
@@ -19,7 +19,7 @@
           <label for="NAZIV">Naziv</label>
           <input type="text" id="naziv" class="form-control" formControlName="naziv" />
           <div class="validators" *ngIf="contractorForm.controls['naziv'].hasError('required') && contractorForm.controls['naziv'].dirty">
-           Naziv je obavezan!
+            {{validationMessages.naziv.required}}
           </div>
         </div>
 
@@ -27,16 +27,16 @@
             <label for="TEKRACUN">Tekući racun</label>
             <input type="text" id="tekracun" class="form-control" formControlName="tekracun" />
             <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('required') && contractorForm.controls['tekracun'].dirty">
-              Tekući račun je obavezno polje!
+              {{validationMessages.tekracun.required}}
             </div>
             <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('minlength') && contractorForm.controls['tekracun'].dirty">
-              Tekući račun se sastoji od tačno 18 cifara!
+              {{validationMessages.tekracun.minLength}}
             </div>
             <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('maxlength') && contractorForm.controls['tekracun'].dirty">
-              Tekući račun se sastoji od tačno 18 cifara!
+              {{validationMessages.tekracun.maxLength}}
             </div>
             <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('pattern') && contractorForm.controls['tekracun'].dirty">
-              Tekući račun se sastoji samo od cifara!
+              {{validationMessages.tekracun.pattern}}
             </div>
           </div>
 
@@ -44,10 +44,10 @@
             <label for="SIFRA">Šifra delatnosti</label>
             <input type="text" id="sifra" class="form-control" formControlName="sifra" />
             <div class="validators" *ngIf="contractorForm.controls['sifra'].hasError('pattern') && contractorForm.controls['sifra'].dirty">
-              Šifra delatnosti se sastoji samo od cifara!
+              {{validationMessages.sifra.pattern}}
             </div>
             <div class="validators" *ngIf="contractorForm.controls['sifra'].hasError('required') && contractorForm.controls['sifra'].dirty">
-              Šifra delatnosti je obavezna!
+              {{validationMessages.sifra.required}}
               </div>
           </div>
 
@@ -55,10 +55,10 @@
             <label for="ime">Ime i prezime direktora</label>
             <input type="text" id="ime" class="form-control" formControlName="ime" />
             <div class="validators" *ngIf="contractorForm.controls['ime'].hasError('pattern') && contractorForm.controls['ime'].dirty">
-              Ime i prezime se sastoji od više od slova!
+              {{validationMessages.ime.pattern}}
             </div>
             <div class="validators" *ngIf="contractorForm.controls['ime'].hasError('required') && contractorForm.controls['ime'].dirty">
-                Ime i prezime direktora je obavezno!
+              {{validationMessages.ime.required}}
                 </div>
           </div>
           
@@ -66,16 +66,16 @@
             <label for="JMBG">JMBG direktora</label>
             <input type="text" id="jmbg" class="form-control" formControlName="jmbg" />
             <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('pattern') && contractorForm.controls['jmbg'].dirty">
-              JMBG se sastoji od 13 cifara!
+              {{validationMessages.jmbg.pattern}}
             </div>
             <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('required') && contractorForm.controls['jmbg'].dirty">
-               JMBG direktora je obavezan!
+              {{validationMessages.jmbg.required}}
                 </div>
                 <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('minlength') && contractorForm.controls['jmbg'].dirty">
-                    JMBG se sastoji od tačno 13 cifara!
+                  {{validationMessages.jmbg.minLength}}
                   </div>
                   <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('maxlength') && contractorForm.controls['jmbg'].dirty">
-                    JMBG se sastoji od tačno 13 cifara!
+                    {{validationMessages.jmbg.maxLength}}
                   </div>
           </div>
           
@@ -135,12 +135,13 @@
 
         <div class="form-group">       
             <label for="PIB">PIB</label>
-          <input type="text" id="pib" class="form-control" formControlName="pib" [readonly]=true />
+          <input type="text" id="pib" class="form-control" formControlName="pib"
+           [readonly]=true [ngClass]="{'readonly-field': true}" />
           <div class="validators" *ngIf="searchForm.controls['pib'].hasError('required') && searchForm.controls['pib'].dirty">
-            PIB je obavezan!
+            {{validationMessages.pib.required}}
           </div>
           <div class="validators" *ngIf="searchForm.controls['pib'].hasError('minlength') || searchForm.controls['pib'].hasError('maxlength')">
-            PIB se sastoji od 9 cifara!
+            {{validationMessages.pib.pattern}}
           </div>
         </div>
 
@@ -148,7 +149,7 @@
           <label for="NAZIV">Naziv</label>
           <input type="text" id="naziv" class="form-control" formControlName="naziv" />
           <div class="validators" *ngIf="searchForm.controls['naziv'].hasError('required') && searchForm.controls['naziv'].dirty">
-           Naziv je obavezan!
+            {{validationMessages.naziv.required}}
           </div>
         </div>
 
@@ -156,27 +157,28 @@
             <label for="TEKRACUN">Tekući racun</label>
             <input type="text" id="tekracun" class="form-control" formControlName="tekracun" />
             <div class="validators" *ngIf="searchForm.controls['tekracun'].hasError('required') && searchForm.controls['tekracun'].dirty">
-              Tekući račun je obavezno polje!
+              {{validationMessages.tekracun.required}}
             </div>
             <div class="validators" *ngIf="searchForm.controls['tekracun'].hasError('minlength') && searchForm.controls['tekracun'].dirty">
-              Tekući račun se sastoji od tačno 18 cifara!
+              {{validationMessages.tekracun.minLength}}
             </div>
             <div class="validators" *ngIf="searchForm.controls['tekracun'].hasError('maxlength') && searchForm.controls['tekracun'].dirty">
-              Tekući račun se sastoji od tačno 18 cifara!
+              {{validationMessages.tekracun.maxLength}}
             </div>
             <div class="validators" *ngIf="searchForm.controls['tekracun'].hasError('pattern') && searchForm.controls['tekracun'].dirty">
-              Tekući račun se sastoji samo od cifara!
+              {{validationMessages.tekracun.pattern}}
             </div>
           </div>  
 
           <div class="form-group">
             <label for="SIFRA">Šifra delatnosti</label>
-            <input type="text" id="sifra" class="form-control" formControlName="sifra" [readonly]=true/>
+            <input type="text" id="sifra" class="form-control" formControlName="sifra" 
+            [readonly]=true [ngClass]="{'readonly-field': true}"/>
             <div class="validators" *ngIf="searchForm.controls['sifra'].hasError('pattern') && searchForm.controls['sifra'].dirty">
-              Šifra delatnosti se sastoji samo od cifara!
+              {{validationMessages.sifra.pattern}}
             </div>
             <div class="validators" *ngIf="searchForm.controls['sifra'].hasError('required') && searchForm.controls['sifra'].dirty">
-              Šifra delatnosti je obavezna!
+              {{validationMessages.sifra.required}}
               </div>
           </div>
           
@@ -184,10 +186,10 @@
             <label for="ime">Ime i prezime direktora</label>
             <input type="text" id="ime" class="form-control" formControlName="ime" />
             <div class="validators" *ngIf="searchForm.controls['ime'].hasError('pattern') && searchForm.controls['ime'].dirty">
-              Ime i prezime se sastoji od više od slova!
+              {{validationMessages.ime.pattern}}
             </div>
             <div class="validators" *ngIf="searchForm.controls['ime'].hasError('required') && searchForm.controls['ime'].dirty">
-                Ime i prezime direktora je obavezno!
+              {{validationMessages.ime.required}}
                 </div>
           </div>
           
@@ -195,16 +197,16 @@
             <label for="JMBG">JMBG direktora</label>
             <input type="text" id="jmbg" class="form-control" formControlName="jmbg" />
             <div class="validators" *ngIf="searchForm.controls['jmbg'].hasError('pattern') && searchForm.controls['jmbg'].dirty">
-              JMBG se sastoji od 13 cifara!
+              {{validationMessages.jmbg.pattern}}
             </div>
             <div class="validators" *ngIf="searchForm.controls['jmbg'].hasError('required') && searchForm.controls['jmbg'].dirty">
-               JMBG direktora je obavezan!
+              {{validationMessages.jmbg.required}}
                 </div>
                 <div class="validators" *ngIf="searchForm.controls['jmbg'].hasError('minlength') && searchForm.controls['jmbg'].dirty">
-                    JMBG se sastoji od tačno 13 cifara!
+                  {{validationMessages.jmbg.minLength}}
                   </div>
                   <div class="validators" *ngIf="searchForm.controls['jmbg'].hasError('maxlength') && searchForm.controls['jmbg'].dirty">
-                    JMBG se sastoji od tačno 13 cifara!
+                    {{validationMessages.jmbg.maxLength}}
                   </div>
           </div>
         <p class="form-group">Adresa</p>

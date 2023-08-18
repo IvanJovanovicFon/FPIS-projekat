@@ -8,7 +8,7 @@ export class Account {
     brojRacuna: string;
     objekat: string;
     investitor: string;
-    realizacija: string;
+    realizacija: number;
     datumIspostavljanja: Date;
     datumIzdavanja: Date;
     datumPrometaDobaraIUsluga: Date;
@@ -22,7 +22,7 @@ export class Account {
     brojRacuna: string,
     objekat: string,
     investitor: string,
-    realizacija: string,
+    realizacija: number,
     datumIspostavljanja: Date,
     datumIzdavanja: Date,
     datumPrometaDobaraIUsluga: Date,

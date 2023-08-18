@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Contractor } from 'src/app/model/contractor';
 import { ContractorService } from 'src/app/services/contractor.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
 
 @Component({
   selector: 'app-add-contractor',
@@ -13,13 +16,67 @@ export class ContractorComponent implements OnInit {
   searchForm!: FormGroup;
   showAddForm = true;
   searchResults: Contractor[] = [];
+  searchTrigger = new Subject<string>();
+  validationMessages = {
+    pib: {
+      required: 'Izvođač je obavezan!',
+      pattern:' PIB se sastoji od 9 cifara!'
+    },
+    naziv:{
+      required: "Id je obavezan!"
+    },
+    tekracun:{
+      required: " Tekući račun je obavezno polje!",
+      minLength:"Tekući račun se sastoji od tačno 18 cifara!",
+      maxLength:'Tekući račun se sastoji od tačno 18 cifara!',
+      pattern: 'Tekući račun se sastoji samo od cifara!'
+    },
+    sifra:{
+      required: "Šifra delatnosti je obavezna!",
+      pattern:' Šifra delatnosti se sastoji samo od cifara!'
+    },
+   ime:{
+    required:' Ime i prezime direktora je obavezno!',
+      pattern: " Ime i prezime se sastoji od više od slova!"
+    },
+   jmbg:{
+      required: " JMBG direktora je obavezan!",
+      pattern: 'JMBG se sastoji od 13 cifara!',
+      minLength: 'JMBG se sastoji od tačno 13 cifara!',
+      maxLength: 'JMBG se sastoji od tačno 13 cifara!'
+    }
+  };
 
 
   constructor(private fb: FormBuilder, private conService: ContractorService) {}
 
   ngOnInit(): void {
     this.initializeForms();
+
+    this.searchTrigger
+    .pipe(
+      debounceTime(1000),       
+      distinctUntilChanged()      
+    )
+    .subscribe((query: string) => {
+      this.performSearch(query);
+    });
   }
+
+   performSearch(query: string): void {
+    if (!query) {
+      this.searchResults = [];
+      return;
+    }
+  
+    this.conService.getAllContractors().subscribe((contractors: Contractor[]) => {
+      this.searchResults = contractors.filter((contractor: Contractor) =>
+        contractor.pib.toLowerCase().includes(query) ||
+        contractor.naziv.toLowerCase().includes(query)
+      );
+    });
+  }
+  
 
   editContractor(event:Event):void{
     event.preventDefault();
@@ -57,19 +114,7 @@ export class ContractorComponent implements OnInit {
 
   onSearch(): void {
     const query = this.searchForm.value.searchQuery.toLowerCase();
-    console.log(query)
-  
-    if (!query) {
-      this.searchResults = [];
-      return;
-    }
-  
-    this.conService.getAllContractors().subscribe((contractors: Contractor[]) => {
-      this.searchResults = contractors.filter((contractor: Contractor) =>
-        contractor.pib.toLowerCase().includes(query) ||
-        contractor.naziv.toLowerCase().includes(query)
-      );
-    });
+    this.searchTrigger.next(query);
   }
   
 
