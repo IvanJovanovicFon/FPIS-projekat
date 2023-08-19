@@ -145,14 +145,13 @@
                 </div>
               </div>
 
-              
 
               <div class="form-group" formGroupName="posao">
               <label for="description">Opis</label>
               <textarea class="form-control" name="description" rows="4" cols="50" formControlName="opis"></textarea>
               <div class="btn-container">
               <button type="submit" class="btn-addC" (click)="addJob()"
-               [disabled]="false" >Dodaj stavku posla</button>
+               >Dodaj stavku posla</button>
                </div>
                <div class="table-of-jobs">
                 <table>
@@ -185,6 +184,10 @@
                 </table>
                </div>
             </div>
+            <div class="form-group" >
+              <label for="ukupnaCena">Ukupna cena(u dinarima)</label>
+              <input type="number" id="ukupnaCena" [readonly]="true" [ngClass]="{'readonly-field': true}" class="form-control" formControlName="ukupnaCena" />
+              </div>
           <div class="btn-container">
             <button type="submit" class="btn-addC" [disabled]="!addedJobs || !addAccountForm.get('broj')?.valid || !addAccountForm.get('objekat')?.valid 
             || !addAccountForm.get('investitor')?.valid || !addAccountForm.get('realizacija')?.valid
@@ -385,10 +388,13 @@
                         <div class="btn-container">
 
                         <button type="submit" class="btn-addC" (click)="addJob()"
-                         [disabled]="false" >Dodaj stavku posla</button>
+                         *ngIf="isDodajStavkuFlag" >Dodaj stavku posla</button>
+                   
+                         <button type="submit" class="btn-addC" (click)="onEditJob()"
+                         *ngIf="!isDodajStavkuFlag" >Izmeni stavku posla</button>
                          </div>
                          
-                         <div class="table-of-jobs" formControlName = "tabela">
+                         <div class="table-of-jobs">
                           <table>
                             <thead>
                               <tr>
@@ -412,6 +418,7 @@
                                 <td>{{ job.cena }}</td>
                                 <td>{{ job.opis }}</td>
                                 <td>
+                                  <button class="small-button" (click)="editJob(i)">Edit</button> 
                                   <button (click)="removeJob(i)">Remove</button>
                                 </td>
                               </tr>
@@ -419,12 +426,18 @@
                           </table>
                          </div>
                       </div>
+                      <div class="form-group" >
+                        <label for="ukupnaCena">Ukupna cena(u dinarima)</label>
+                        <input type="number" id="ukupnaCena" [readonly]="true" [ngClass]="{'readonly-field': true}" class="form-control" formControlName="ukupnaCena" />
+                        </div>
                       <div class="btn-container">
-                        <button type="submit" class="btn-addC" [disabled]="!addedJobs || !editAccountForm.get('broj')?.valid || !editAccountForm.get('objekat')?.valid 
+                        <button type="submit" class="btn-addC"
+                         [disabled]="!addedJobs
+                      || !editAccountForm.get('broj')?.valid || !editAccountForm.get('objekat')?.valid 
                       || !editAccountForm.get('investitor')?.valid || !editAccountForm.get('realizacija')?.valid
                       || !editAccountForm.get('datumIspos')?.valid || !editAccountForm.get('datumIzdav')?.valid
                       || !editAccountForm.get('datumPromet')?.valid || !editAccountForm.get('izvodjac')?.valid"
-                         (click)="addAccount()">Zapamti račun</button>
+                         (click)="editAccount()">Zapamti račun</button>
                       <button type="submit" class="btn-addC" (click)="toggleForm()">Dodaj novi račun</button>
                       </div>
                       </div>

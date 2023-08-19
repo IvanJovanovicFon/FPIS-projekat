@@ -8,21 +8,21 @@ const accounts: Account[] = [
   new Account("neka bude string za sad", new Contractor("22222222222", "Firma12", "123456789123456789",
     "666888", "Ivan Peric", "0707000792258"),
     "neki id", 
-    "neki broj racuna",
-    "objekat neki", "neki investitor", 10000, new Date(), new Date(), new Date(),
+    "1111",
+    "objekat neki", "neki investitor", 10000, new Date(), new Date(), new Date(),10000,
     [
-      new Job("vrsta posla", "podvrsta", "Km", 3, 12200, "nema opisa"),
-      new Job("vrsta posla2", "podvrsta2", "Km2", 32, 122002, "nema opisa2")
+      new Job("vrsta posla", "podvrsta", "Km", 3, 0, "nema opisa"),
+      new Job("vrsta posla2", "podvrsta2", "Km2", 32, 0, "nema opisa2")
     ]
   ), 
   new Account("neka bude string za sad2", new Contractor("22222222222", "firma", "123456789123456789",
     "666888", "Ivan Peric", "0707000792258"),
     "neki id2", 
-    "neki broj racuna2",
-    "objekat neki2", "neki investitor2",12000, new Date(), new Date(), new Date(),
+    "22222",
+    "objekat neki2", "neki investitor2",12000, new Date(), new Date(), new Date(),10000,
     [
-      new Job("vrsta posla3", "podvrsta3", "Km3", 33, 122030, "nema opisa3"),
-      new Job("vrsta posla23", "podvrsta23", "Km23", 332, 1220302, "nema opisa23")
+      new Job("vrsta posla3", "podvrsta3", "Km3", 33, 1, "nema opisa3"),
+      new Job("vrsta posla23", "podvrsta23", "Km23", 332, 0, "nema opisa23")
     ]
   )
 ];
@@ -47,5 +47,6 @@ export class AccountService {
       console.log("added:", acc);
     accounts.push(acc);
   }
+
 
 }

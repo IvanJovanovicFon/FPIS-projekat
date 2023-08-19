@@ -25,10 +25,14 @@ export class AccountPageComponent implements OnInit {
   posaoGroup!: FormGroup;
   jobs: Job[] = [];
   addedJobs: boolean = false;
-  isValidPosaoFlag :boolean = true;
+  isValidCenaFlag :boolean = true;
+  isValidKolicinaFlag :boolean = true;
   showAddForm: boolean = true;
   searchResults: Account[] = [];
   searchTrigger = new Subject<string>();
+  isDodajStavkuFlag: boolean = true;
+  indexOfEditedJob: number = -1;
+  ukupnaCena:number = 0;
   validationMessages = {
     izvodjac: {
       required: 'Izvođač je obavezan!'
@@ -76,10 +80,13 @@ export class AccountPageComponent implements OnInit {
     });
   }
 
+
   toggleForm():void {
     this.showAddForm = !this.showAddForm;
     this.jobs = [];
     this.addedJobs = false;
+    this.editAccountForm.reset();
+    this.addAccountForm.reset();
   }
 
 
@@ -99,6 +106,7 @@ export class AccountPageComponent implements OnInit {
       datumIspos: [currentDate, Validators.required],
       datumIzdav: [currentDate, Validators.required],
       datumPromet: [currentDate, Validators.required],
+      ukupnaCena: [0],
       posao: this.fb.group({
         vrsta: ['', Validators.required],
         podvrsta: ['', Validators.required],
@@ -120,6 +128,7 @@ export class AccountPageComponent implements OnInit {
       datumIspos: [currentDate, Validators.required],
       datumIzdav: [currentDate, Validators.required],
       datumPromet: [currentDate, Validators.required],
+      ukupnaCena: [0],
       posao: this.fb.group({
         vrsta: ['', Validators.required],
         podvrsta: ['', Validators.required],
@@ -132,9 +141,41 @@ export class AccountPageComponent implements OnInit {
   }
   
 
+  editAccount(): void {
+    let izvodjacId: string = this.editAccountForm.get('izvodjac')?.value;
+    this.conService.getAllContractors().subscribe(izvodjaci => {
+      const foundContractor = izvodjaci.find(contractor => {
+        return contractor.naziv === izvodjacId || contractor.pib === izvodjacId;
+      });
+      
+      if (foundContractor) {
+        const editedAccount: Account = {
+          izvodjac: foundContractor,
+          predracun: this.editAccountForm.get('predracun')?.value,
+          idRacuna: this.editAccountForm.get('id')?.value,
+          brojRacuna: this.editAccountForm.get('broj')?.value,
+          objekat: this.editAccountForm.get('objekat')?.value,
+          realizacija: this.editAccountForm.get('realizacija')?.value,
+          investitor: this.editAccountForm.get('investitor')?.value,
+          datumIspostavljanja: this.editAccountForm.get('datumIspos')?.value,
+          datumIzdavanja: this.editAccountForm.get('datumIzdav')?.value,
+          datumPrometaDobaraIUsluga: this.editAccountForm.get('datumPromet')?.value,
+          ukupnaCena: this.editAccountForm.get('ukupnaCena')?.value,
+          poslovi: this.jobs
+        };      
+        this.accService.editAccount(editedAccount);
+      } else {
+        console.log('Contractor not found');
+        return;
+      }
+    });
+
+
+  }
+  
+
   addAccount(): void {
     let izvodjacId: string = this.addAccountForm.get('izvodjac')?.value;
-    
     this.conService.getAllContractors().subscribe(izvodjaci => {
       console.log(this.contractors);
       const foundContractor = izvodjaci.find(contractor => {
@@ -153,9 +194,9 @@ export class AccountPageComponent implements OnInit {
           datumIspostavljanja: this.addAccountForm.get('datumIspos')?.value,
           datumIzdavanja: this.addAccountForm.get('datumIzdav')?.value,
           datumPrometaDobaraIUsluga: this.addAccountForm.get('datumPromet')?.value,
+          ukupnaCena:this.addAccountForm.get('ukupnaCena')?.value,
           poslovi: this.jobs
-        };
-        
+        };      
         this.accService.addAccount(newAccount);
       } else {
         console.log('Contractor not found');
@@ -188,11 +229,14 @@ export class AccountPageComponent implements OnInit {
     });
   }
 
-//izmena
+
   selectSearchResult(result: any) {
     this.searchResults = [];
-    console.log('Selected:', result);
+    let selectedJobs: Job[] = [];
+    selectedJobs = result.poslovi;
+    this.jobs = selectedJobs;
   
+
     this.editAccountForm.patchValue({
       id: result.idRacuna,
       izvodjac:result.izvodjac.naziv,
@@ -200,82 +244,152 @@ export class AccountPageComponent implements OnInit {
       objekat: result.objekat,
       realizacija:result.realizacija,
       investitor: result.investitor,
-    datumIspos: formatDate(result.datumIspostavljanja, 'yyyy-MM-dd', 'en'),
-    datumIzdav: formatDate(result.datumIzdavanja, 'yyyy-MM-dd', 'en'),
-    datumPromet: formatDate(result.datumPrometaDobaraIUsluga, 'yyyy-MM-dd', 'en'),
-      //fali da se doda niz sacuvanih poslova i treba da se omoguci izmena stavki posla
-      //mozda dodati dugme izmeni i onda se popune polja sa ovim i mozes da izmenis poslje i onda ga dodas  
+      datumIspos: formatDate(result.datumIspostavljanja, 'yyyy-MM-dd', 'en'),
+      datumIzdav: formatDate(result.datumIzdavanja, 'yyyy-MM-dd', 'en'),
+      datumPromet: formatDate(result.datumPrometaDobaraIUsluga, 'yyyy-MM-dd', 'en')
     });
+      this.jobs.forEach(job => {
+        this.ukupnaCena+=job.cena*job.kolicina;
+      });
+      this.editAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
+      this.addedJobs = true;
   }
+
 
   addJob(): void {
     this.addedJobs = true;
     let posaoGroup: AbstractControl | null;
-    if(this.addAccountForm.get('posao')){
-     posaoGroup = this.addAccountForm.get('posao');
+    
+    if (this.showAddForm) {
+      posaoGroup = this.addAccountForm.get('posao');
+    } else {
+      posaoGroup = this.editAccountForm.get('posao');
     }
-    else {
-     posaoGroup = this.editAccountForm.get('posao');
-    }
-    console.log(posaoGroup)
-
+  
     if (posaoGroup) {
-      const newJob: Job = {
-        vrsta: posaoGroup.get('vrsta')?.value || '',//za sad nek ide dok ne popunim
-        podvrsta: posaoGroup.get('podvrsta')?.value || '',
-        jedinicaMere: posaoGroup.get('jedinicaMere')?.value || '',
-        kolicina: posaoGroup.get('kolicina')?.value,
-        cena: posaoGroup.get('cena')?.value,
-        opis: posaoGroup.get('opis')?.value || 'nema opisa',
-      };
-      
-      
-      if (posaoGroup.get('cena')?.value ==null || posaoGroup.get('cena')?.value === "") {
+      const kolicinaValue = posaoGroup.get('kolicina')?.value;
+      const cenaValue = posaoGroup.get('cena')?.value;
+
+      if (cenaValue ===null || cenaValue === "") {
         const cenaControl = posaoGroup.get('cena');
-      
+  
         cenaControl?.markAsTouched();
         cenaControl?.markAsDirty();
         cenaControl?.setErrors({ required: true });
-        this.isValidPosaoFlag = false;
+        this.isValidCenaFlag = false;
+      } else {
+        this.isValidCenaFlag = true;
       }
-      else{
-        this.isValidPosaoFlag = true;
-      }
-      
-      if (posaoGroup.get('kolicina')?.value === "" || posaoGroup.get('kolicina')?.value ==null ) {
+  
+  
+      if (kolicinaValue ===null || kolicinaValue === "") {
         const kolicinaControl = posaoGroup.get('kolicina');
-      
+  
         kolicinaControl?.markAsTouched();
         kolicinaControl?.markAsDirty();
         kolicinaControl?.setErrors({ required: true });
-        this.isValidPosaoFlag = false;
+        this.isValidKolicinaFlag = false;
+      } else {
+        this.isValidKolicinaFlag = true;
       }
-      else{
-        this.isValidPosaoFlag = true;
-      }
+  
 
-      if(this.isValidPosaoFlag === false){
+      if (this.isValidCenaFlag === false || this.isValidKolicinaFlag == false) {
         return;
       }
-      
-
-      console.log(newJob)
+  
+      const newJob = this.getJobFromEditForm();
       this.jobs.push(newJob);
-      // this.posaoGroup.get('kolicina')?.reset();
-      // this.posaoGroup.get('cena')?.reset();
-      // this.posaoGroup.get('opis')?.reset();
+      this.ukupnaCena += newJob.cena * newJob.kolicina;
+      if(this.showAddForm){
+        this.addAccountForm.get('ukupnaCena')?.
+        setValue(this.ukupnaCena);
+      }
+      else{
+        this.editAccountForm.get('ukupnaCena')?.
+        setValue(this.ukupnaCena);
+      }
+      console.log()
       posaoGroup.reset();
     }
   }
-
+  
   
   removeJob(index: number): void {
     if(this.jobs.length===1){
       this.addedJobs = false;
     }
+    if(this.indexOfEditedJob === index){
+      this.isDodajStavkuFlag = true;
+      this.editAccountForm.get('posao')?.reset();
+    }
+    this.ukupnaCena -= this.jobs[index].cena*this.jobs[index].kolicina;
+
+    if(this.showAddForm){
+      this.addAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
+    }
+    else{
+      this.editAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
+    }
     this.jobs.splice(index, 1);
   }
 
+
+  editJob(index: number): void {
+    const editedJob = this.jobs[index];
+  this.isDodajStavkuFlag = false;
+  this.indexOfEditedJob = index;
+    const posaoGroup = this.editAccountForm.get('posao');
+    if (posaoGroup) {
+      posaoGroup.patchValue({
+        kolicina: editedJob.kolicina,
+        cena: editedJob.cena,
+        jedinicaMere: editedJob.jedinicaMere,
+        vrsta: editedJob.vrsta,
+        podvrsta: editedJob.podvrsta,
+        opis: editedJob.opis
+      });
+    }
+  
+    this.addedJobs = true;
+  }
+
+
+  getJobFromEditForm(): Job {
+
+    let posaoGroup: AbstractControl | null;
+    
+    if (this.showAddForm) {
+      posaoGroup = this.addAccountForm.get('posao');
+    } else {
+      posaoGroup = this.editAccountForm.get('posao');
+    }
+ 
+    const job: Job = {
+      vrsta: posaoGroup?.get('vrsta')?.value || '',//za sad nek ide dok ne popunim
+      podvrsta: posaoGroup?.get('podvrsta')?.value || '',
+      jedinicaMere: posaoGroup?.get('jedinicaMere')?.value || '',
+      kolicina: posaoGroup?.get('kolicina')?.value,
+      cena: posaoGroup?.get('cena')?.value,
+      opis: posaoGroup?.get('opis')?.value || 'nema opisa',
+    };
+    return job;
+    //fali nekki error da se vrati
+  }
+  
+
+  onEditJob(): void{
+    const posaoGroup = this.editAccountForm.get('posao');
+    const job = this.getJobFromEditForm();
+    this.ukupnaCena-=(this.jobs[this.indexOfEditedJob].cena*this.jobs[this.indexOfEditedJob].kolicina)
+    this.jobs[this.indexOfEditedJob] = job;
+   
+    this.ukupnaCena+= job.cena*job.kolicina;
+    this.editAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
+
+    posaoGroup?.reset();
+    this.isDodajStavkuFlag = true;
+  }
  
 
 }

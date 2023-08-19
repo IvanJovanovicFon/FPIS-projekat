@@ -12,6 +12,7 @@ export class Account {
     datumIspostavljanja: Date;
     datumIzdavanja: Date;
     datumPrometaDobaraIUsluga: Date;
+    ukupnaCena: number;
     poslovi: Job[];
     
   
@@ -26,6 +27,7 @@ export class Account {
     datumIspostavljanja: Date,
     datumIzdavanja: Date,
     datumPrometaDobaraIUsluga: Date,
+    ukupnaCena: number,
     poslovi: Job[]
         ) {
       this.predracun = predracun;
@@ -38,6 +40,7 @@ export class Account {
       this.datumIspostavljanja = datumIspostavljanja;
       this.datumIzdavanja = datumIzdavanja;
       this.datumPrometaDobaraIUsluga = datumPrometaDobaraIUsluga;
+      this.ukupnaCena = ukupnaCena;
       this.poslovi = poslovi;
  
     }
