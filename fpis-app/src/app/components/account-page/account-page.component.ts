@@ -85,6 +85,7 @@ export class AccountPageComponent implements OnInit {
     this.showAddForm = !this.showAddForm;
     this.jobs = [];
     this.addedJobs = false;
+    this.ukupnaCena = 0;
     this.editAccountForm.reset();
     this.addAccountForm.reset();
   }
