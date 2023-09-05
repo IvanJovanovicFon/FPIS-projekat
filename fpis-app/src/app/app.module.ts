@@ -7,22 +7,30 @@ import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ContractorComponent } from './components/add-contractor/add-contractor.component';
 import { AccountPageComponent } from './components/account-page/account-page.component';
-
+import { CarouselComponent } from './components/carousel/carousel.component';
+import { CarouselModule } from '@coreui/angular';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+ 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     NavbarComponent,
     ContractorComponent,
-    AccountPageComponent
+    AccountPageComponent,
+    CarouselComponent
+
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    FormsModule 
+    FormsModule ,
+    CarouselModule,
+    BrowserModule,
+    BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
