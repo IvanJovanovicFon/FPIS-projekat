@@ -1,0 +1,19 @@
+{
+  "name": "server-express",
+  "version": "1.0.0",
+  "description": "Backand za aplikaciju",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanJovanovicFon/FPIS-projekat.git"
+  },
+  "author": "Ivan Jovanovic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IvanJovanovicFon/FPIS-projekat/issues"
+  },
+  "homepage": "https://github.com/IvanJovanovicFon/FPIS-projekat#readme"
+}
