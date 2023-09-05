@@ -1,13 +1,18 @@
-export class Job {//fali id
-    vrsta: string;
-    podvrsta: string;
-    jedinicaMere: string;
+export class Job {
+  id:string;
+    idVrsta: string;
+    idPodvrsta: string;
+    idjedinicaMere: string;
     kolicina: number;
     cena: number;
     opis: string;
-    
+    idPredracun:string;
+    idRacuna:string;
   
-    constructor(  
+    constructor( 
+        id:string,
+        idPredracun:string,
+        idRacuna:string,
         vrsta: string,
         podvrsta: string,
         jedinicaMere: string,
@@ -15,13 +20,15 @@ export class Job {//fali id
         cena: number,
         opis: string,
         ) {
-      this.vrsta = vrsta;
-      this.podvrsta = podvrsta;
-      this.jedinicaMere = jedinicaMere;
+      this.idVrsta = vrsta;
+      this.idPodvrsta = podvrsta;
+      this.idjedinicaMere = jedinicaMere; 
       this.kolicina = kolicina;
       this.cena = cena;
       this.opis = opis;
- 
+      this.idRacuna = idRacuna;
+      this.idPredracun = idPredracun;
+      this.id = id;
     }
   }
   

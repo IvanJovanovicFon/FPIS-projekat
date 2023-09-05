@@ -345,10 +345,14 @@ export class AccountPageComponent implements OnInit {
       posaoGroup.patchValue({
         kolicina: editedJob.kolicina,
         cena: editedJob.cena,
-        jedinicaMere: editedJob.jedinicaMere,
-        vrsta: editedJob.vrsta,
-        podvrsta: editedJob.podvrsta,
-        opis: editedJob.opis
+        jedinicaMere: editedJob.idjedinicaMere,
+        vrsta: editedJob.idVrsta,
+        podvrsta: editedJob.idPodvrsta,
+        opis: editedJob.opis,
+        id:editedJob.id     
+      
+        // idPredracun:string;
+        // idRacuna:string;
       });
     }
   
