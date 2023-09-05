@@ -1,4 +1,6 @@
-import Izvodjac from "../Models/izvodjac";
+const { response } = require("express");
+const Izvodjac = require("../Models/izvodjac");
+
 
 exports.createIzvodjac = async (req, res) => {
   try {
@@ -17,10 +19,21 @@ exports.updateIzvodjac = async (req, res) => {
   // Implement logic to update a user
 };
 
-exports.getAllIzvodjac = async (req, res) => {
-  // Implement logic to update a user
+
+exports.findAllIzvodjaci = async (req, res) => {
+  try {
+    const contractors = await Izvodjac.findAll({
+      attributes: ['id', 'PIB', 'naziv', 'tekuciRacun', 'sifra', 'imeIprezime', 'jmbg', 'mesto', 'ulica', 'broj'],
+    });
+
+    if (contractors) {
+      return contractors; 
+    } else {
+      return { error: 'No contractors found.' }; 
+    }
+  } catch (error) {
+    console.error('Error retrieving izvodjaci:', error);
+    throw error; 
+  }
 };
 
-exports.deleteIzvodjac = async (req, res) => {
-  // Implement logic to delete a user
-};

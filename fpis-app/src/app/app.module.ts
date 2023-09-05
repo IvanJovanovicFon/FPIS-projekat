@@ -10,6 +10,7 @@ import { AccountPageComponent } from './components/account-page/account-page.com
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { CarouselModule } from '@coreui/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
  
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FormsModule ,
     CarouselModule,
     BrowserModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    HttpClientModule
   ],
   providers: [ ],
   bootstrap: [AppComponent]

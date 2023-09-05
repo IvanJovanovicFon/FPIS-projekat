@@ -2,7 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../Config/database');
 
-const User = sequelize.define('Izvodjac', {
+const Izvodjac = sequelize.define('izvodjaci', {
     PIB: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -42,7 +42,12 @@ const User = sequelize.define('Izvodjac', {
   broj: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+},
+{
+  timestamps: false, 
+  tableName: 'izvodjaci',
+  freezeTableName: true
 });
 
 module.exports = Izvodjac;

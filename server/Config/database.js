@@ -3,8 +3,8 @@ const { Sequelize } = require('sequelize');
 // Replace these values with your database configuration
 const databaseName = 'fpis';
 const username = 'ivan';
-const password = '';
-const host = '3000'; 
+const password = 'ivan';
+const host = 'localhost'; 
 
 const sequelize = new Sequelize(databaseName, username, password, {
   host: host,
