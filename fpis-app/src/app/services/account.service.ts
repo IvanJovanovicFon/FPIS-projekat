@@ -11,8 +11,8 @@ const accounts: Account[] = [
     "1111",
     "objekat neki", "neki investitor", 10000, new Date(), new Date(), new Date(),10000,
     [
-      new Job("vrsta posla", "podvrsta", "Km", 3, 0, "nema opisa"),
-      new Job("vrsta posla2", "podvrsta2", "Km2", 32, 0, "nema opisa2")
+      new Job("neki id posla", "neki id racuna","vrsta posla", "podvrsta", "Km", 3, 0, "nema opisa"),
+      new Job("neki id posla2", "neki id racuna2","vrsta posla2", "podvrsta2", "Km2", 32, 0, "nema opisa2")
     ]
   ), 
   new Account("neka bude string za sad2", new Contractor("22222222222", "firma", "123456789123456789",
@@ -21,8 +21,8 @@ const accounts: Account[] = [
     "22222",
     "objekat neki2", "neki investitor2",12000, new Date(), new Date(), new Date(),10000,
     [
-      new Job("vrsta posla3", "podvrsta3", "Km3", 33, 1, "nema opisa3"),
-      new Job("vrsta posla23", "podvrsta23", "Km23", 332, 0, "nema opisa23")
+      new Job("neki id posla3", "neki id racuna3","vrsta posla4", "podvrsta234234", "Km", 333, 0, "nem2342a opisa"),
+      new Job("neki id posla4", "neki id racuna4","vrsta posla3", "pod4234vrsta2", "Km2", 323, 3, "nem243a opisa2")
     ]
   )
 ];

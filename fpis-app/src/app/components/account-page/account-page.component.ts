@@ -350,9 +350,6 @@ export class AccountPageComponent implements OnInit {
         podvrsta: editedJob.idPodvrsta,
         opis: editedJob.opis,
         id:editedJob.id     
-      
-        // idPredracun:string;
-        // idRacuna:string;
       });
     }
   
@@ -371,12 +368,14 @@ export class AccountPageComponent implements OnInit {
     }
  
     const job: Job = {
-      vrsta: posaoGroup?.get('vrsta')?.value || '',//za sad nek ide dok ne popunim
-      podvrsta: posaoGroup?.get('podvrsta')?.value || '',
-      jedinicaMere: posaoGroup?.get('jedinicaMere')?.value || '',
+      id: uuidv4(),
+      idVrsta: posaoGroup?.get('vrsta')?.value || '',//za sad nek ide dok ne popunim
+      idPodvrsta: posaoGroup?.get('podvrsta')?.value || '',
+      idjedinicaMere: posaoGroup?.get('jedinicaMere')?.value || '',
       kolicina: posaoGroup?.get('kolicina')?.value,
       cena: posaoGroup?.get('cena')?.value,
       opis: posaoGroup?.get('opis')?.value || 'nema opisa',
+      idRacuna: this.editAccountForm.get('id')?.value,
     };
     return job;
     //fali nekki error da se vrati
