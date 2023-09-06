@@ -1,5 +1,5 @@
 export class Job {
-  id:string;
+    id:string;
     idVrsta: string;
     idPodvrsta: string;
     idjedinicaMere: string;

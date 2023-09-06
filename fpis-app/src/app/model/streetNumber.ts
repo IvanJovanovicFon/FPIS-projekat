@@ -1,4 +1,4 @@
-export class unitOfMeasure {
+export class streetNumber {
     id:string;
     number:string;
     ptt:string;

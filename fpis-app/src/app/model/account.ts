@@ -1,8 +1,12 @@
+import { Accounting } from "./Accounting";
 import { Job } from "./Job";
+import { city } from "./city";
 import { Contractor } from "./contractor";
+import { street } from "./street";
+import { streetNumber } from "./streetNumber";
 
 export class Account {
-    predracun: string;
+    predracun: Accounting;
     izvodjac: Contractor;
     idRacuna: string;
     brojRacuna: string;
@@ -12,12 +16,16 @@ export class Account {
     datumIspostavljanja: Date;
     datumIzdavanja: Date;
     datumPrometaDobaraIUsluga: Date;
-    ukupnaCena: number;
+    ukupnaCena: number;//11
+    mesto:city;
+    ulica:street;
+    broj:streetNumber;
+    materijal:String
     poslovi: Job[];
     
   
     constructor( 
-        predracun: string,
+    predracun: Accounting,
     izvodjac: Contractor,
     idRacuna: string,
     brojRacuna: string,
@@ -28,6 +36,10 @@ export class Account {
     datumIzdavanja: Date,
     datumPrometaDobaraIUsluga: Date,
     ukupnaCena: number,
+    mesto:city,
+    ulica:street,
+    broj:streetNumber,
+    materijal:string,
     poslovi: Job[]
         ) {
       this.predracun = predracun;
@@ -42,7 +54,10 @@ export class Account {
       this.datumPrometaDobaraIUsluga = datumPrometaDobaraIUsluga;
       this.ukupnaCena = ukupnaCena;
       this.poslovi = poslovi;
- 
+      this.mesto = mesto,
+      this.broj = broj,
+      this.ulica = ulica,
+      this.materijal = materijal
     }
   }
   

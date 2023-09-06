@@ -5,16 +5,16 @@ export class Accounting {
 
     id: string;
     izvodjac: Contractor;
-pib:string;
+    ukupnaCena: number;
   
     constructor( 
         id: string,
-    izvodjac: Contractor,
+        izvodjac: Contractor,
+        ukupnaCena:number
         ) {
       this.id = id;
       this.izvodjac = izvodjac;
-    this.pib = izvodjac.pib;
- 
+      this.ukupnaCena = ukupnaCena;
     }
   }
   
