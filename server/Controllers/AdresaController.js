@@ -1,7 +1,8 @@
 const { response } = require("express");
 const Mesto = require("../Models/Mesto");
+const Ulica = require("../Models/Ulica");
 
-exports.findAllMesto = async (req, res) => {
+exports.findAllUlicaForPTT = async (req, res) => {
     try {
       const mesta = await Mesto.findAll({
         attributes: ['ptt', 'naziv']

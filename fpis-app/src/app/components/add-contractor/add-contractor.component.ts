@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { AdressService } from 'src/app/services/adress.service';
 import { city } from 'src/app/model/city';
 import { TitleStrategy } from '@angular/router';
+import { streetNumber } from 'src/app/model/streetNumber';
+import { street } from 'src/app/model/street';
 
 
 @Component({
@@ -22,6 +24,8 @@ export class ContractorComponent implements OnInit {
   searchResults: Contractor[] = [];
   searchTrigger = new Subject<string>();
   cities: city[] = [];
+  streets: street[] = [];
+  numbers: streetNumber[] = [];
   mestoDisabled:boolean = true;
   ulicaDisabled:boolean = true;
   brojDisabled:boolean = true;
@@ -60,7 +64,6 @@ export class ContractorComponent implements OnInit {
   ngOnInit(): void {
     this.adressService.getAllCities().subscribe((data) => {
       Object.values(data).forEach((city: city)=>{
-        console.log(city)
      this.cities.push(city);
       })
     });
@@ -187,8 +190,15 @@ export class ContractorComponent implements OnInit {
 
   }
   onCitySelected(event: any) {
+    this.ulicaDisabled = false;
     const selectedCityPtt = event.target.value;
-//sada ovde pozvati ulicu koja u bazi ima taj grad za id
+    this.streets=[];
+    this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
+      Object.values(data).forEach((str:street)=>{
+        this.streets.push(str)
+      })
+      console.log(this.streets)
+   })
   }
 
 }
