@@ -17,10 +17,12 @@ export class Account {
     datumIzdavanja: Date;
     datumPrometaDobaraIUsluga: Date;
     ukupnaCena: number;//11
-    mesto:city;
-    ulica:street;
-    broj:streetNumber;
-    materijal:String
+    // mesto:city;
+    // ulica:street;
+    // broj:streetNumber;
+    mesto:string;
+    ulica:string;
+    broj:string;
     poslovi: Job[];
     
   
@@ -36,10 +38,12 @@ export class Account {
     datumIzdavanja: Date,
     datumPrometaDobaraIUsluga: Date,
     ukupnaCena: number,
-    mesto:city,
-    ulica:street,
-    broj:streetNumber,
-    materijal:string,
+    // mesto:city,
+    // ulica:street,
+    // broj:streetNumber,
+    mesto:string,
+    ulica:string,
+    broj:string,
     poslovi: Job[]
         ) {
       this.predracun = predracun;
@@ -56,8 +60,7 @@ export class Account {
       this.poslovi = poslovi;
       this.mesto = mesto,
       this.broj = broj,
-      this.ulica = ulica,
-      this.materijal = materijal
+      this.ulica = ulica
     }
   }
   

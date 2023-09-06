@@ -1,9 +1,9 @@
 export class city {
     ptt:string;
-    name:string;
+    naziv:string;
 
-    constructor(ptt:string, name:string){
+    constructor(ptt:string, naziv:string){
         this.ptt=ptt;
-        this.name=name;
+        this.naziv=naziv;
     }
 }

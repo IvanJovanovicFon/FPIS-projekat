@@ -1,5 +1,5 @@
 const { response } = require("express");
-const Izvodjac = require("../Models/izvodjac");
+const Izvodjac = require("../Models/Izvodjac");
 
 
 exports.createIzvodjac = async (req, res) => {
@@ -16,14 +16,14 @@ exports.getIzvodjac = async (req, res) => {
 };
 
 exports.updateIzvodjac = async (req, res) => {
-  // Implement logic to update a user
+  // Implement logic to update a user 
 };
 
 
 exports.findAllIzvodjaci = async (req, res) => {
   try {
     const contractors = await Izvodjac.findAll({
-      attributes: ['id', 'PIB', 'naziv', 'tekuciRacun', 'sifra', 'imeIprezime', 'jmbg', 'mesto', 'ulica', 'broj'],
+      attributes: ['id', 'pib', 'naziv', 'tekuciRacun', 'sifra', 'imeIprezime', 'jmbg', 'mesto', 'ulica', 'broj'],
     });
 
     if (contractors) {

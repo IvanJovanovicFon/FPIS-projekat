@@ -3,7 +3,13 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../Config/database');
 
 const Izvodjac = sequelize.define('izvodjaci', {
-    PIB: {
+  id: {
+    primaryKey: true,
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+    pib: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,

@@ -4,6 +4,7 @@ import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Valida
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Job } from 'src/app/model/Job';
 import { Account } from 'src/app/model/account';
+import { city } from 'src/app/model/city';
 import { Contractor } from 'src/app/model/contractor';
 import { AccountService } from 'src/app/services/account.service';
 import { ContractorService } from 'src/app/services/contractor.service';
@@ -162,6 +163,9 @@ export class AccountPageComponent implements OnInit {
           datumIzdavanja: this.editAccountForm.get('datumIzdav')?.value,
           datumPrometaDobaraIUsluga: this.editAccountForm.get('datumPromet')?.value,
           ukupnaCena: this.editAccountForm.get('ukupnaCena')?.value,
+          mesto:'1',
+          ulica:'1',
+          broj:'1',
           poslovi: this.jobs
         };      
         this.accService.editAccount(editedAccount);
@@ -196,6 +200,9 @@ export class AccountPageComponent implements OnInit {
           datumIzdavanja: this.addAccountForm.get('datumIzdav')?.value,
           datumPrometaDobaraIUsluga: this.addAccountForm.get('datumPromet')?.value,
           ukupnaCena:this.addAccountForm.get('ukupnaCena')?.value,
+          mesto:'1',
+          ulica:'1',
+          broj:'1',
           poslovi: this.jobs
         };      
         this.accService.addAccount(newAccount);

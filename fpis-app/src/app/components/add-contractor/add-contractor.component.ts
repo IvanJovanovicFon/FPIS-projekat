@@ -4,6 +4,10 @@ import { Contractor } from 'src/app/model/contractor';
 import { ContractorService } from 'src/app/services/contractor.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+import { AdressService } from 'src/app/services/adress.service';
+import { city } from 'src/app/model/city';
+import { TitleStrategy } from '@angular/router';
 
 
 @Component({
@@ -17,6 +21,10 @@ export class ContractorComponent implements OnInit {
   showAddForm = true;
   searchResults: Contractor[] = [];
   searchTrigger = new Subject<string>();
+  cities: city[] = [];
+  mestoDisabled:boolean = true;
+  ulicaDisabled:boolean = true;
+  brojDisabled:boolean = true;
   validationMessages = {
     pib: {
       required: 'Izvođač je obavezan!',
@@ -47,10 +55,16 @@ export class ContractorComponent implements OnInit {
     }
   };
 
-
-  constructor(private fb: FormBuilder, private conService: ContractorService) {}
+  constructor(private fb: FormBuilder, private conService: ContractorService, private adressService: AdressService) {}
 
   ngOnInit(): void {
+    this.adressService.getAllCities().subscribe((data) => {
+      Object.values(data).forEach((city: city)=>{
+        console.log(city)
+     this.cities.push(city);
+      })
+    });
+
     this.initializeForms();
 
     this.searchTrigger
@@ -69,26 +83,32 @@ export class ContractorComponent implements OnInit {
       return;
     }
   
-    this.conService.getAllContractors().subscribe((contractors: Contractor[]) => {
-      this.searchResults = contractors.filter((contractor: Contractor) =>
-        contractor.pib.toLowerCase().includes(query) ||
-        contractor.naziv.toLowerCase().includes(query)
-      );
+    this.conService.getAllContractors().subscribe((contractors) => {
+      console.log(contractors);
+      this.searchResults = contractors.filter((contractor) => {
+        const pib = contractor.pib;
+        const naziv = contractor.naziv;
+        return pib.toLowerCase().includes(query) ||
+               naziv.toLowerCase().includes(query);
+      });
     });
   }
-  
 
   editContractor(event:Event):void{
     event.preventDefault();
     if (this.searchForm.valid) {
       const contractorData = this.searchForm.value;
       const contractor = new Contractor(
+        uuidv4(),
         contractorData.pib,
         contractorData.naziv,
         contractorData.tekracun,
         contractorData.sifra,
         contractorData.ime,
-        contractorData.jmbg
+        contractorData.jmbg,
+        contractorData.mesto,
+        contractorData.ulica,
+        contractorData.broj
         );
       this.conService.editContractor(contractor);
       this.searchForm.reset();
@@ -100,12 +120,16 @@ export class ContractorComponent implements OnInit {
     if (this.contractorForm.valid) {
       const contractorData = this.contractorForm.value;
       const contractor = new Contractor(
+        uuidv4(),
         contractorData.pib,
         contractorData.naziv,
         contractorData.tekracun,
         contractorData.sifra,
         contractorData.ime,
-        contractorData.jmbg
+        contractorData.jmbg,
+        contractorData.mesto,
+        contractorData.ulica,
+        contractorData.broj
         );
       this.conService.addContractor(contractor);
       this.contractorForm.reset();
@@ -122,7 +146,7 @@ export class ContractorComponent implements OnInit {
     this.searchResults = [];
     console.log('Selected:', result);
   
-    this.searchForm.patchValue({//fali
+    this.searchForm.patchValue({
       pib: result.pib,
       naziv: result.naziv,
       tekracun: result.tekuciRacun,
@@ -148,6 +172,8 @@ export class ContractorComponent implements OnInit {
       jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]]
     });
 
+
+
     this.contractorForm = this.fb.group({
       pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
       naziv: ['', Validators.required],
@@ -156,7 +182,13 @@ export class ContractorComponent implements OnInit {
       sifra: ['', [Validators.pattern('^[0-9]*$')]],
       ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
       jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
+     
     });
 
   }
+  onCitySelected(event: any) {
+    const selectedCityPtt = event.target.value;
+//sada ovde pozvati ulicu koja u bazi ima taj grad za id
+  }
+
 }

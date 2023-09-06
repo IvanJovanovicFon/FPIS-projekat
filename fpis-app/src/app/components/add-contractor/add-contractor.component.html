@@ -84,15 +84,16 @@
         <div class="combobox-row">
             <div class="form-group">
               <label for="mesto">Mesto  </label>
-              <select id="mesto">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+              <select id="mesto" (change)="onCitySelected($event)">
+                <option *ngFor="let city of cities"[value]="city.ptt">{{ city.naziv }}</option>
               </select>
+              
+              
+              
             </div>
             <div class="form-group">
               <label for="ulica">Ulica  </label>
-              <select id="ulica">
+              <select id="ulica" [disabled]="ulicaDisabled">
                 <option value="option1">Option 1</option>
                 <option value="option2">Option 2</option>
                 <option value="option3">Option 3</option>
@@ -100,7 +101,7 @@
             </div>
             <div class="form-group">
               <label for="broj">Broj  </label>
-              <select id="broj">
+              <select id="broj" [disabled]="brojDisabled">
                 <option value="option1">Option 1</option>
                 <option value="option2">Option 2</option>
                 <option value="option3">Option 3</option>
