@@ -29,6 +29,10 @@ export class ContractorComponent implements OnInit {
   mestoDisabled:boolean = true;
   ulicaDisabled:boolean = true;
   brojDisabled:boolean = true;
+  mestoSelected:boolean = false;
+  ulicaSelected:boolean = false;
+  brojSelected:boolean = false;
+
   validationMessages = {
     pib: {
       required: 'Izvođač je obavezan!',
@@ -56,6 +60,15 @@ export class ContractorComponent implements OnInit {
       pattern: 'JMBG se sastoji od 13 cifara!',
       minLength: 'JMBG se sastoji od tačno 13 cifara!',
       maxLength: 'JMBG se sastoji od tačno 13 cifara!'
+    },
+    mesto:{
+      required: "Izaberite mesto!",
+    },
+    ulica:{
+      required: "Izaberite ulica!",
+    },
+    broj:{
+      required: "Izaberite broj!",
     }
   };
 
@@ -118,10 +131,11 @@ export class ContractorComponent implements OnInit {
     }
   }
 
-  addContractor(event: Event): void {
+  addContractor(event: Event): void {//mora da se ubace vrednosti od combo boxa
     event.preventDefault();
     if (this.contractorForm.valid) {
       const contractorData = this.contractorForm.value;
+      console.log("da vidimo: ", contractorData)
       const contractor = new Contractor(
         uuidv4(),
         contractorData.pib,
@@ -166,6 +180,12 @@ export class ContractorComponent implements OnInit {
   }
 
   initializeForms(): void {
+    this.mestoSelected = false;
+    this.ulicaSelected = false;
+    this.brojSelected = false;
+    this.ulicaDisabled = true;
+    this.brojDisabled = true;
+
     this.searchForm = this.fb.group({
       searchQuery: [''],
       pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -174,7 +194,10 @@ export class ContractorComponent implements OnInit {
         Validators.pattern('^[0-9]*$')]],
       sifra: ['', [Validators.pattern('^[0-9]*$')]],
       ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
-      jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]]
+      jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
+      mesto: [null, Validators.required], 
+      ulica: [null, Validators.required], 
+      broj: [null, Validators.required]
     });
 
 
@@ -187,13 +210,20 @@ export class ContractorComponent implements OnInit {
       sifra: ['', [Validators.pattern('^[0-9]*$')]],
       ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
       jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
-     
+      mesto: ['', this.mestoSelected], 
+      ulica: ['', this.ulicaSelected], 
+      broj: ['', this.brojSelected]
     });
 
   }
-  onCitySelected(event: any) {
+
+  onCitySelected(event: any) {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
     this.ulicaDisabled = false;
     this.brojDisabled=true;
+
+    this.mestoSelected = true;
+    this.brojSelected = false;
+    this.ulicaSelected = false;
     const selectedCityPtt = event.target.value;
     this.streets=[];
     this.numbers=[];
@@ -206,6 +236,8 @@ export class ContractorComponent implements OnInit {
 
   onStreetSelected(event: any){
     this.brojDisabled = false;
+    this.ulicaSelected = true;
+    this.brojSelected = false;
     const selected = event.target.value;
     const [ptt, id] = selected.split(',');
     this.numbers=[];
@@ -213,7 +245,14 @@ export class ContractorComponent implements OnInit {
       Object.values(data).forEach((num:streetNumber)=>{
         this.numbers.push(num)
       })
-      console.log(this.numbers)
   })
+  }
+
+  onReset(){
+    this.mestoSelected = false;
+    this.ulicaSelected = false;
+    this.brojSelected = false;
+    this.ulicaDisabled = true;
+    this.brojDisabled = true;
   }
 }
