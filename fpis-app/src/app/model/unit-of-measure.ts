@@ -1,9 +1,9 @@
-export class unitOfMeasure {
-    id:string;
-    name:string;
+export class UnitOfMeasure {
+    oznaka:string;
+    naziv:string;
 
-    constructor(id:string, name:string){
-        this.id=id;
-        this.name=name;
+    constructor(oznaka:string, naziv:string){
+        this.oznaka=oznaka;
+        this.naziv=naziv;
     }
 }

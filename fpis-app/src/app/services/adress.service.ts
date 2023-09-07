@@ -4,6 +4,7 @@ import { HttpClient , HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { city } from '../model/city';
 import { street } from '../model/street';
+import { streetNumber } from '../model/streetNumber';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { street } from '../model/street';
 export class AdressService {
   private pttCode = "";
   private apiUrlMesta = 'http://localhost:3000/api/mesta';
-  private apiUrlUlica = '';
+  private apiUrl = '';
 
   constructor(private http: HttpClient) {}
 
@@ -20,9 +21,17 @@ export class AdressService {
   }
 
   getAllStreetsByPTT(Ptt:string): Observable<street[]> {
+    console.log(Ptt, typeof(Ptt));
     this.pttCode = Ptt;
-    this.apiUrlUlica = `http://localhost:3000/api/ulice/${this.pttCode}`
-    return this.http.get<street[]>(this.apiUrlUlica);
+    this.apiUrl = `http://localhost:3000/api/ulice/${this.pttCode}`
+    return this.http.get<street[]>(this.apiUrl);
+    
+  }
+
+  getAllNumbersByPTTAndId(ptt: string, id:number): Observable<streetNumber[]> {
+    console.log(id, typeof(id));
+    this.apiUrl = `http://localhost:3000/api/brojevi/${ptt}/${id}`
+    return this.http.get<streetNumber[]>(this.apiUrl);
     
   }
 

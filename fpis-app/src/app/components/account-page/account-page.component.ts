@@ -2,11 +2,18 @@ import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Accounting } from 'src/app/model/Accounting';
 import { Job } from 'src/app/model/Job';
 import { Account } from 'src/app/model/account';
 import { city } from 'src/app/model/city';
 import { Contractor } from 'src/app/model/contractor';
+import { street } from 'src/app/model/street';
+import { streetNumber } from 'src/app/model/streetNumber';
+import { SubtypeOfJob } from 'src/app/model/subtypeOfJob';
+import { TypeOfJob } from 'src/app/model/typeOfjob';
+import { UnitOfMeasure } from 'src/app/model/unit-of-measure';
 import { AccountService } from 'src/app/services/account.service';
+import { AdressService } from 'src/app/services/adress.service';
 import { ContractorService } from 'src/app/services/contractor.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,7 +25,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class AccountPageComponent implements OnInit {
 
   public constructor(private conService: ContractorService, private fb: FormBuilder
-    , private accService: AccountService){}
+    , private accService: AccountService, private adressService:AdressService){}
 
   contractors: Contractor[] = [];
   addAccountForm!: FormGroup;
@@ -34,6 +41,16 @@ export class AccountPageComponent implements OnInit {
   isDodajStavkuFlag: boolean = true;
   indexOfEditedJob: number = -1;
   ukupnaCena:number = 0;
+  cities: city[] = [];
+  streets: street[] = [];
+  numbers: streetNumber[] = [];
+  predracuni: Accounting[]=[];
+  vrste: TypeOfJob[]=[];
+  podvrste: SubtypeOfJob[]=[];
+  mere: UnitOfMeasure[]=[];
+  ulicaDisabled:boolean = true;
+  brojDisabled:boolean = true;
+  podvrsteDisabled:boolean = true;
   validationMessages = {
     izvodjac: {
       required: 'Izvođač je obavezan!'
@@ -87,12 +104,43 @@ export class AccountPageComponent implements OnInit {
     this.jobs = [];
     this.addedJobs = false;
     this.ukupnaCena = 0;
-    this.editAccountForm.reset();
-    this.addAccountForm.reset();
+    this.initializeForms();
   }
 
 
   initializeForms(): void {
+    this.cities=[];
+    this.predracuni = [];
+    this.mere = [];
+    this.vrste = [];
+    this.podvrste = [];
+    this.podvrsteDisabled = true;
+
+    this.adressService.getAllCities().subscribe((data) => {
+      Object.values(data).forEach((city: city)=>{
+     this.cities.push(city);
+      })
+    });
+
+    this.accService.getAllAccountings().subscribe((data)=>{
+      Object.values(data).forEach((pred: Accounting)=>{
+        this.predracuni.push(pred);
+      })
+  })
+
+  this.accService.getAllJM().subscribe((data)=>{
+    Object.values(data).forEach((item: UnitOfMeasure)=>{
+      this.mere.push(item);
+    })
+})
+
+this.accService.getAllTypesOfJob().subscribe((data)=>{
+  Object.values(data).forEach((item: TypeOfJob)=>{
+    this.vrste.push(item);
+  })
+})
+
+
     const currentDate = new Date(); 
     this.conService.getAllContractors().subscribe((contractors)=>{
       this.contractors = contractors;
@@ -402,5 +450,43 @@ export class AccountPageComponent implements OnInit {
     this.isDodajStavkuFlag = true;
   }
  
+
+  onCitySelected(event: any) {
+    this.ulicaDisabled = false;
+    this.brojDisabled=true;
+    const selectedCityPtt = event.target.value;
+    this.streets=[];
+    this.numbers=[];
+    this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
+      Object.values(data).forEach((str:street)=>{
+        this.streets.push(str)
+      })
+   })
+  }
+
+  onStreetSelected(event: any){
+    this.brojDisabled = false;
+    const selected = event.target.value;
+    const [ptt, id] = selected.split(',');
+    this.numbers=[];
+    this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
+      Object.values(data).forEach((num:streetNumber)=>{
+        this.numbers.push(num)
+      })
+      console.log(this.numbers)
+  })
+  }
+
+  onVrstaSelected(event: any) {
+    this.podvrsteDisabled = false;
+    const selectedTypeId = event.target.value;
+    this.podvrste = [];
+    this.accService.getAllSubtypesOfJobByTypeId(selectedTypeId).subscribe((data)=>{
+      Object.values(data).forEach((item: SubtypeOfJob)=>{
+        this.podvrste.push(item);
+      })
+    })
+    console.log(this.podvrste)
+  }
 
 }

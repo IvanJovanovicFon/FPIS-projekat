@@ -1,11 +1,11 @@
-export class typeOfJob {
-    idTypeOfWork:number;
+export class SubtypeOfJob {
+    idVrstaPosla:string;
     id:string;
-    name:string;
+    naziv:string;
 
-    constructor(idTypeOfWork:number, id:string, name:string){
+    constructor(idVrstaPosla:string, id:string, naziv:string){
         this.id=id;
-        this.name=name;
-        this.idTypeOfWork = idTypeOfWork;
+        this.naziv=naziv;
+        this.idVrstaPosla = idVrstaPosla;
     }
 }

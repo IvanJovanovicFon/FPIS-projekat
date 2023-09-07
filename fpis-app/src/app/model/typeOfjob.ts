@@ -1,9 +1,9 @@
-export class typeOfJob {
+export class TypeOfJob {
     id:string;
-    name:string;
+    naziv:string;
 
-    constructor(id:string, name:string){
+    constructor(id:string, naziv:string){
         this.id=id;
-        this.name=name;
+        this.naziv=naziv;
     }
 }

@@ -6,16 +6,16 @@
         <div class="combobox-row">
           <div class="form-group">
             <label for="predracun">Predracun</label>
-            <select id="predracun">
-              <option value="option1">Option 1</option>
-              <option value="option2">Option 2</option>
-              <option value="option3">Option 3</option>
+            <select id="predracun" >
+              <option disabled selected>Izaberite predračun:</option>
+              <option   *ngFor="let pred of predracuni" [value]="pred.id">{{ pred.id }}</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="izvodjac">Izvođač</label>
             <select id="izvodajac" formControlName="izvodjac">
+              <option disabled selected>Izaberite izvodjača:</option>
               <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option>
             </select>
             <div class="validators" *ngIf="addAccountForm.controls['izvodjac'].hasError('required') && addAccountForm.controls['izvodjac'].dirty">
@@ -89,38 +89,62 @@
               <input type="date" id="datumPromet" class="form-control" formControlName="datumPromet" />
             </div>
 
+            <p class="form-group">Adresa</p>
+        <div class="combobox-row-adress">
+          <div class="form-group">
+            <label for="mesto">Mesto:</label>
+            <select id="mesto" (change)="onCitySelected($event)">
+              <option disabled selected>Izaberite mesto:</option>
+              <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ulica">Ulica:</label>
+            <select id="ulica" [disabled]="ulicaDisabled" (change)="onStreetSelected($event)">
+              <option disabled selected>Izaberite ulicu:</option>
+              <option *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="broj">Broj:</label>
+            <select id="broj" [disabled]="brojDisabled">
+              <option disabled selected>Izaberite broj:</option>
+              <option *ngFor="let nmb of numbers">{{ nmb.broj }}</option>
+            </select>
+          </div>
+        </div>
+
 
 
             <p class="form-group">Unos posla</p>
 
             <div class="posao" >
               <div class="combobox-row">
-                  <div class="form-group">
+
+                    <div class="form-group">
                       <label for="vrsta">Vrsta posla</label>
-                      <select id="vrsta">
-                          <option value="option1">Option 1</option>
-                          <option value="option2">Option 2</option>
-                          <option value="option3">Option 3</option>
+                      <select id="vrsta" (change)="onVrstaSelected($event)">
+                        <option disabled selected>Izaberite vrstu posla:</option>
+                        <option *ngFor="let item of vrste" [value]="item.id">{{ item.naziv }}</option>
                       </select>
-                  </div>
+                    </div>
           
-                  <div class="form-group">
+                    <div class="form-group">
                       <label for="podvrsta">Podvrsta posla</label>
-                      <select id="podvrsta">
-                          <option value="option1">Option 1</option>
-                          <option value="option2">Option 2</option>
-                          <option value="option3">Option 3</option>
+                      <select id="podvrsta" [disabled]="podvrsteDisabled" >
+                        <option disabled selected>Izaberite podvrstu posla:</option>
+                        <option *ngFor="let item of podvrste" [value]="item.id">{{ item.naziv }}</option>
                       </select>
-                  </div>
+                    </div>
           
-                  <div class="form-group">
-                      <label for="jedinicaMere">Jedinica mere</label>
-                      <select id="jedinicaMere">
-                          <option value="option1">Option 1</option>
-                          <option value="option2">Option 2</option>
-                          <option value="option3">Option 3</option>
+                    <div class="form-group">
+                      <label for="jedinicemere">Jedinica mere</label>
+                      <select id="jedinicemere">
+                        <option disabled selected>Izaberite jedinicu mere:</option>
+                        <option *ngFor="let item of mere" [value]="item.oznaka">{{ item.naziv }} ({{item.oznaka}})</option>
                       </select>
-                  </div>
+                    </div>
+          
               </div>
           
               <div class="form-group" formGroupName="posao">
@@ -230,24 +254,25 @@
                 
               
                 <div class="combobox-row">
-                    <div class="form-group">
-                      <label for="predracun">Predracun</label>
-                      <select id="predracun">
-                        <option value="option1">Option 1</option>
-                        <option value="option2">Option 2</option>
-                        <option value="option3">Option 3</option>
-                      </select>
-                    </div>
+                  <div class="form-group">
+                    <label for="predracun">Predracun</label>
+                    <select id="predracun" >
+                      <option disabled selected>Izaberite predračun:</option>
+                      <!-- <option   *ngFor="let pred of predracuni" [value]="pred.id">{{ pred.id }}</option> -->
+                   
+                    </select>
+                  </div>
         
-                    <div class="form-group">
-                      <label for="izvodjac">Izvođač</label>
-                      <select id="izvodajac" formControlName="izvodjac">
-                        <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option>
-                      </select>
-                      <div class="validators" *ngIf="editAccountForm.controls['izvodjac'].hasError('required') && editAccountForm.controls['izvodjac'].dirty">
-                        {{ validationMessages.izvodjac.required }}
-                      </div>
+                  <div class="form-group">
+                    <label for="izvodjac">Izvođač</label>
+                    <select id="izvodajac" formControlName="izvodjac">
+                      <option disabled selected>Izaberite izvodjača:</option>
+                      <!-- <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option> -->
+                    </select>
+                    <div class="validators" *ngIf="editAccountForm.controls['izvodjac'].hasError('required') && editAccountForm.controls['izvodjac'].dirty">
+                      {{ validationMessages.izvodjac.required }}
                     </div>
+                  </div>
                     
                     
                     <div class="form-group">
@@ -324,7 +349,30 @@
                         </div>
                       </div>
         
-        
+                      <p class="form-group">Adresa</p>
+                      <div class="combobox-row-adress">
+                        <div class="form-group">
+                          <label for="mesto">Mesto:</label>
+                          <select id="mesto" (change)="onCitySelected($event)">
+                            <option disabled selected>Izaberite mesto:</option>
+                            <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="ulica">Ulica:</label>
+                          <select id="ulica" [disabled]="ulicaDisabled" (change)="onStreetSelected($event)">
+                            <option disabled selected>Izaberite ulicu:</option>
+                            <option *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="broj">Broj:</label>
+                          <select id="broj" [disabled]="brojDisabled">
+                            <option disabled selected>Izaberite broj:</option>
+                            <option *ngFor="let nmb of numbers">{{ nmb.broj }}</option>
+                          </select>
+                        </div>
+                      </div>
         
                       <p class="form-group">Unos posla</p>
         

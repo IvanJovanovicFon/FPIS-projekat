@@ -161,6 +161,8 @@ export class ContractorComponent implements OnInit {
   
   toggleForm() {
     this.showAddForm = !this.showAddForm;
+    this.ulicaDisabled = true;
+    this.brojDisabled = true;
   }
 
   initializeForms(): void {
@@ -191,14 +193,27 @@ export class ContractorComponent implements OnInit {
   }
   onCitySelected(event: any) {
     this.ulicaDisabled = false;
+    this.brojDisabled=true;
     const selectedCityPtt = event.target.value;
     this.streets=[];
+    this.numbers=[];
     this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
       Object.values(data).forEach((str:street)=>{
         this.streets.push(str)
       })
-      console.log(this.streets)
    })
   }
 
+  onStreetSelected(event: any){
+    this.brojDisabled = false;
+    const selected = event.target.value;
+    const [ptt, id] = selected.split(',');
+    this.numbers=[];
+    this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
+      Object.values(data).forEach((num:streetNumber)=>{
+        this.numbers.push(num)
+      })
+      console.log(this.numbers)
+  })
+  }
 }

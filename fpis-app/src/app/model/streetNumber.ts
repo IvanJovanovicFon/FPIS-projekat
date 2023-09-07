@@ -1,11 +1,11 @@
 export class streetNumber {
     id:string;
-    number:string;
+    broj:string;
     ptt:string;
 
-    constructor(ptt:string, id:string, number:string){
+    constructor(ptt:string, id:string, broj:string){
         this.id=id;
-        this.number=number;
+        this.broj=broj;
         this.ptt=ptt;
     }
 }
