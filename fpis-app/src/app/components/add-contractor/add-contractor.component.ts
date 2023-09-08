@@ -72,7 +72,10 @@ export class ContractorComponent implements OnInit {
     }
   };
 
-  constructor(private fb: FormBuilder, private conService: ContractorService, private adressService: AdressService) {}
+  constructor(private fb: FormBuilder, private conService: ContractorService, private adressService: AdressService)
+   {
+
+  }
 
   ngOnInit(): void {
     this.adressService.getAllCities().subscribe((data) => {
@@ -185,6 +188,20 @@ export class ContractorComponent implements OnInit {
     this.brojSelected = false;
     this.ulicaDisabled = true;
     this.brojDisabled = true;
+    
+    this.contractorForm = this.fb.group({
+      pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
+      naziv: ['', Validators.required],
+      tekracun: ['', [Validators.required, Validators.minLength(18), Validators.maxLength(18), 
+        Validators.pattern('^[0-9]*$')]],
+      sifra: ['', [Validators.pattern('^[0-9]*$')]],
+      ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
+      jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
+      mesto: ['', Validators.required], 
+      ulica: [{ value: '', disabled: true }, Validators.required], 
+      broj: [{ value: '', disabled: true }, Validators.required]
+    });
+
 
     this.searchForm = this.fb.group({
       searchQuery: [''],
@@ -195,24 +212,47 @@ export class ContractorComponent implements OnInit {
       sifra: ['', [Validators.pattern('^[0-9]*$')]],
       ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
       jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
-      mesto: [null, Validators.required], 
-      ulica: [null, Validators.required], 
-      broj: [null, Validators.required]
+      mesto: ['', Validators.required], 
+      ulica: [{ value: '', disabled: true }, Validators.required], 
+      broj: [{ value: '', disabled: true }, Validators.required]
     });
 
 
+    this.contractorForm.get('mesto')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
+      if (value) {
+        //izabrano mesto
+        const selectedCityPtt = this.contractorForm.get('mesto')?.value
+        this.streets=[];
+        this.numbers=[];
+        this.contractorForm.get('broj')?.reset();
+        this.contractorForm.get('broj')?.setValue('');
+        this.contractorForm.get('ulica')?.setValue('');
+        this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
+          Object.values(data).forEach((str:street)=>{
+            this.streets.push(str)
+          })
+       })
+       //this.contractorForm.get('ulica')?.reset();
+       this.contractorForm.get('ulica')?.enable();
+        this.contractorForm.get('broj')?.disable();
+      } 
+    });
 
-    this.contractorForm = this.fb.group({
-      pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
-      naziv: ['', Validators.required],
-      tekracun: ['', [Validators.required, Validators.minLength(18), Validators.maxLength(18), 
-        Validators.pattern('^[0-9]*$')]],
-      sifra: ['', [Validators.pattern('^[0-9]*$')]],
-      ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
-      jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
-      mesto: ['', this.mestoSelected], 
-      ulica: ['', this.ulicaSelected], 
-      broj: ['', this.brojSelected]
+    this.contractorForm.get('ulica')?.valueChanges.subscribe((value) => {
+      if (value) {
+        //izabrana ulica
+        this.contractorForm.get('broj')?.enable();
+        const selected = this.contractorForm.get('ulica')?.value
+        const [ptt, id] = selected.split(',');
+        this.numbers=[];
+        this.contractorForm.get('broj')?.reset();
+        this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
+          Object.values(data).forEach((num:streetNumber)=>{
+            this.numbers.push(num)
+          })
+        })
+      } 
+
     });
 
   }
@@ -233,6 +273,8 @@ export class ContractorComponent implements OnInit {
       })
    })
   }
+
+
 
   onStreetSelected(event: any){
     this.brojDisabled = false;

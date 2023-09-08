@@ -84,39 +84,31 @@
         <div class="combobox-row">
           <div class="form-group">
             <label for="mesto">Mesto:</label>
-
-            <select id="mesto" (change)="onCitySelected($event)">
-              <option disabled selected value>Izaberite mesto:</option>
+            <select id="mesto" formControlName="mesto">
+              <option disabled selected value ="-">Izaberite mesto:</option>
               <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
             </select>
-            <!-- <div class="validators" *ngIf="contractorForm.controls['mesto'].hasError('required') && contractorForm.controls['mesto'].dirty">
-              {{ validationMessages.mesto.required }}
-            </div> -->
+
           </div>
           <div class="form-group">
             <label for="ulica">Ulica:</label>
-            <select id="ulica" [disabled]="ulicaDisabled"(change)="onStreetSelected($event)">
-              <option disabled selected >Izaberite ulicu:</option>
+            <select id="ulica" formControlName="ulica">
+              <option disabled selected value ="-">Izaberite ulicu:</option>
               <option *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
             </select>
-            <!-- <div class="validators" *ngIf="contractorForm.controls['ulica'].hasError('required') && contractorForm.controls['ulica'].dirty">
-              {{ validationMessages.ulica.required }}
-            </div> -->
+
           </div>
           <div class="form-group">
             <label for="broj">Broj:</label>
-            <select id="broj" [disabled]="brojDisabled" (change) = "brojSelected = true">
-              <option disabled selected >Izaberite broj:</option>
+            <select id="broj"  (change) = "brojSelected = true" formControlName="broj">
+              <option disabled selected value ="-">Izaberite broj:</option>
               <option *ngFor="let nmb of numbers">{{ nmb.broj }}</option>
             </select>
-            <!-- <div class="validators" *ngIf="contractorForm.controls['broj'].hasError('required') && contractorForm.controls['broj'].dirty">
-              {{ validationMessages.broj.required }}
-            </div> -->
           </div>
         </div>
         
         <div class="btn-container">
-            <button type="submit" class="btn-addC" [disabled]="!contractorForm.valid || !ulicaSelected || !mestoSelected || !brojSelected" (click)="addContractor($event)">Zapamti</button>
+            <button type="submit" class="btn-addC" [disabled]="!contractorForm.valid " (click)="addContractor($event)">Zapamti</button>
             <button type="reset" class="btn-ponisti" >Poništi</button>
             <button type="submit" class="btn-addC" (click)="toggleForm()" >Pronađi izvođača</button>
           </div>
