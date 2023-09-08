@@ -2,23 +2,15 @@ const { response } = require("express");
 const Izvodjac = require("../Models/Izvodjac");
 
 
-exports.createIzvodjac = async (req, res) => {
+exports.createIzvodjac = async(data) =>{
   try {
-    const izvodjac = await Izvodjac.create(req.body);
-    res.json(izvodjac);
+    console.log("controler: ", data);
+    const newIzvodjac = await Izvodjac.create(data); 
+    return newIzvodjac;
   } catch (error) {
-    res.status(500).json({ error: 'Unable to create izvodjac.' });
+    throw error;
   }
-};
-
-exports.getIzvodjac = async (req, res) => {
-  // Implement logic to retrieve a user by ID or other criteria
-};
-
-exports.updateIzvodjac = async (req, res) => {
-  // Implement logic to update a user 
-};
-
+}
 
 exports.findAllIzvodjaci = async (req, res) => {
   try {

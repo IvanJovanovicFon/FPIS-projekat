@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const IzvodjacController = require('../Controllers/IzvodjacController');
-const AdresaController = require('../Controllers/AdresaController');
-const Izvodjac = require("../Models/Izvodjac");
 const Mesto = require("../Models/Mesto");
 const Ulica = require("../Models/Ulica");
 const Broj = require("../Models/Broj");
@@ -10,22 +8,33 @@ const Predracun = require("../Models/Predracun");
 const VrstaPosla = require('../Models/VrstaPosla');
 const PodvrstaPosla = require('../Models/PodvrstaPosla');
 const JedinicaMere = require('../Models/JedinicaMere');
-
-
 const app = express();
+app.use(express.json());
+
+
 const port = 3000;
 
-
-router.get('/izvodjaci', async (req, res) => {
+router.post('/izvodjaci', async (req, res) => {
     try {
-
-      const izvodjaci = await IzvodjacController.findAllIzvodjaci(req, res);     
-      res.json(izvodjaci);
+      console.log("ovo je requestt:  ",req.body)
+      const newIzvodjac = await IzvodjacController.createIzvodjac(req.body);
+      res.status(201).json(newIzvodjac);
     } catch (error) {
-      console.error('Error retrieving izvodjaci:', error);
-      res.status(500).json({ error: 'Unable to retrieve izvodjaci.' });
+      console.error('Error creating Izvodjac:', error);
+      res.status(500).json({ error: 'Unable to create Izvodjac.' });
     }
   });
+
+  router.get('/izvodjaci', async (req, res) => {
+      try {
+        const izvodjaci = await IzvodjacController.findAllIzvodjaci(req, res);     
+        res.json(izvodjaci);
+      } catch (error) {
+        console.error('Error retrieving izvodjaci:', error);
+        res.status(500).json({ error: 'Unable to retrieve izvodjaci.' });
+      }
+    });
+
 
   router.get('/mesta', async (req, res) => {
     try {

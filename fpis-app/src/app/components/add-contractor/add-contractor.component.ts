@@ -134,11 +134,12 @@ export class ContractorComponent implements OnInit {
     }
   }
 
-  addContractor(event: Event): void {//mora da se ubace vrednosti od combo boxa
+  addContractor(event: Event): void {
     event.preventDefault();
     if (this.contractorForm.valid) {
       const contractorData = this.contractorForm.value;
-      console.log("da vidimo: ", contractorData)
+      const [ptt, id] = contractorData.ulica.split(',');
+      contractorData.ulica = id;
       const contractor = new Contractor(
         uuidv4(),
         contractorData.pib,
