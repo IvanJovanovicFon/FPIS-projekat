@@ -36,10 +36,18 @@ export class ContractorService {
       );
     }
 
+
     editContractor(contractor: Contractor) {
       console.log("edited:", contractor);
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        })
+      };
+      this.http.put(`${this.apiUrl}/${contractor.id}`, contractor, httpOptions)
+      .pipe(
+        map((response: any) => response)
+        ).subscribe();
     }
-
-
  
 }

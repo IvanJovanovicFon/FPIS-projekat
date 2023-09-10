@@ -35,6 +35,17 @@ router.post('/izvodjaci', async (req, res) => {
       }
     });
 
+    router.put('/izvodjaci/:id', async (req, res) => {
+      try {
+        const updatedIzvodjac = await IzvodjacController.updateIzvodjac(req.body);
+
+        res.json(updatedIzvodjac);
+      } catch (error) {
+        console.error('Error updating Izvodjac:', error);
+        res.status(500).json({ error: 'Unable to update Izvodjac.' });
+      }
+    });
+
 
   router.get('/mesta', async (req, res) => {
     try {

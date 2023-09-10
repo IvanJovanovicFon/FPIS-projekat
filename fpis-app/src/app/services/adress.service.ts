@@ -21,7 +21,6 @@ export class AdressService {
   }
 
   getAllStreetsByPTT(Ptt:string): Observable<street[]> {
-    console.log(Ptt, typeof(Ptt));
     this.pttCode = Ptt;
     this.apiUrl = `http://localhost:3000/api/ulice/${this.pttCode}`
     return this.http.get<street[]>(this.apiUrl);
@@ -29,7 +28,6 @@ export class AdressService {
   }
 
   getAllNumbersByPTTAndId(ptt: string, id:number): Observable<streetNumber[]> {
-    console.log(id, typeof(id));
     this.apiUrl = `http://localhost:3000/api/brojevi/${ptt}/${id}`
     return this.http.get<streetNumber[]>(this.apiUrl);
     

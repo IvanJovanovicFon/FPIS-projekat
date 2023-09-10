@@ -26,12 +26,9 @@ export class ContractorComponent implements OnInit {
   cities: city[] = [];
   streets: street[] = [];
   numbers: streetNumber[] = [];
-  mestoDisabled:boolean = true;
-  ulicaDisabled:boolean = true;
-  brojDisabled:boolean = true;
-  mestoSelected:boolean = false;
-  ulicaSelected:boolean = false;
-  brojSelected:boolean = false;
+  selectedMesto: string = ''; // Initialize with an empty string or default value
+selectedUlica: string = '';
+selectedBroj: string = '';
 
   validationMessages = {
     pib: {
@@ -83,7 +80,6 @@ export class ContractorComponent implements OnInit {
      this.cities.push(city);
       })
     });
-
     this.initializeForms();
 
     this.searchTrigger
@@ -93,10 +89,10 @@ export class ContractorComponent implements OnInit {
     )
     .subscribe((query: string) => {
       this.performSearch(query);
-    });
+    });    
   }
 
-   performSearch(query: string): void {
+  performSearch(query: string): void {
     if (!query) {
       this.searchResults = [];
       return;
@@ -117,21 +113,48 @@ export class ContractorComponent implements OnInit {
     event.preventDefault();
     if (this.searchForm.valid) {
       const contractorData = this.searchForm.value;
-      const contractor = new Contractor(
-        uuidv4(),
-        contractorData.pib,
-        contractorData.naziv,
-        contractorData.tekracun,
-        contractorData.sifra,
-        contractorData.ime,
-        contractorData.jmbg,
-        contractorData.mesto,
-        contractorData.ulica,
-        contractorData.broj
-        );
-      this.conService.editContractor(contractor);
-      this.searchForm.reset();
-    }
+      const grad = this.cities.find((g)=>g.naziv === contractorData.mesto)
+      
+      if(grad){
+        const ulica = this.streets.find((u)=>u.naziv === contractorData.ulica)
+       
+        if(ulica){
+          const broj = this.numbers.find((b)=>b.broj === contractorData.broj)
+         
+          if(broj){
+
+            this.conService.getAllContractors().subscribe((c) => {
+              
+              const contractors: Contractor[] = c;
+              console.log(contractors)
+              const izvodjacOriginal = contractors.find((con)=> con.pib === contractorData.pib);
+              
+              if(izvodjacOriginal){
+
+                const contractor = new Contractor(
+                  izvodjacOriginal?.id,
+                  contractorData.pib,
+                  contractorData.naziv,
+                  contractorData.tekracun,
+                  contractorData.sifra,
+                  contractorData.ime,
+                  contractorData.jmbg,
+                  grad.ptt,
+                  ulica.id,
+                  broj.broj
+                  );
+                  
+                  this.conService.editContractor(contractor);
+                  this.searchForm.reset();
+                  this.searchForm.get('mesto')?.disable()
+                  this.searchForm.get('ulica')?.disable()
+                  this.searchForm.get('broj')?.disable()
+                }
+                });
+              }
+            }
+          }
+        }
   }
 
   addContractor(event: Event): void {
@@ -161,34 +184,125 @@ export class ContractorComponent implements OnInit {
     const query = this.searchForm.value.searchQuery.toLowerCase();
     this.searchTrigger.next(query);
   }
-  
 
-  selectSearchResult(result: any) {
+  selectSearchResult(result: any) {//ima dosta nekih bagova ali videcemo, trebalo bi da je sve izabrano i ucitano, samo treba da pise vrednost jos u selectu
     this.searchResults = [];
-    console.log('Selected:', result);
-  
-    this.searchForm.patchValue({
-      pib: result.pib,
-      naziv: result.naziv,
-      tekracun: result.tekuciRacun,
-      sifra: result.sifra,
-      ime:result.imeIprezime,
-      jmbg: result.jmbg
-    });
+    this.streets = [];
+    this.numbers = [];
+    this.searchForm.get('mesto')?.enable()
+    this.searchForm.get('ulica')?.enable()
+    this.searchForm.get('broj')?.enable()
+    const selectedMesto = this.cities.find((city) => city.ptt === result.mesto) as city;
+    let selectedUlica: street  = new street("1","1","1");
+    let selectedBroj :streetNumber = new streetNumber("1","1","1");
+    if(selectedMesto){
+      this.adressService.getAllStreetsByPTT(selectedMesto.ptt).subscribe((data: street[]) => {
+        Object.values(data).forEach((str: street) => {
+          this.streets.push(str);
+        });     
+       
+        this.streets.forEach(str => {
+          if(str.id.toString() === result.ulica){
+           selectedUlica = str as street;
+          }
+        });
+        if (selectedUlica) {
+          const ulicaIdString = (selectedUlica as { id: string }).id;
+          const ulicaId = parseInt(ulicaIdString, 10);
+          this.adressService.getAllNumbersByPTTAndId(selectedMesto.ptt, ulicaId).subscribe((data: streetNumber[]) => {
+            Object.values(data).forEach((num: streetNumber) => {
+              this.numbers.push(num);
+            });
+            let num =  null;
+            this.numbers.forEach((nmb)=>{
+              if(nmb.broj == result.broj){
+                num = nmb as streetNumber
+              }
+            })          
+            if(num){
+              selectedBroj = num;
+            }
+
+            this.searchForm.patchValue({
+              pib: result.pib,
+              naziv: result.naziv,
+              tekracun: result.tekuciRacun,
+              sifra: result.sifra,
+              ime:result.imeIprezime,
+              jmbg: result.jmbg,
+              mesto: selectedMesto.naziv,
+              ulica: selectedUlica.naziv,
+              broj: selectedBroj.broj
+            });
+            console.log("***", selectedMesto.naziv, selectedUlica.naziv, selectedBroj.broj);
+
+            this.selectedMesto = selectedMesto.naziv;
+            this.selectedUlica = selectedUlica.naziv;
+            this.selectedBroj = selectedBroj.broj;
+            this.searchForm.get('mesto')?.setValue(selectedMesto.naziv);
+            this.searchForm.get('ulica')?.setValue(selectedUlica.naziv);
+            this.searchForm.get('broj')?.setValue(selectedBroj.broj);
+
+          });          
+        }     
+      });
+    }
+//************************************************************************************************************ */
+this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
+  if (selectedMestoNaziv) {
+
+    const selectedCity: city | undefined = this.cities.find((ct) => ct.naziv === selectedMestoNaziv);
+
+    if (selectedCity) {
+      this.adressService.getAllStreetsByPTT(selectedCity.ptt).subscribe((data) => {
+        this.streets = data;
+
+        this.searchForm.get('ulica')?.valueChanges.subscribe((value) => {
+          const selectedStreet =this.streets.find((st)=>{
+            return st.naziv === value
+          } )
+
+          if (selectedCity && selectedStreet) {
+          
+            if (selectedCity.ptt && selectedStreet.id) {
+              const ulicaIdString = (selectedStreet as { id: string }).id;
+              const ulicaId = parseInt(ulicaIdString, 10);
+              this.adressService
+                .getAllNumbersByPTTAndId(selectedMesto.ptt,ulicaId)
+                .subscribe((data) => {
+                  this.numbers = data;
+                });
+            } else {
+              this.numbers = [];
+            }
+          }
+        });
+
+      });
+    } else {
+      this.streets = [];
+    }
+  } 
+});
+
   }
   
   toggleForm() {
+    this.initializeForms()
     this.showAddForm = !this.showAddForm;
-    this.ulicaDisabled = true;
-    this.brojDisabled = true;
+    this.searchForm.get('mesto')?.disable()
+    this.searchForm.get('ulica')?.disable()
+    this.searchForm.get('broj')?.disable()
+    // this.contractorForm.get('broj')?.reset();
+    // this.contractorForm.get('ulica')?.reset();
+    // this.searchForm.get('ulica')?.reset();
+    // this.searchForm.get('ulica')?.reset();
+    // this.searchForm.reset();
+    // this.contractorForm.reset();
   }
 
   initializeForms(): void {
-    this.mestoSelected = false;
-    this.ulicaSelected = false;
-    this.brojSelected = false;
-    this.ulicaDisabled = true;
-    this.brojDisabled = true;
+
     
     this.contractorForm = this.fb.group({
       pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -203,7 +317,6 @@ export class ContractorComponent implements OnInit {
       broj: [{ value: '', disabled: true }, Validators.required]
     });
 
-
     this.searchForm = this.fb.group({
       searchQuery: [''],
       pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -213,15 +326,13 @@ export class ContractorComponent implements OnInit {
       sifra: ['', [Validators.pattern('^[0-9]*$')]],
       ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
       jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
-      mesto: ['', Validators.required], 
-      ulica: [{ value: '', disabled: true }, Validators.required], 
-      broj: [{ value: '', disabled: true }, Validators.required]
+      mesto: [{ value: 'Mesto', disabled: true }, Validators.required],
+      ulica: [{ value: 'Ulica', disabled: true }, Validators.required],
+      broj: [{ value: 'Broj', disabled: true }, Validators.required]
     });
-
 
     this.contractorForm.get('mesto')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
       if (value) {
-        //izabrano mesto
         const selectedCityPtt = this.contractorForm.get('mesto')?.value
         this.streets=[];
         this.numbers=[];
@@ -233,7 +344,6 @@ export class ContractorComponent implements OnInit {
             this.streets.push(str)
           })
        })
-       //this.contractorForm.get('ulica')?.reset();
        this.contractorForm.get('ulica')?.enable();
         this.contractorForm.get('broj')?.disable();
       } 
@@ -241,7 +351,6 @@ export class ContractorComponent implements OnInit {
 
     this.contractorForm.get('ulica')?.valueChanges.subscribe((value) => {
       if (value) {
-        //izabrana ulica
         this.contractorForm.get('broj')?.enable();
         const selected = this.contractorForm.get('ulica')?.value
         const [ptt, id] = selected.split(',');
@@ -255,47 +364,12 @@ export class ContractorComponent implements OnInit {
       } 
 
     });
-
+    
+    //*****************************************search form*********************************************************** *
   }
-
-  onCitySelected(event: any) {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
-    this.ulicaDisabled = false;
-    this.brojDisabled=true;
-
-    this.mestoSelected = true;
-    this.brojSelected = false;
-    this.ulicaSelected = false;
-    const selectedCityPtt = event.target.value;
-    this.streets=[];
-    this.numbers=[];
-    this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
-      Object.values(data).forEach((str:street)=>{
-        this.streets.push(str)
-      })
-   })
-  }
-
-
-
-  onStreetSelected(event: any){
-    this.brojDisabled = false;
-    this.ulicaSelected = true;
-    this.brojSelected = false;
-    const selected = event.target.value;
-    const [ptt, id] = selected.split(',');
-    this.numbers=[];
-    this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
-      Object.values(data).forEach((num:streetNumber)=>{
-        this.numbers.push(num)
-      })
-  })
-  }
-
   onReset(){
-    this.mestoSelected = false;
-    this.ulicaSelected = false;
-    this.brojSelected = false;
-    this.ulicaDisabled = true;
-    this.brojDisabled = true;
+    this.searchForm.get('mesto')?.disable()
+    this.searchForm.get('ulica')?.disable()
+    this.searchForm.get('broj')?.disable()
   }
 }

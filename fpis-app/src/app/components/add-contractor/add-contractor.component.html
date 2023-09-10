@@ -100,9 +100,9 @@
           </div>
           <div class="form-group">
             <label for="broj">Broj:</label>
-            <select id="broj"  (change) = "brojSelected = true" formControlName="broj">
+            <select id="broj"  formControlName="broj">
               <option disabled selected value ="-">Izaberite broj:</option>
-              <option *ngFor="let nmb of numbers">{{ nmb.broj }}</option>
+              <option *ngFor="let nmb of numbers" [value]="">{{ nmb.broj }}</option>
             </select>
           </div>
         </div>
@@ -224,30 +224,32 @@
         <div class="combobox-row">
           <div class="form-group">
             <label for="mesto">Mesto:</label>
-            <select id="mesto" (change)="onCitySelected($event)">
-              <option disabled selected>Izaberite mesto:</option>
-              <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
+            <select id="mesto" formControlName="mesto">
+              <option value="" selected disabled>Izaberite grad:</option>
+              <option *ngFor="let city of cities" [value]="city.naziv">{{ city.naziv }}</option>
             </select>
+
           </div>
           <div class="form-group">
             <label for="ulica">Ulica:</label>
-            <select id="ulica" [disabled]="ulicaDisabled" (change)="onStreetSelected($event)">
-              <option disabled selected>Izaberite ulicu:</option>
-              <option *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
+            <select id="ulica" formControlName="ulica">
+              <option value="" selected disabled>Izaberite ulicu:</option>
+              <option *ngFor="let str of streets" [value]="str.naziv">{{ str.naziv }}</option>
             </select>
           </div>
+
           <div class="form-group">
             <label for="broj">Broj:</label>
-            <select id="broj" [disabled]="brojDisabled">
-              <option disabled selected>Izaberite broj:</option>
-              <option *ngFor="let nmb of numbers">{{ nmb.broj }}</option>
+            <select id="broj"  formControlName="broj">
+              <option value="" selected disabled>Izaberite broj:</option>
+              <option *ngFor="let nmb of numbers" [value]="nmb.broj">{{ nmb.broj }}</option>
             </select>
           </div>
         </div>
 
         <div class="btn-container">
             <button type="submit" class="btn-addC" [disabled]="!searchForm.valid" (click)="editContractor($event)">Zapamti izmene</button>
-            <button type="reset" class="btn-ponisti" >Poništi</button>
+            <button type="reset" class="btn-ponisti" (click)="onReset()" >Poništi</button>
             <button type="submit" class="btn-addC" (click)="toggleForm()" >Dodaj novog izvođača</button>
           </div>
       </form>

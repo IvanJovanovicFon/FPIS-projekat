@@ -29,3 +29,23 @@ exports.findAllIzvodjaci = async (req, res) => {
   }
 };
 
+exports.updateIzvodjac = async(contractorData)=> {
+  try {
+    console.log(contractorData)
+    const izvodjac = await Izvodjac.findByPk(contractorData.id);
+
+    if (!izvodjac) {
+      throw new Error('Izvodjac not found'); 
+    }
+
+    izvodjac.set(contractorData);
+
+  
+    await izvodjac.save();
+
+    return izvodjac; 
+  } catch (error) {
+    throw error; 
+  }
+}
+
