@@ -201,9 +201,9 @@
               <tbody>
                 <tr *ngFor="let job of jobs; let i = index">
                   <td>{{ i+1 }}</td>
-                  <td>{{ job.idVrsta }}</td>
-                  <td>{{ job.idPodvrsta }}</td>
-                  <td>{{ job.idjedinicaMere }}</td>
+                  <td>{{ job.idVrstaPosla }}</td>
+                  <td>{{ job.idPodvrstaPosla }}</td>
+                  <td>{{ job.oznakaJedinicaMere }}</td>
                   <td>{{ job.kolicina }}</td>
                   <td>{{ job.cena }}</td>
                   <td>{{ job.opis }}</td>
@@ -262,7 +262,7 @@
                   <ul *ngIf="searchResults.length > 0 && editAccountForm.value.searchQuery">
                     <li *ngFor="let result of searchResults"
                         (click)="selectSearchResult(result)">
-                      {{ result.idRacuna }} 
+                      {{ result.id }} 
                     </li>
                   </ul>
                 </div>
@@ -476,9 +476,9 @@
                             <tbody>
                               <tr *ngFor="let job of jobs; let i = index">
                                 <td>{{ i+1 }}</td>
-                                <td>{{ job.idVrsta }}</td>
-                                <td>{{ job.idPodvrsta }}</td>
-                                <td>{{ job.idjedinicaMere }}</td>
+                                <td>{{ job.idVrstaPosla }}</td>
+                                <td>{{ job.idPodvrstaPosla }}</td>
+                                <td>{{ job.oznakaJedinicaMere }}</td>
                                 <td>{{ job.kolicina }}</td>
                                 <td>{{ job.cena }}</td>
                                 <td>{{ job.opis }}</td>

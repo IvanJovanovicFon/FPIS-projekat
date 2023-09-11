@@ -275,8 +275,9 @@ export class AccountPageComponent implements OnInit {
       if (foundContractor) {
         const editedAccount: Account = {
           izvodjac: foundContractor,
-          predracun: this.editAccountForm.get('predracun')?.value,
-          idRacuna: this.editAccountForm.get('id')?.value,
+          idIzvodjac:foundContractor.id,
+          idPredracun: this.editAccountForm.get('predracun')?.value,
+          id: this.editAccountForm.get('id')?.value,
           brojRacuna: this.editAccountForm.get('broj')?.value,
           objekat: this.editAccountForm.get('objekat')?.value,
           realizacija: this.editAccountForm.get('realizacija')?.value,
@@ -286,8 +287,8 @@ export class AccountPageComponent implements OnInit {
           datumPrometaDobaraIUsluga: this.editAccountForm.get('datumPromet')?.value,
           ukupnaCena: this.editAccountForm.get('ukupnaCena')?.value,
           mesto:'1',
-          ulica:'1',
-          broj:'1',
+          idUlica:'1',
+          brojUlice:'1',
           poslovi: this.jobs
         };      
         this.accService.editAccount(editedAccount);
@@ -311,8 +312,9 @@ export class AccountPageComponent implements OnInit {
       if (foundContractor) {
         const newAccount: Account = {
           izvodjac: foundContractor,
-          predracun: this.addAccountForm.get('predracun')?.value, 
-          idRacuna: this.addAccountForm.get('id')?.value,
+          idIzvodjac: foundContractor.id,
+          idPredracun: this.addAccountForm.get('predracun')?.value, 
+          id: this.addAccountForm.get('id')?.value,
           brojRacuna: this.addAccountForm.get('brojRacuna')?.value,
           objekat: this.addAccountForm.get('objekat')?.value,
           realizacija: this.addAccountForm.get('realizacija')?.value,
@@ -322,13 +324,13 @@ export class AccountPageComponent implements OnInit {
           datumPrometaDobaraIUsluga: this.addAccountForm.get('datumPromet')?.value,
           ukupnaCena:this.addAccountForm.get('ukupnaCena')?.value,
           mesto:this.addAccountForm.get('mesto')?.value,
-          ulica:this.addAccountForm.get('ulica')?.value,
-          broj:this.addAccountForm.get('broj')?.value,
+          idUlica:this.addAccountForm.get('ulica')?.value,
+          brojUlice:this.addAccountForm.get('broj')?.value,
           poslovi: this.jobs
         };      
       
-        const [ptt, id] = newAccount.ulica.split(',');
-        newAccount.ulica = id;
+        const [ptt, id] = newAccount.idUlica.split(',');
+        newAccount.idUlica = id;
         this.accService.addAccount(newAccount);
       } else {
         console.log('Contractor not found');
@@ -353,7 +355,7 @@ export class AccountPageComponent implements OnInit {
   
     this.accService.getAllAccounts().subscribe((accounts: Account[]) => {
       this.searchResults = accounts.filter((account: Account) =>
-        account.idRacuna.toLowerCase().includes(query) ||
+        account.id.toLowerCase().includes(query) ||
         account.brojRacuna.toLowerCase().includes(query)
       );
     });
@@ -367,7 +369,7 @@ export class AccountPageComponent implements OnInit {
   
 
     this.editAccountForm.patchValue({
-      id: result.idRacuna,
+      id: result.id,
       izvodjac:result.izvodjac.naziv,
       broj: result.brojRacuna,
       objekat: result.objekat,
@@ -514,9 +516,9 @@ export class AccountPageComponent implements OnInit {
       posaoGroup.patchValue({
         kolicina: editedJob.kolicina,
         cena: editedJob.cena,
-        jedinicaMere: editedJob.idjedinicaMere,
-        vrsta: editedJob.idVrsta,
-        podvrsta: editedJob.idPodvrsta,
+        jedinicaMere: editedJob.oznakaJedinicaMere,
+        vrsta: editedJob.idVrstaPosla,
+        podvrsta: editedJob.idPodvrstaPosla,
         opis: editedJob.opis,
         id:editedJob.id     
       });
@@ -532,13 +534,13 @@ export class AccountPageComponent implements OnInit {
       posaoGroup = this.addAccountForm.get('posao');
        const job: Job = {
         id: uuidv4(),
-        idVrsta: posaoGroup?.get('vrsta')?.value ,
-        idPodvrsta: posaoGroup?.get('podvrsta')?.value ,
-        idjedinicaMere: posaoGroup?.get('jedinicamere')?.value ,
+        idVrstaPosla: posaoGroup?.get('vrsta')?.value ,
+        idPodvrstaPosla: posaoGroup?.get('podvrsta')?.value ,
+        oznakaJedinicaMere: posaoGroup?.get('jedinicamere')?.value ,
         kolicina: posaoGroup?.get('kolicina')?.value,
         cena: posaoGroup?.get('cena')?.value,
         opis: posaoGroup?.get('opis')?.value || 'nema opisa',
-        idRacuna: this.addAccountForm.get('id')?.value,
+        idRacun: this.addAccountForm.get('id')?.value,
       };
       return job;
     } else {
@@ -546,13 +548,13 @@ export class AccountPageComponent implements OnInit {
 
        const job: Job = {
         id: uuidv4(),
-        idVrsta: posaoGroup?.get('vrsta')?.value ,
-        idPodvrsta: posaoGroup?.get('podvrsta')?.value ,
-        idjedinicaMere: posaoGroup?.get('jedinicamere')?.value ,
+        idVrstaPosla: posaoGroup?.get('vrsta')?.value ,
+        idPodvrstaPosla: posaoGroup?.get('podvrsta')?.value ,
+        oznakaJedinicaMere: posaoGroup?.get('jedinicamere')?.value ,
         kolicina: posaoGroup?.get('kolicina')?.value,
         cena: posaoGroup?.get('cena')?.value,
         opis: posaoGroup?.get('opis')?.value || 'nema opisa',
-        idRacuna: this.editAccountForm.get('id')?.value,
+        idRacun: this.editAccountForm.get('id')?.value,
       };
       return job;
     }

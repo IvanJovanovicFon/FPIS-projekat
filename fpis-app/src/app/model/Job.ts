@@ -1,16 +1,16 @@
 export class Job {
     id:string;
-    idVrsta: string;
-    idPodvrsta: string;
-    idjedinicaMere: string;
+    idVrstaPosla: string;
+    idPodvrstaPosla: string;
+    oznakaJedinicaMere: string;
     kolicina: number;
     cena: number;
     opis: string;
-    idRacuna:string;
+    idRacun:string;
   
     constructor( 
         id:string,
-        idRacuna:string,
+        idRacun:string,
         vrsta: string,
         podvrsta: string,
         jedinicaMere: string,
@@ -18,13 +18,13 @@ export class Job {
         cena: number,
         opis: string)
          {
-      this.idVrsta = vrsta;
-      this.idPodvrsta = podvrsta;
-      this.idjedinicaMere = jedinicaMere; 
+      this.idVrstaPosla = vrsta;
+      this.idPodvrstaPosla = podvrsta;
+      this.oznakaJedinicaMere = jedinicaMere; 
       this.kolicina = kolicina;
       this.cena = cena;
       this.opis = opis;
-      this.idRacuna = idRacuna;
+      this.idRacun = idRacun;
       this.id = id;
     }
   }

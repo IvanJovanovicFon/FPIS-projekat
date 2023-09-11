@@ -9,8 +9,12 @@ const Posao = sequelize.define('posao', {
     allowNull: false,
     unique: true,
   },
-    idRacun: {
+  idRacun: {
     type: DataTypes.STRING,
+    allowNull: false
+  },
+  cena: {
+    type: DataTypes.DOUBLE,
     allowNull: false
   },
   idVrstaPosla: {
@@ -20,14 +24,9 @@ const Posao = sequelize.define('posao', {
   idPodvrstaPosla: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
   },
-  oznakaJednicaMere: {
+  oznakaJedinicaMere: {
     type: DataTypes.STRING,
-    allowNull: false
-  },
-  cena: {
-    type: DataTypes.DOUBLE,
     allowNull: false
   },
   kolicina: {
@@ -36,9 +35,8 @@ const Posao = sequelize.define('posao', {
 
   },
   opis: {
-    type: DataTypes.string,
+    type: DataTypes.STRING,
     allowNull: false,
-
   }
 },
 {

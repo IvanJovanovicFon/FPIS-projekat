@@ -9,6 +9,7 @@ const Predracun = require("../Models/Predracun");
 const VrstaPosla = require('../Models/VrstaPosla');
 const PodvrstaPosla = require('../Models/PodvrstaPosla');
 const JedinicaMere = require('../Models/JedinicaMere');
+const Izvodjac = require('../Models/Izvodjac');
 const app = express();
 app.use(express.json());
 
@@ -131,8 +132,8 @@ router.post('/izvodjaci', async (req, res) => {
 
   router.post('/racun', async (req, res) => {
     try {
-      console.log("ovo je requestt:  ",req.body)
-      const newRacun = await RacunController.createRacun(req.body);
+      //console.log("ovo je requestt:  ",req.body.poslovi)
+      const newRacun = await RacunController.createRacunWithJobs(req.body);
       res.status(201).json(newRacun);
     } catch (error) {
       console.error('Error creating account:', error);
