@@ -367,6 +367,7 @@ this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
     
     //*****************************************search form*********************************************************** *
   }
+  
   onReset(){
     this.searchForm.get('mesto')?.disable()
     this.searchForm.get('ulica')?.disable()

@@ -6,13 +6,14 @@ import { street } from "./street";
 import { streetNumber } from "./streetNumber";
 
 export class Account {
-    predracun: Accounting;
-    izvodjac: Contractor;
-    idRacuna: string;
+  izvodjac: Contractor;
+  id: string;
+  idIzvodjac:string;
+    idPredracun: Accounting;
     brojRacuna: string;
     objekat: string;
-    investitor: string;
     realizacija: number;
+    investitor: string;
     datumIspostavljanja: Date;
     datumIzdavanja: Date;
     datumPrometaDobaraIUsluga: Date;
@@ -21,8 +22,8 @@ export class Account {
     // ulica:street;
     // broj:streetNumber;
     mesto:string;
-    ulica:string;
-    broj:string;
+    idUlica:string;
+    brojUlice:string;
     poslovi: Job[];
     
   
@@ -46,9 +47,9 @@ export class Account {
     broj:string,
     poslovi: Job[]
         ) {
-      this.predracun = predracun;
+      this.idPredracun = predracun;
       this.izvodjac = izvodjac;
-      this.idRacuna = idRacuna;
+      this.id = idRacuna;
       this.brojRacuna = brojRacuna;
       this.objekat = objekat;
       this.investitor = investitor;
@@ -59,8 +60,9 @@ export class Account {
       this.ukupnaCena = ukupnaCena;
       this.poslovi = poslovi;
       this.mesto = mesto,
-      this.broj = broj,
-      this.ulica = ulica
+      this.brojUlice = broj,
+      this.idUlica = ulica
+      this.idIzvodjac = izvodjac.id
     }
   }
   

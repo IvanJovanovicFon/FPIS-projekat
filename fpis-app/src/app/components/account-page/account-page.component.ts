@@ -35,12 +35,16 @@ export class AccountPageComponent implements OnInit {
   addedJobs: boolean = false;
   isValidCenaFlag :boolean = true;
   isValidKolicinaFlag :boolean = true;
+  isValidJMFlag :boolean = true;
+  isValidVrstaFlag :boolean = true;
+  isValidPodvrstaFlag :boolean = true;
   showAddForm: boolean = true;
   searchResults: Account[] = [];
   searchTrigger = new Subject<string>();
   isDodajStavkuFlag: boolean = true;
   indexOfEditedJob: number = -1;
   ukupnaCena:number = 0;
+  clickOnAddJob:boolean = false;
   cities: city[] = [];
   streets: street[] = [];
   numbers: streetNumber[] = [];
@@ -48,9 +52,6 @@ export class AccountPageComponent implements OnInit {
   vrste: TypeOfJob[]=[];
   podvrste: SubtypeOfJob[]=[];
   mere: UnitOfMeasure[]=[];
-  ulicaDisabled:boolean = true;
-  brojDisabled:boolean = true;
-  podvrsteDisabled:boolean = true;
   validationMessages = {
     izvodjac: {
       required: 'Izvođač je obavezan!'
@@ -80,14 +81,21 @@ export class AccountPageComponent implements OnInit {
     cena: {
       required: 'Cena je obavezna!',
       min: 'Cena mora biti pozitivan broj!'
+    },
+    vrsta:{
+      required: "Izaberite vrstu!",
+    },
+    podvrsta:{
+      required: "Izaberite podvrstu!",
+    },    
+    jedinicamere:{
+      required: "Izaberite jedinicu mere!",
     }
   };
   
-
-
   ngOnInit(): void {
     this.initializeForms();
-
+   
     this.searchTrigger
     .pipe(
       debounceTime(1000),       
@@ -98,15 +106,14 @@ export class AccountPageComponent implements OnInit {
     });
   }
 
-
   toggleForm():void {
     this.showAddForm = !this.showAddForm;
     this.jobs = [];
     this.addedJobs = false;
     this.ukupnaCena = 0;
+    this.addAccountForm.get('posao.podvrsta')?.disable();
     this.initializeForms();
   }
-
 
   initializeForms(): void {
     this.cities=[];
@@ -114,42 +121,42 @@ export class AccountPageComponent implements OnInit {
     this.mere = [];
     this.vrste = [];
     this.podvrste = [];
-    this.podvrsteDisabled = true;
 
+    
     this.adressService.getAllCities().subscribe((data) => {
       Object.values(data).forEach((city: city)=>{
-     this.cities.push(city);
+        this.cities.push(city);
       })
     });
-
+    
     this.accService.getAllAccountings().subscribe((data)=>{
       Object.values(data).forEach((pred: Accounting)=>{
         this.predracuni.push(pred);
       })
-  })
-
-  this.accService.getAllJM().subscribe((data)=>{
-    Object.values(data).forEach((item: UnitOfMeasure)=>{
-      this.mere.push(item);
     })
-})
-
-this.accService.getAllTypesOfJob().subscribe((data)=>{
-  Object.values(data).forEach((item: TypeOfJob)=>{
-    this.vrste.push(item);
-  })
-})
-
-
+    
+    this.accService.getAllJM().subscribe((data)=>{
+      Object.values(data).forEach((item: UnitOfMeasure)=>{
+        this.mere.push(item);
+      })
+    })
+    
+    this.accService.getAllTypesOfJob().subscribe((data)=>{
+      Object.values(data).forEach((item: TypeOfJob)=>{
+        this.vrste.push(item);
+      })
+    })
+    
     const currentDate = new Date(); 
     this.conService.getAllContractors().subscribe((contractors)=>{
       this.contractors = contractors;
     });
-  
+    
     this.addAccountForm = this.fb.group({
       izvodjac:['', Validators.required],
+      predracun:['', Validators.required],
       id: [uuidv4(), Validators.required],
-      broj: ['', [Validators.required, Validators.pattern('^[0-9]+$'), ]],
+      brojRacuna: ['', [Validators.required, Validators.pattern('^[0-9]+$'), ]],
       objekat: ['', Validators.required],
       realizacija: ['', [Validators.required, Validators.pattern('^[0-9]+$'),  Validators.min(0)]],
       investitor: ['', Validators.required],
@@ -157,10 +164,13 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       datumIzdav: [currentDate, Validators.required],
       datumPromet: [currentDate, Validators.required],
       ukupnaCena: [0],
+      mesto: ['', Validators.required], 
+      ulica: [{ value: '', disabled: true }, Validators.required], 
+      broj: [{ value: '', disabled: true }, Validators.required],
       posao: this.fb.group({
         vrsta: ['', Validators.required],
-        podvrsta: ['', Validators.required],
-        jedinicaMere: ['', Validators.required],
+        podvrsta: [{ value: '', disabled: true}, Validators.required],
+        jedinicamere: ['', Validators.required],
         kolicina: ['', [Validators.required, Validators.min(0)]],
         cena: ['', [Validators.required, Validators.min(0)]],
         opis: ['']
@@ -170,8 +180,9 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
     this.editAccountForm = this.fb.group({
       searchQuery: [''],
       izvodjac:['', Validators.required],
+      predracun:['', Validators.required],
       id: ['', Validators.required],
-      broj: ['', [Validators.required, Validators.pattern('^[0-9]+$'), ]],
+      brojRacuna: ['', [Validators.required, Validators.pattern('^[0-9]+$'), ]],
       objekat: ['', Validators.required],
       realizacija: ['', [Validators.required, Validators.pattern('^[0-9]+$'),  Validators.min(0)]],
       investitor: ['', Validators.required],
@@ -179,18 +190,81 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       datumIzdav: [currentDate, Validators.required],
       datumPromet: [currentDate, Validators.required],
       ukupnaCena: [0],
+      mesto: ['', Validators.required], 
+      ulica: [{ value: '', disabled: true }, Validators.required], 
+      broj: [{ value: '', disabled: true }, Validators.required],
       posao: this.fb.group({
-        vrsta: ['', Validators.required],
-        podvrsta: ['', Validators.required],
+        vrsta: [Validators.required],
+        podvrsta: ['', [Validators.required]],
         jedinicaMere: ['', Validators.required],
         kolicina: ['', [Validators.required, Validators.min(0)]],
         cena: ['', [Validators.required, Validators.min(0)]],
         opis: ['']
       })
     });
+
+
+
+    this.addAccountForm.get('mesto')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
+      if (value) {
+        const selectedCityPtt = this.addAccountForm.get('mesto')?.value
+        this.streets=[];
+        this.numbers=[];
+        this.addAccountForm.get('broj')?.reset();
+        this.addAccountForm.get('broj')?.setValue('');
+        this.addAccountForm.get('ulica')?.setValue('');
+        this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
+          Object.values(data).forEach((str:street)=>{
+            this.streets.push(str)
+          })
+       })
+       this.addAccountForm.get('ulica')?.enable();
+        this.addAccountForm.get('broj')?.disable();
+      } 
+    });
+
+    this.addAccountForm.get('ulica')?.valueChanges.subscribe((value) => {
+      if (value) {
+        this.addAccountForm.get('broj')?.enable();
+        const selected = this.addAccountForm.get('ulica')?.value
+        const [ptt, id] = selected.split(',');
+        this.numbers=[];
+        this.addAccountForm.get('broj')?.reset();
+        this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
+          Object.values(data).forEach((num:streetNumber)=>{
+            this.numbers.push(num)
+          })
+        })
+      } 
+
+    });
+    let posaoGroup: AbstractControl | null;
+    
+    if (this.showAddForm) {
+      posaoGroup = this.addAccountForm.get('posao');
+    } else {
+      posaoGroup = this.editAccountForm.get('posao');
+    }
+    if (posaoGroup) {
+  
+      posaoGroup.get('vrsta')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
+      if (value) {
+        const selectedVrsta = posaoGroup?.get('vrsta')?.value
+        this.podvrste = [];
+        posaoGroup?.get('podvrsta')?.reset();
+        posaoGroup?.get('podvrsta')?.setValue('');
+      console.log("vrstaa",selectedVrsta)
+      this.accService.getAllSubtypesOfJobByTypeId(selectedVrsta).subscribe((data)=>{
+        Object.values(data).forEach((item: SubtypeOfJob)=>{
+          this.podvrste.push(item);
+        })
+      })
+      } 
+    });
+    posaoGroup.get('podvrsta')?.enable();
+  }
   }
   
-
   editAccount(): void {
     let izvodjacId: string = this.editAccountForm.get('izvodjac')?.value;
     this.conService.getAllContractors().subscribe(izvodjaci => {
@@ -226,7 +300,6 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
 
   }
   
-
   addAccount(): void {
     let izvodjacId: string = this.addAccountForm.get('izvodjac')?.value;
     this.conService.getAllContractors().subscribe(izvodjaci => {
@@ -238,9 +311,9 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       if (foundContractor) {
         const newAccount: Account = {
           izvodjac: foundContractor,
-          predracun: this.addAccountForm.get('predracun')?.value,
+          predracun: this.addAccountForm.get('predracun')?.value, 
           idRacuna: this.addAccountForm.get('id')?.value,
-          brojRacuna: this.addAccountForm.get('broj')?.value,
+          brojRacuna: this.addAccountForm.get('brojRacuna')?.value,
           objekat: this.addAccountForm.get('objekat')?.value,
           realizacija: this.addAccountForm.get('realizacija')?.value,
           investitor: this.addAccountForm.get('investitor')?.value,
@@ -248,11 +321,14 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
           datumIzdavanja: this.addAccountForm.get('datumIzdav')?.value,
           datumPrometaDobaraIUsluga: this.addAccountForm.get('datumPromet')?.value,
           ukupnaCena:this.addAccountForm.get('ukupnaCena')?.value,
-          mesto:'1',
-          ulica:'1',
-          broj:'1',
+          mesto:this.addAccountForm.get('mesto')?.value,
+          ulica:this.addAccountForm.get('ulica')?.value,
+          broj:this.addAccountForm.get('broj')?.value,
           poslovi: this.jobs
         };      
+      
+        const [ptt, id] = newAccount.ulica.split(',');
+        newAccount.ulica = id;
         this.accService.addAccount(newAccount);
       } else {
         console.log('Contractor not found');
@@ -263,13 +339,11 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
 
   }
   
-
   onSearch(): void {
     const query = this.editAccountForm.value.searchQuery.toLowerCase();
     console.log(query)
     this.searchTrigger.next(query);
   }
-
 
   performSearch(query: string): void {
     if (!query) {
@@ -284,7 +358,6 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       );
     });
   }
-
 
   selectSearchResult(result: any) {
     this.searchResults = [];
@@ -311,8 +384,8 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       this.addedJobs = true;
   }
 
-
   addJob(): void {
+
     this.addedJobs = true;
     let posaoGroup: AbstractControl | null;
     
@@ -325,8 +398,11 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
     if (posaoGroup) {
       const kolicinaValue = posaoGroup.get('kolicina')?.value;
       const cenaValue = posaoGroup.get('cena')?.value;
+      const jmValue = posaoGroup.get('jedinicamere')?.value;
+      const vrstaValue = posaoGroup.get('vrsta')?.value;
+      const podvrstaValue = posaoGroup.get('podvrsta')?.value;
 
-      if (cenaValue ===null || cenaValue === "") {
+     if (cenaValue ===null || cenaValue === "" ) {
         const cenaControl = posaoGroup.get('cena');
   
         cenaControl?.markAsTouched();
@@ -336,7 +412,6 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       } else {
         this.isValidCenaFlag = true;
       }
-  
   
       if (kolicinaValue ===null || kolicinaValue === "") {
         const kolicinaControl = posaoGroup.get('kolicina');
@@ -348,9 +423,45 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       } else {
         this.isValidKolicinaFlag = true;
       }
+
+      
+
+        if(jmValue ===""  || vrstaValue === null){
+      const jmControl = posaoGroup.get('jedinicamere');
+
+        jmControl?.markAsTouched();
+        jmControl?.markAsDirty();
+        jmControl?.setErrors({ required: true });
+        this.isValidJMFlag = false;
+      } else {
+        this.isValidJMFlag = true;
+      }
+
+      if(vrstaValue ==="" || vrstaValue === null){
+        const vrstaControl = posaoGroup.get('vrsta');
+    
+        vrstaControl?.markAsTouched();
+        vrstaControl?.markAsDirty();
+        vrstaControl?.setErrors({ required: true });
+          this.isValidVrstaFlag = false;
+        } else {
+          this.isValidVrstaFlag = true;
+        }
+
+        if(podvrstaValue ==="" || podvrstaValue ===null){
+          const pvControl = posaoGroup.get('podvrsta');
+      
+          pvControl?.markAsTouched();
+          pvControl?.markAsDirty();
+          pvControl?.setErrors({ required: true });
+            this.isValidPodvrstaFlag = false;
+          } else {
+            this.isValidPodvrstaFlag = true;
+          }
   
 
-      if (this.isValidCenaFlag === false || this.isValidKolicinaFlag == false) {
+      if (this.isValidCenaFlag === false || this.isValidKolicinaFlag === false || this.isValidJMFlag === false
+         || this.isValidPodvrstaFlag === false || this.isValidVrstaFlag === false) {
         return;
       }
   
@@ -367,9 +478,13 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       }
       console.log()
       posaoGroup.reset();
+      this.isValidJMFlag =false;
+      this.isValidPodvrstaFlag =false;
+      this.isValidVrstaFlag =false;
+      this.isValidCenaFlag =false;
+      this.isValidKolicinaFlag =false;
     }
   }
-  
   
   removeJob(index: number): void {
     if(this.jobs.length===1){
@@ -389,7 +504,6 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
     }
     this.jobs.splice(index, 1);
   }
-
 
   editJob(index: number): void {
     const editedJob = this.jobs[index];
@@ -411,31 +525,40 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
     this.addedJobs = true;
   }
 
-
   getJobFromEditForm(): Job {
 
     let posaoGroup: AbstractControl | null;
-    
     if (this.showAddForm) {
       posaoGroup = this.addAccountForm.get('posao');
+       const job: Job = {
+        id: uuidv4(),
+        idVrsta: posaoGroup?.get('vrsta')?.value ,
+        idPodvrsta: posaoGroup?.get('podvrsta')?.value ,
+        idjedinicaMere: posaoGroup?.get('jedinicamere')?.value ,
+        kolicina: posaoGroup?.get('kolicina')?.value,
+        cena: posaoGroup?.get('cena')?.value,
+        opis: posaoGroup?.get('opis')?.value || 'nema opisa',
+        idRacuna: this.addAccountForm.get('id')?.value,
+      };
+      return job;
     } else {
       posaoGroup = this.editAccountForm.get('posao');
+
+       const job: Job = {
+        id: uuidv4(),
+        idVrsta: posaoGroup?.get('vrsta')?.value ,
+        idPodvrsta: posaoGroup?.get('podvrsta')?.value ,
+        idjedinicaMere: posaoGroup?.get('jedinicamere')?.value ,
+        kolicina: posaoGroup?.get('kolicina')?.value,
+        cena: posaoGroup?.get('cena')?.value,
+        opis: posaoGroup?.get('opis')?.value || 'nema opisa',
+        idRacuna: this.editAccountForm.get('id')?.value,
+      };
+      return job;
     }
- 
-    const job: Job = {
-      id: uuidv4(),
-      idVrsta: posaoGroup?.get('vrsta')?.value || '',//za sad nek ide dok ne popunim
-      idPodvrsta: posaoGroup?.get('podvrsta')?.value || '',
-      idjedinicaMere: posaoGroup?.get('jedinicaMere')?.value || '',
-      kolicina: posaoGroup?.get('kolicina')?.value,
-      cena: posaoGroup?.get('cena')?.value,
-      opis: posaoGroup?.get('opis')?.value || 'nema opisa',
-      idRacuna: this.editAccountForm.get('id')?.value,
-    };
-    return job;
+
     //fali nekki error da se vrati
-  }
-  
+  } 
 
   onEditJob(): void{
     const posaoGroup = this.editAccountForm.get('posao');
@@ -450,35 +573,17 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
     this.isDodajStavkuFlag = true;
   }
  
-
-  onCitySelected(event: any) {
-    this.ulicaDisabled = false;
-    this.brojDisabled=true;
-    const selectedCityPtt = event.target.value;
-    this.streets=[];
-    this.numbers=[];
-    this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
-      Object.values(data).forEach((str:street)=>{
-        this.streets.push(str)
-      })
-   })
-  }
-
-  onStreetSelected(event: any){
-    this.brojDisabled = false;
-    const selected = event.target.value;
-    const [ptt, id] = selected.split(',');
-    this.numbers=[];
-    this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
-      Object.values(data).forEach((num:streetNumber)=>{
-        this.numbers.push(num)
-      })
-      console.log(this.numbers)
-  })
-  }
-
   onVrstaSelected(event: any) {
-    this.podvrsteDisabled = false;
+    let posaoGroup: AbstractControl | null;
+    
+    if (this.showAddForm) {
+      posaoGroup = this.addAccountForm.get('posao');
+    } else {
+      posaoGroup = this.editAccountForm.get('posao');
+    }
+    if (posaoGroup) {
+      
+      this.posaoGroup.get('podvrsta')?.enable()
     const selectedTypeId = event.target.value;
     this.podvrste = [];
     this.accService.getAllSubtypesOfJobByTypeId(selectedTypeId).subscribe((data)=>{
@@ -487,6 +592,6 @@ this.accService.getAllTypesOfJob().subscribe((data)=>{
       })
     })
     console.log(this.podvrste)
+    }
   }
-
 }

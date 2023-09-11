@@ -1,11 +1,11 @@
 import { Account } from '../model/account';
-import { Observable, of} from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Accounting } from '../model/Accounting';
 import { TypeOfJob } from '../model/typeOfjob';
 import { SubtypeOfJob } from '../model/subtypeOfJob';
 import { UnitOfMeasure } from '../model/unit-of-measure';
+import { Observable, map, of, throwError  } from 'rxjs';
+import { HttpClient , HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
 const accounts: Account[] = [];
 
@@ -14,24 +14,34 @@ const accounts: Account[] = [];
 })
 
 export class AccountService {
-
   
-
-    getAllAccounts(): Observable<Account[]> {
-      return of(accounts);
-    }
-
-    editAccount(acc: Account) {
+  private apiUrl = `http://localhost:3000/api/`;
+  
+  
+  getAllAccounts(): Observable<Account[]> {
+    return of(accounts);
+  }
+  
+  editAccount(acc: Account) {
       console.log("edited:", acc);
     }
 
-    addAccount(acc: Account) {
-      console.log("added:", acc);
-    accounts.push(acc);
-  }
-
   
-  private apiUrl = '';
+  addAccount(acc: Account) {
+    console.log("added:", acc);
+    this.apiUrl = 'http://localhost:3000/api/racun'
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+    this.http.post(this.apiUrl, acc, httpOptions)
+    .pipe(
+      map((response: any) => response)
+      ).subscribe();
+      console.log("added new account!");
+  }
+  
 
   constructor(private http: HttpClient) {}
 

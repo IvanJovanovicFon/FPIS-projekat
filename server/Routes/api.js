@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const IzvodjacController = require('../Controllers/IzvodjacController');
+const RacunController = require('../Controllers/RacunController');
 const Mesto = require("../Models/Mesto");
 const Ulica = require("../Models/Ulica");
 const Broj = require("../Models/Broj");
@@ -125,6 +126,17 @@ router.post('/izvodjaci', async (req, res) => {
     } catch (error) {
       console.error('Error fetching types:', error);
       res.status(500).json({ error: 'An error occurred while fetching types.' });
+    }
+  });
+
+  router.post('/racun', async (req, res) => {
+    try {
+      console.log("ovo je requestt:  ",req.body)
+      const newRacun = await RacunController.createRacun(req.body);
+      res.status(201).json(newRacun);
+    } catch (error) {
+      console.error('Error creating account:', error);
+      res.status(500).json({ error: 'Unable to create account.' });
     }
   });
   
