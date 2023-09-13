@@ -10,7 +10,8 @@ import { AccountPageComponent } from './components/account-page/account-page.com
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { CarouselModule } from '@coreui/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import { ErrorIntercept } from './services/httpInterceptor';
  
 @NgModule({
   declarations: [
@@ -32,7 +33,13 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     HttpClientModule
   ],
-  providers: [ ],
+  providers: [  
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorIntercept,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

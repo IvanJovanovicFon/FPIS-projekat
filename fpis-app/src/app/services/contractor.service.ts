@@ -20,6 +20,7 @@ export class ContractorService {
           'Content-Type': 'application/json'
         })
       };
+      this.apiUrl = `http://localhost:3000/api/izvodjaci`;
       this.http.post(this.apiUrl, contractor, httpOptions)
       .pipe(
         map((response: any) => response)

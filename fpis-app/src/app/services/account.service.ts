@@ -72,12 +72,17 @@ export class AccountService {
         'Content-Type': 'application/json'
       })
     };
+    this.apiUrl = `http://localhost:3000/api/racun`;
     this.http.post(this.apiUrl, acc, httpOptions)
     .pipe(
       map((response: any) => response)
       ).subscribe();
       console.log("added new account!");
     }
+
+
+  
+
 
   getAllAccountings(): Observable<Accounting[]> {
     this.apiUrl ='http://localhost:3000/api/predracuni';

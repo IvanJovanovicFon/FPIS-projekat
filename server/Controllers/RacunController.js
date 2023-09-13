@@ -4,8 +4,6 @@ const sequelize = require('../Config/database');
 const Izvodjac = require("../Models/Izvodjac");
 
 exports.createRacunWithJobs = async (req) => {
-  // console.log("sve ukuono: ",req)
-  // console.log("posloviiiiii", req.poslovi)
   let posloviData = req.poslovi
   let racunData = {
     id: req.id,
@@ -28,19 +26,22 @@ exports.createRacunWithJobs = async (req) => {
   const t = await sequelize.transaction();
   try {
     const racun = await Racun.create(racunData, { transaction: t });
-console.log("********************11", posloviData)
+ 
 
 const poslovi = await Posao.bulkCreate(posloviData, { transaction: t });
 await t.commit();
-console.log("********************22", poslovi)
-
     console.log('Racun and Poslovi records created successfully.');
     return { racun, poslovi };
-  } catch (error) {
+  }catch (error) {
+ 
+    if (error.code === 'ER_DUP_ENTRY') {
+     
+     return({ error: 'Duplicate brojRacuna' });
+    } else {
 
-    await t.rollback();
-    console.error('Error creating Racun and Poslovi records:', error);
-    throw error;
+      console.error('Error creating account:', error);
+      return({ error: 'Server error' });
+    }
   }
 
 };
@@ -162,7 +163,6 @@ exports.updateRacun = async (account) => {
 
     console.log(updatedRacun)
 
-    // Fetch existing jobs associated with the racun
     const existingJobs = await Posao.findAll({
       where: { idRacun: account.id },
       transaction: t,
@@ -198,8 +198,14 @@ exports.updateRacun = async (account) => {
     return { racun: account, poslovi: posloviData };
   } catch (error) {
     await t.rollback();
-    console.error('Error updating Racun and Poslovi records:', error);
-    throw error;
+    if (error.code === 'ER_DUP_ENTRY') {
+     
+      return({ error: 'Duplicate brojRacuna' });
+     } else {
+ 
+       console.error('Error creating account:', error);
+       return({ error: 'Server error' });
+     }
   }
 };
 

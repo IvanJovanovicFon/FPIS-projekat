@@ -91,7 +91,7 @@ export class AccountPageComponent implements OnInit {
     },
     broj:{
       required: "  Broj računa je obavezan!",
-      pattern: 'Broj računa se sastoji samo od cifara!'
+      pattern: 'Unesite tačan broj računa!'
     },
     objekat:{
       required: "Objekat je obavezan!"
@@ -187,7 +187,7 @@ export class AccountPageComponent implements OnInit {
       izvodjac:['', Validators.required],
       predracun:['', Validators.required],
       id: [uuidv4(), Validators.required],
-      brojRacuna: ['', [Validators.required, Validators.pattern('^[0-9]+$'), ]],
+      brojRacuna: ['', [Validators.required, Validators.pattern('^[0-9]{9,18}$'), ]],
       objekat: ['', Validators.required],
       realizacija: ['', [Validators.required, Validators.pattern('^[0-9]+$'),  Validators.min(0)]],
       investitor: ['', Validators.required],
@@ -386,6 +386,7 @@ this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) =
                 brojUlice:broj.broj,
                 poslovi: this.jobs
               };    
+              console.log("ajmoo menjaj")
               this.accService.editAccount(editedAccount);
             }}}
       } else {
@@ -398,7 +399,7 @@ this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) =
   addAccount(): void {
     let izvodjacId: string = this.addAccountForm.get('izvodjac')?.value;
     this.conService.getAllContractors().subscribe(izvodjaci => {
-      console.log(this.contractors);
+
       const foundContractor = izvodjaci.find(contractor => {
         return contractor.naziv === izvodjacId || contractor.pib === izvodjacId;
       });
@@ -425,7 +426,7 @@ this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) =
       
         const [ptt, id] = newAccount.idUlica.split(',');
         newAccount.idUlica = id;
-        this
+        this.accService.addAccount(newAccount);
       } else {
         console.log('Contractor not found');
         return;

@@ -298,7 +298,7 @@
         
                     <div class="form-group">       
                         <label for="brojRacuna">Broj racuna</label>
-                      <input type="text" id="brojRacuna" class="form-control" formControlName="brojRacuna" />
+                      <input type="text" [readonly]="true" [ngClass]="{'readonly-field': true}" id="brojRacuna" class="form-control" formControlName="brojRacuna" />
                       <div class="validators" *ngIf="editAccountForm.controls['brojRacuna'].hasError('required') && editAccountForm.controls['brojRacuna'].dirty">
                         {{ validationMessages.broj.required }}
                       </div>

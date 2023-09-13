@@ -17,15 +17,20 @@ app.use(express.json());
 const port = 3000;
 
 router.post('/izvodjaci', async (req, res) => {
-    try {
-      console.log("ovo je requestt:  ",req.body)
-      const newIzvodjac = await IzvodjacController.createIzvodjac(req.body);
-      res.status(201).json(newIzvodjac);
-    } catch (error) {
-      console.error('Error creating Izvodjac:', error);
-      res.status(500).json({ error: 'Unable to create Izvodjac.' });
+  try {
+    const newIzvodjac = await IzvodjacController.createIzvodjac(req.body);
+    if (newIzvodjac.error) {
+      console.log("Duplicate entry error detected.");
+      return res.status(400).json({ error: "PIB, broj računa i naziv moraju biti jedinstveni!" });
+    } else {
+      return res.status(201).json(newIzvodjac);
     }
-  });
+  } catch (error) {
+    console.error('Error creating Izvodjac:', error);
+    res.status(500).json({ error: 'Unable to create Izvodjac.' });
+  }
+});
+
 
   router.get('/izvodjaci', async (req, res) => {
       try {
@@ -150,16 +155,24 @@ router.post('/izvodjaci', async (req, res) => {
     }
   });
 
+
+
   router.post('/racun', async (req, res) => {
     try {
-      //console.log("ovo je requestt:  ",req.body.poslovi)
       const newRacun = await RacunController.createRacunWithJobs(req.body);
-      res.status(201).json(newRacun);
+      if (newRacun.error) {
+        return res.status(400).json({ error: "Ovaj broj računa već postoji!" });
+      } else {
+
+        return res.status(201).json(newRacun);
+      }
     } catch (error) {
       console.error('Error creating account:', error);
-      res.status(500).json({ error: 'Unable to create account.' });
+      return res.status(500).json({ error: 'Unable to create account.' });
     }
   });
+  
+  
 
   router.get('/racunBack', async (req, res) => {
     try {
@@ -184,8 +197,12 @@ router.post('/izvodjaci', async (req, res) => {
   router.put('/racun/:id', async (req, res) => {
     try {
       const updatedRacun = await RacunController.updateRacun(req.body);
+      if (updatedRacun.error) {
+        return res.status(400).json({ error: "Ovaj broj računa već postoji!" });
+      } else {
 
-      res.json(updatedRacun);
+        return res.status(201).json(updatedRacun);
+      }
     } catch (error) {
       console.error('Error updating Izvodjac:', error);
       res.status(500).json({ error: 'Unable to update Izvodjac.' });

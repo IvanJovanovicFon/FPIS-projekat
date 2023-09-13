@@ -34,8 +34,7 @@ const Izvodjac = sequelize.define('izvodjaci', {
   },
   jmbg: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false
   },
   mesto: {
     type: DataTypes.STRING,
