@@ -99,7 +99,7 @@ selectedBroj: string = '';
     }
   
     this.conService.getAllContractors().subscribe((contractors) => {
-      console.log(contractors);
+      console.log("prazan: ",contractors);
       this.searchResults = contractors.filter((contractor) => {
         const pib = contractor.pib;
         const naziv = contractor.naziv;

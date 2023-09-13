@@ -29,6 +29,25 @@ exports.findAllIzvodjaci = async (req, res) => {
   }
 };
 
+exports.findIzvodjacById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const contractor = await Izvodjac.findOne({
+      attributes: ['id', 'pib', 'naziv', 'tekuciRacun', 'sifra', 'imeIprezime', 'jmbg', 'mesto', 'ulica', 'broj'],
+      where: { id }
+    });
+
+    if (contractor) {
+      return contractor; 
+    } else {
+      return { error: 'No contractor found.' }; 
+    }
+  } catch (error) {
+    console.error('Error retrieving contractor:', error);
+    throw error; 
+  }
+};
+
 exports.updateIzvodjac = async(contractorData)=> {
   try {
     console.log(contractorData)

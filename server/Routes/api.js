@@ -37,6 +37,16 @@ router.post('/izvodjaci', async (req, res) => {
       }
     });
 
+    router.get('/izvodjaci/:id', async (req, res) => {
+      try {
+        const izvodjac = await IzvodjacController.findIzvodjacById(req, res);     
+        res.json(izvodjac);
+      } catch (error) {
+        console.error('Error retrieving izvodjac:', error);
+        res.status(500).json({ error: 'Unable to retrieve izvodjac.' });
+      }
+    });
+
     router.put('/izvodjaci/:id', async (req, res) => {
       try {
         const updatedIzvodjac = await IzvodjacController.updateIzvodjac(req.body);
@@ -138,6 +148,26 @@ router.post('/izvodjaci', async (req, res) => {
     } catch (error) {
       console.error('Error creating account:', error);
       res.status(500).json({ error: 'Unable to create account.' });
+    }
+  });
+
+  router.get('/racunBack', async (req, res) => {
+    try {
+      const racun = await RacunController.findAllIdAndNumberOfAccounts(req, res);     
+      res.json(racun);
+    } catch (error) {
+      console.error('Error retrieving accounts:', error);
+      res.status(500).json({ error: 'Unable to retrieve accounts.' });
+    }
+  });
+
+  router.get('/racun/:id', async (req, res) => {
+    try {
+      const racun = await RacunController.findRacunById(req, res);     
+      res.json(racun);
+    } catch (error) {
+      console.error('Error retrieving accounts:', error);
+      res.status(500).json({ error: 'Unable to retrieve accounts.' });
     }
   });
   

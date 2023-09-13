@@ -28,9 +28,9 @@ export class AdressService {
   }
 
   getAllNumbersByPTTAndId(ptt: string, id:number): Observable<streetNumber[]> {
+    console.log("servis: ",ptt,id)
     this.apiUrl = `http://localhost:3000/api/brojevi/${ptt}/${id}`
     return this.http.get<streetNumber[]>(this.apiUrl);
-    
   }
 
 }

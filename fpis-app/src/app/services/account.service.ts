@@ -4,24 +4,54 @@ import { Accounting } from '../model/Accounting';
 import { TypeOfJob } from '../model/typeOfjob';
 import { SubtypeOfJob } from '../model/subtypeOfJob';
 import { UnitOfMeasure } from '../model/unit-of-measure';
-import { Observable, map, of, throwError  } from 'rxjs';
+import { Observable, catchError, map, of, throwError  } from 'rxjs';
 import { HttpClient , HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Job } from '../model/Job';
 
-const accounts: Account[] = [];
+
+interface Result {
+  account: {
+    id: string;
+    idIzvodjac: string;
+    idPredracun: string;
+    brojRacuna: string;
+    objekat: string;
+    realizacija: number;
+    datumIspostavljanja: string; // Assuming it's a string, change to Date if needed
+    datumIzdavanja: string; // Assuming it's a string, change to Date if needed
+    datumPrometaDobaraIUsluga: string; // Assuming it's a string, change to Date if needed
+    ukupnaCena: number;
+    investitor: string;
+    mesto: string;
+    idUlica: string;
+    brojUlice: string;
+    poslovi: Job[]; // Assuming Posao is another interface
+  };
+}
+
+interface AccountBack {
+  brojRacuna: string;
+  id: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class AccountService {
   
-  private apiUrl = `http://localhost:3000/api/`;
-  
-  
-  getAllAccounts(): Observable<Account[]> {
-    return of(accounts);
+  private apiUrl = "http://localhost:3000/api/racun";
+
+  getAccountsIdAndNumber(): Observable<Account[]> {
+    this.apiUrl ='http://localhost:3000/api/racunBack';
+    return this.http.get<Account[]>(this.apiUrl);
   }
-  
+
+  getAccountById(id: string): Observable<Result>{
+    this.apiUrl =`http://localhost:3000/api/racun/${id}`;
+    return this.http.get<Result>(this.apiUrl);
+  }
+
+
   editAccount(acc: Account) {
       console.log("edited:", acc);
     }
@@ -29,7 +59,6 @@ export class AccountService {
   
   addAccount(acc: Account) {
     console.log("added:", acc);
-    this.apiUrl = 'http://localhost:3000/api/racun'
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

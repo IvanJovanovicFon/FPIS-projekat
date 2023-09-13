@@ -28,12 +28,12 @@ export class ContractorService {
     }
 
     getAllContractors(): Observable<Contractor[]> {
-      return this.http.get<Contractor[]>(this.apiUrl).pipe(
-        catchError((error: HttpErrorResponse) => {
-          console.error('HTTP Error:', error);
-          return throwError('An error occurred while fetching contractors.');
-        })
-      );
+      return this.http.get<Contractor[]>(this.apiUrl);
+    }
+
+    getContracorById(id: string): Observable<Contractor> {
+      this.apiUrl = `http://localhost:3000/api/izvodjaci/${id}`;
+      return this.http.get<Contractor>(this.apiUrl);
     }
 
 

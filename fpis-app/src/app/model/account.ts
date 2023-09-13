@@ -17,10 +17,7 @@ export class Account {
     datumIspostavljanja: Date;
     datumIzdavanja: Date;
     datumPrometaDobaraIUsluga: Date;
-    ukupnaCena: number;//11
-    // mesto:city;
-    // ulica:street;
-    // broj:streetNumber;
+    ukupnaCena: number;
     mesto:string;
     idUlica:string;
     brojUlice:string;

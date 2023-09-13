@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, take } from 'rxjs';
 import { Accounting } from 'src/app/model/Accounting';
 import { Job } from 'src/app/model/Job';
 import { Account } from 'src/app/model/account';
@@ -17,6 +17,31 @@ import { AdressService } from 'src/app/services/adress.service';
 import { ContractorService } from 'src/app/services/contractor.service';
 import { v4 as uuidv4 } from 'uuid';
 
+interface AccountBack {
+  brojRacuna: string;
+  id: string;
+}
+
+interface Result {
+  account: {
+    id: string;
+    idIzvodjac: string;
+    idPredracun: string;
+    brojRacuna: string;
+    objekat: string;
+    realizacija: number;
+    datumIspostavljanja: string; // Assuming it's a string, change to Date if needed
+    datumIzdavanja: string; // Assuming it's a string, change to Date if needed
+    datumPrometaDobaraIUsluga: string; // Assuming it's a string, change to Date if needed
+    ukupnaCena: number;
+    investitor: string;
+    mesto: string;
+    idUlica: string;
+    brojUlice: string;
+    poslovi: Job[]; // Assuming Posao is another interface
+  };
+}
+
 @Component({
   selector: 'app-account-page',
   templateUrl: './account-page.component.html',
@@ -31,6 +56,7 @@ export class AccountPageComponent implements OnInit {
   addAccountForm!: FormGroup;
   editAccountForm!: FormGroup;
   posaoGroup!: FormGroup;
+  form!: FormGroup;
   jobs: Job[] = [];
   addedJobs: boolean = false;
   isValidCenaFlag :boolean = true;
@@ -45,6 +71,9 @@ export class AccountPageComponent implements OnInit {
   indexOfEditedJob: number = -1;
   ukupnaCena:number = 0;
   clickOnAddJob:boolean = false;
+  selectedMesto: string = ''; // Initialize with an empty string or default value
+  selectedUlica: string = '';
+  selectedBroj: string = '';
   cities: city[] = [];
   streets: street[] = [];
   numbers: streetNumber[] = [];
@@ -95,12 +124,12 @@ export class AccountPageComponent implements OnInit {
   
   ngOnInit(): void {
     this.initializeForms();
-   
+    
     this.searchTrigger
     .pipe(
       debounceTime(1000),       
       distinctUntilChanged()      
-    )
+      )
     .subscribe((query: string) => {
       this.performSearch(query);
     });
@@ -112,6 +141,7 @@ export class AccountPageComponent implements OnInit {
     this.addedJobs = false;
     this.ukupnaCena = 0;
     this.addAccountForm.get('posao.podvrsta')?.disable();
+    this.editAccountForm.get('posao.podvrsta')?.disable();
     this.initializeForms();
   }
 
@@ -194,42 +224,49 @@ export class AccountPageComponent implements OnInit {
       ulica: [{ value: '', disabled: true }, Validators.required], 
       broj: [{ value: '', disabled: true }, Validators.required],
       posao: this.fb.group({
-        vrsta: [Validators.required],
-        podvrsta: ['', [Validators.required]],
-        jedinicaMere: ['', Validators.required],
+        vrsta: ['', Validators.required],
+        podvrsta: [{ value: '', disabled: true}, Validators.required],
+        jedinicamere: ['', Validators.required],
         kolicina: ['', [Validators.required, Validators.min(0)]],
         cena: ['', [Validators.required, Validators.min(0)]],
         opis: ['']
       })
     });
+    
+        let posaoGroup: AbstractControl | null;
+   if (this.showAddForm) {
+      posaoGroup = this.addAccountForm.get('posao');
+      this.form = this.addAccountForm;
+    } else {
+      posaoGroup = this.editAccountForm.get('posao');
+      this.form = this.editAccountForm;
+    }
 
-
-
-    this.addAccountForm.get('mesto')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
+    this.form.get('mesto')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
       if (value) {
-        const selectedCityPtt = this.addAccountForm.get('mesto')?.value
+        const selectedCityPtt = this.form.get('mesto')?.value
         this.streets=[];
         this.numbers=[];
-        this.addAccountForm.get('broj')?.reset();
-        this.addAccountForm.get('broj')?.setValue('');
-        this.addAccountForm.get('ulica')?.setValue('');
+        this.form.get('broj')?.reset();
+        this.form.get('broj')?.setValue('');
+        this.form.get('ulica')?.setValue('');
         this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
           Object.values(data).forEach((str:street)=>{
             this.streets.push(str)
           })
        })
-       this.addAccountForm.get('ulica')?.enable();
-        this.addAccountForm.get('broj')?.disable();
+       this.form.get('ulica')?.enable();
+        this.form.get('broj')?.disable();
       } 
     });
 
-    this.addAccountForm.get('ulica')?.valueChanges.subscribe((value) => {
+    this.form.get('ulica')?.valueChanges.subscribe((value) => {
       if (value) {
-        this.addAccountForm.get('broj')?.enable();
-        const selected = this.addAccountForm.get('ulica')?.value
+        this.form.get('broj')?.enable();
+        const selected = this.form.get('ulica')?.value
         const [ptt, id] = selected.split(',');
         this.numbers=[];
-        this.addAccountForm.get('broj')?.reset();
+        this.form.get('broj')?.reset();
         this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
           Object.values(data).forEach((num:streetNumber)=>{
             this.numbers.push(num)
@@ -238,22 +275,14 @@ export class AccountPageComponent implements OnInit {
       } 
 
     });
-    let posaoGroup: AbstractControl | null;
-    
-    if (this.showAddForm) {
-      posaoGroup = this.addAccountForm.get('posao');
-    } else {
-      posaoGroup = this.editAccountForm.get('posao');
-    }
+
     if (posaoGroup) {
-  
-      posaoGroup.get('vrsta')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
+      posaoGroup?.get('vrsta')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange    
       if (value) {
         const selectedVrsta = posaoGroup?.get('vrsta')?.value
         this.podvrste = [];
         posaoGroup?.get('podvrsta')?.reset();
         posaoGroup?.get('podvrsta')?.setValue('');
-      console.log("vrstaa",selectedVrsta)
       this.accService.getAllSubtypesOfJobByTypeId(selectedVrsta).subscribe((data)=>{
         Object.values(data).forEach((item: SubtypeOfJob)=>{
           this.podvrste.push(item);
@@ -262,7 +291,8 @@ export class AccountPageComponent implements OnInit {
       } 
     });
     posaoGroup.get('podvrsta')?.enable();
-  }
+
+    }
   }
   
   editAccount(): void {
@@ -331,7 +361,7 @@ export class AccountPageComponent implements OnInit {
       
         const [ptt, id] = newAccount.idUlica.split(',');
         newAccount.idUlica = id;
-        this.accService.addAccount(newAccount);
+        this
       } else {
         console.log('Contractor not found');
         return;
@@ -343,7 +373,6 @@ export class AccountPageComponent implements OnInit {
   
   onSearch(): void {
     const query = this.editAccountForm.value.searchQuery.toLowerCase();
-    console.log(query)
     this.searchTrigger.next(query);
   }
 
@@ -352,38 +381,106 @@ export class AccountPageComponent implements OnInit {
       this.searchResults = [];
       return;
     }
+
+    
   
-    this.accService.getAllAccounts().subscribe((accounts: Account[]) => {
-      this.searchResults = accounts.filter((account: Account) =>
-        account.id.toLowerCase().includes(query) ||
-        account.brojRacuna.toLowerCase().includes(query)
-      );
+    this.accService.getAccountsIdAndNumber().subscribe((accounts) => {
+      console.log("prazam: ",accounts)
+      if(accounts !== Array(0))
+      this.searchResults = accounts.filter((account: Account) =>{
+        return (
+          (account.id && account.id.toLowerCase().includes(query)) ||
+          (account.brojRacuna && account.brojRacuna.toLowerCase().includes(query))
+        );
+      });
     });
   }
-
-  selectSearchResult(result: any) {
-    this.searchResults = [];
-    let selectedJobs: Job[] = [];
-    selectedJobs = result.poslovi;
-    this.jobs = selectedJobs;
   
 
-    this.editAccountForm.patchValue({
-      id: result.id,
-      izvodjac:result.izvodjac.naziv,
-      broj: result.brojRacuna,
-      objekat: result.objekat,
-      realizacija:result.realizacija,
-      investitor: result.investitor,
-      datumIspos: formatDate(result.datumIspostavljanja, 'yyyy-MM-dd', 'en'),
-      datumIzdav: formatDate(result.datumIzdavanja, 'yyyy-MM-dd', 'en'),
-      datumPromet: formatDate(result.datumPrometaDobaraIUsluga, 'yyyy-MM-dd', 'en')
-    });
-      this.jobs.forEach(job => {
-        this.ukupnaCena+=job.cena*job.kolicina;
+
+selectSearchResult(valueId:Account) {
+
+  this.searchResults = [];
+  this.streets = [];
+  this.numbers = [];
+  this.editAccountForm.get('mesto')?.enable()
+  this.editAccountForm.get('ulica')?.enable()
+  this.editAccountForm.get('broj')?.enable()
+ 
+
+
+
+this.accService.getAccountById(valueId.id).subscribe((result: Result) => {//videti nesto sa switch mapom
+console.log("rezz:",result)
+
+this.searchResults = [];
+let selectedJobs: Job[] = [];
+selectedJobs = result.account.poslovi;
+this.jobs = selectedJobs
+this.conService.getContracorById(result.account.idIzvodjac).subscribe((contractor)=>{
+
+  const selectedMesto = this.cities.find((city) => city.ptt === result.account.mesto) as city;
+  let selectedUlica: street  = new street("1","1","1");
+  let selectedBroj :streetNumber = new streetNumber("1","1","1");
+  if(selectedMesto){
+    this.adressService.getAllStreetsByPTT(selectedMesto.ptt).subscribe((data: street[]) => {
+      Object.values(data).forEach((str: street) => {
+        this.streets.push(str);
+      });     
+     
+      this.streets.forEach(str => {
+        if(str.id.toString() === result.account.idUlica){
+         selectedUlica = str as street;
+        }
       });
-      this.editAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
-      this.addedJobs = true;
+      if (selectedUlica) {
+        const ulicaIdString = (selectedUlica as { id: string }).id;
+        const ulicaId = parseInt(ulicaIdString, 10);
+        console.log("broojevii: ", selectedMesto.ptt, ulicaId)
+        this.adressService.getAllNumbersByPTTAndId(selectedMesto.ptt, ulicaId).subscribe((data: streetNumber[]) => {
+          console.log(data)
+          Object.values(data).forEach((num: streetNumber) => {
+            this.numbers.push(num);
+          });
+          let num =  null;
+          this.numbers.forEach((nmb)=>{
+            if(nmb.broj == result.account.brojUlice){
+              num = nmb as streetNumber
+            }
+          })          
+          if(num){
+            selectedBroj = num;
+          }
+          this.editAccountForm.patchValue({
+            id: result.account.id,
+            izvodjac:contractor.naziv,
+            broj: result.account.brojRacuna,
+            objekat: result.account.objekat,
+            realizacija:result.account.realizacija,
+            investitor: result.account.investitor,
+            datumIspos: formatDate(new Date(result.account.datumIspostavljanja), 'yyyy-MM-dd', 'en'),
+            datumIzdav: formatDate(new Date(result.account.datumIzdavanja), 'yyyy-MM-dd', 'en'),
+            datumPromet: formatDate(new Date(result.account.datumPrometaDobaraIUsluga), 'yyyy-MM-dd', 'en')
+           });
+            this.jobs.forEach(job => {
+              this.ukupnaCena+=job.cena*job.kolicina;
+            });
+            this.editAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
+            this.addedJobs = true;
+
+          this.selectedMesto = selectedMesto.naziv;
+          this.selectedUlica = selectedUlica.naziv;
+          this.selectedBroj = selectedBroj.broj;
+          this.editAccountForm.get('mesto')?.setValue(selectedMesto.naziv);
+          this.editAccountForm.get('ulica')?.setValue(selectedUlica.naziv);
+          this.editAccountForm.get('broj')?.setValue(selectedBroj.broj);
+
+        });          
+      }     
+    });
+  }
+    })
+  });
   }
 
   addJob(): void {
@@ -478,13 +575,14 @@ export class AccountPageComponent implements OnInit {
         this.editAccountForm.get('ukupnaCena')?.
         setValue(this.ukupnaCena);
       }
-      console.log()
       posaoGroup.reset();
       this.isValidJMFlag =false;
       this.isValidPodvrstaFlag =false;
       this.isValidVrstaFlag =false;
       this.isValidCenaFlag =false;
       this.isValidKolicinaFlag =false;
+
+      this.podvrste = [];
     }
   }
   
@@ -593,7 +691,6 @@ export class AccountPageComponent implements OnInit {
         this.podvrste.push(item);
       })
     })
-    console.log(this.podvrste)
     }
   }
 }
