@@ -74,6 +74,7 @@ export class AccountPageComponent implements OnInit {
   selectedMesto: string = ''; // Initialize with an empty string or default value
   selectedUlica: string = '';
   selectedBroj: string = '';
+  skipInitialChange: boolean = true;
   cities: city[] = [];
   streets: street[] = [];
   numbers: streetNumber[] = [];
@@ -294,7 +295,55 @@ export class AccountPageComponent implements OnInit {
       } 
     });
     }
+//********************************************************************************************** */
+this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
+  if (selectedMestoNaziv) {
+    const selectedCity: city | undefined = this.cities.find((ct) => ct.naziv === selectedMestoNaziv);
 
+    if (selectedCity) {
+      this.adressService.getAllStreetsByPTT(selectedCity.ptt).subscribe((data) => {
+        this.streets = data;
+
+
+        if (this.skipInitialChange) {
+          this.skipInitialChange = false;
+          return;
+        }
+
+        this.editAccountForm.get('broj')?.reset();
+        this.editAccountForm.get('broj')?.disable();
+
+        this.editAccountForm.get('ulica')?.valueChanges.subscribe((value) => {
+
+          if (this.skipInitialChange) {
+            this.skipInitialChange = false;
+            return;
+          }
+
+          const selectedStreet = this.streets.find((st) => st.naziv === value);
+
+          if (selectedCity && selectedStreet) {
+            if (selectedCity.ptt && selectedStreet.id) {
+              this.editAccountForm.get('broj')?.enable();
+
+              const ulicaIdString = (selectedStreet as { id: string }).id;
+              const ulicaId = parseInt(ulicaIdString, 10);
+              this.adressService
+                .getAllNumbersByPTTAndId(selectedCity.ptt, ulicaId)
+                .subscribe((data) => {
+                  this.numbers = data;
+                });
+            } else {
+              this.numbers = [];
+            }
+          }
+        });
+      });
+    } else {
+      this.streets = [];
+    }
+  }
+});
 
   }
   

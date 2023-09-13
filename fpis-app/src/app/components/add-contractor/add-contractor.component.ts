@@ -26,10 +26,10 @@ export class ContractorComponent implements OnInit {
   cities: city[] = [];
   streets: street[] = [];
   numbers: streetNumber[] = [];
-  selectedMesto: string = ''; // Initialize with an empty string or default value
+  selectedMesto: string = ''; 
 selectedUlica: string = '';
 selectedBroj: string = '';
-
+private skipInitialChange = true;
   validationMessages = {
     pib: {
       required: 'Izvođač je obavezan!',
@@ -222,7 +222,7 @@ selectedBroj: string = '';
             if(num){
               selectedBroj = num;
             }
-
+            this.skipInitialChange = true;
             this.searchForm.patchValue({
               pib: result.pib,
               naziv: result.naziv,
@@ -234,57 +234,15 @@ selectedBroj: string = '';
               ulica: selectedUlica.naziv,
               broj: selectedBroj.broj
             });
-            console.log("***", selectedMesto.naziv, selectedUlica.naziv, selectedBroj.broj);
-
-            this.selectedMesto = selectedMesto.naziv;
+            
+            this.selectedMesto = selectedMesto.naziv; 
             this.selectedUlica = selectedUlica.naziv;
             this.selectedBroj = selectedBroj.broj;
-            this.searchForm.get('mesto')?.setValue(selectedMesto.naziv);
-            this.searchForm.get('ulica')?.setValue(selectedUlica.naziv);
-            this.searchForm.get('broj')?.setValue(selectedBroj.broj);
-
           });          
         }     
       });
     }
-//************************************************************************************************************ */
-this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
-  if (selectedMestoNaziv) {
-
-    const selectedCity: city | undefined = this.cities.find((ct) => ct.naziv === selectedMestoNaziv);
-
-    if (selectedCity) {
-      this.adressService.getAllStreetsByPTT(selectedCity.ptt).subscribe((data) => {
-        this.streets = data;
-
-        this.searchForm.get('ulica')?.valueChanges.subscribe((value) => {
-          const selectedStreet =this.streets.find((st)=>{
-            return st.naziv === value
-          } )
-
-          if (selectedCity && selectedStreet) {
-          
-            if (selectedCity.ptt && selectedStreet.id) {
-              const ulicaIdString = (selectedStreet as { id: string }).id;
-              const ulicaId = parseInt(ulicaIdString, 10);
-              this.adressService
-                .getAllNumbersByPTTAndId(selectedMesto.ptt,ulicaId)
-                .subscribe((data) => {
-                  this.numbers = data;
-                });
-            } else {
-              this.numbers = [];
-            }
-          }
-        });
-
-      });
-    } else {
-      this.streets = [];
-    }
-  } 
-});
-
+this.skipInitialChange = true;
   }
   
   toggleForm() {
@@ -302,7 +260,7 @@ this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
   }
 
   initializeForms(): void {
-
+    this.skipInitialChange = true;
     
     this.contractorForm = this.fb.group({
       pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -366,11 +324,108 @@ this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
     });
     
     //*****************************************search form*********************************************************** *
+    // this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
+    //   if (selectedMestoNaziv) {
+    
+    //     const selectedCity: city | undefined = this.cities.find((ct) => ct.naziv === selectedMestoNaziv);
+    
+    //     if (selectedCity) {
+    //       this.adressService.getAllStreetsByPTT(selectedCity.ptt).subscribe((data) => {
+    //         this.streets = data;
+    
+    //           this.searchForm.get('broj')?.reset();
+    //           this.searchForm.get('broj')?.disable();
+       
+            
+    //         this.searchForm.get('ulica')?.valueChanges.subscribe((value) => {
+    //          // this.firstTimChange = false;
+    //           const selectedStreet =this.streets.find((st)=>{
+    //             return st.naziv === value
+    //           } )
+              
+    //           if (selectedCity && selectedStreet) {
+                
+    //             if (selectedCity.ptt && selectedStreet.id) {
+                  
+    //               this.searchForm.get('broj')?.enable();
+                  
+    //               const ulicaIdString = (selectedStreet as { id: string }).id;
+    //               const ulicaId = parseInt(ulicaIdString, 10);
+    //               this.adressService
+    //                 .getAllNumbersByPTTAndId(selectedCity.ptt,ulicaId)
+    //                 .subscribe((data) => {
+    //                   this.numbers = data;
+    //                 });
+    //             } else {
+    //               this.numbers = [];
+    //             }
+    //           }
+    //         });
+    
+    //       });
+    //     } else {
+    //       this.streets = [];
+    //     }
+    //   } 
+    // });
+
+    // Add a boolean flag to skip the initial change
+
+
+this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
+  if (selectedMestoNaziv) {
+    const selectedCity: city | undefined = this.cities.find((ct) => ct.naziv === selectedMestoNaziv);
+
+    if (selectedCity) {
+      this.adressService.getAllStreetsByPTT(selectedCity.ptt).subscribe((data) => {
+        this.streets = data;
+
+
+        if (this.skipInitialChange) {
+          this.skipInitialChange = false;
+          return;
+        }
+
+        this.searchForm.get('broj')?.reset();
+        this.searchForm.get('broj')?.disable();
+
+        this.searchForm.get('ulica')?.valueChanges.subscribe((value) => {
+          // Skip the initial change
+          if (this.skipInitialChange) {
+            this.skipInitialChange = false;
+            return;
+          }
+
+          const selectedStreet = this.streets.find((st) => st.naziv === value);
+
+          if (selectedCity && selectedStreet) {
+            if (selectedCity.ptt && selectedStreet.id) {
+              this.searchForm.get('broj')?.enable();
+
+              const ulicaIdString = (selectedStreet as { id: string }).id;
+              const ulicaId = parseInt(ulicaIdString, 10);
+              this.adressService
+                .getAllNumbersByPTTAndId(selectedCity.ptt, ulicaId)
+                .subscribe((data) => {
+                  this.numbers = data;
+                });
+            } else {
+              this.numbers = [];
+            }
+          }
+        });
+      });
+    } else {
+      this.streets = [];
+    }
+  }
+});
+
   }
   
   onReset(){
     this.searchForm.get('mesto')?.disable()
     this.searchForm.get('ulica')?.disable()
     this.searchForm.get('broj')?.disable()
-  }
+  }  
 }
