@@ -39,6 +39,7 @@ interface AccountBack {
 })
 export class AccountService {
   
+  constructor(private http: HttpClient) {}
   private apiUrl = "http://localhost:3000/api/racun";
 
   getAccountsIdAndNumber(): Observable<Account[]> {
@@ -51,12 +52,19 @@ export class AccountService {
     return this.http.get<Result>(this.apiUrl);
   }
 
-
   editAccount(acc: Account) {
       console.log("edited:", acc);
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        })
+      };
+      this.http.put(`http://localhost:3000/api/racun/${acc.id}`, acc, httpOptions)
+    .pipe(
+      map((response: any) => response)
+      ).subscribe();
     }
 
-  
   addAccount(acc: Account) {
     console.log("added:", acc);
     const httpOptions = {
@@ -69,10 +77,7 @@ export class AccountService {
       map((response: any) => response)
       ).subscribe();
       console.log("added new account!");
-  }
-  
-
-  constructor(private http: HttpClient) {}
+    }
 
   getAllAccountings(): Observable<Accounting[]> {
     this.apiUrl ='http://localhost:3000/api/predracuni';

@@ -7,7 +7,7 @@
           <div class="form-group">
             <label for="predracun">Predracun</label>
             <select id="predracun" formControlName ="predracun">
-              <option disabled selected>Izaberite predračun:</option>
+              <option disabled selected value ="">Izaberite predračun:</option>
               <option   *ngFor="let pred of predracuni" [value]="pred.id">{{ pred.id }}</option>
             </select>
           </div>
@@ -15,7 +15,7 @@
           <div class="form-group">
             <label for="izvodjac">Izvođač</label>
             <select id="izvodajac" formControlName="izvodjac">
-              <option disabled selected>Izaberite izvodjača:</option>
+              <option disabled selected value ="">Izaberite izvodjača:</option>
               <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option>
             </select>
             <div class="validators" *ngIf="addAccountForm.controls['izvodjac'].hasError('required') && addAccountForm.controls['izvodjac'].dirty">
@@ -94,21 +94,21 @@
           <div class="form-group">
             <label for="mesto">Mesto:</label>
             <select id="mesto" formControlName="mesto">
-              <option disabled selected value ="-">Izaberite mesto:</option>
-              <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
+              <option disabled selected value ="">Izaberite mesto:</option>
+              <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv}}</option>
             </select>
           </div>
           <div class="form-group">
             <label for="ulica">Ulica:</label>
             <select id="ulica" formControlName="ulica">
-              <option disabled selected value ="-">Izaberite ulicu:</option>
+              <option disabled selected value ="">Izaberite ulicu:</option>
               <option *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
             </select>
           </div>
           <div class="form-group">
             <label for="broj">Broj:</label>
             <select id="broj"  formControlName="broj">
-              <option disabled selected value ="-">Izaberite broj:</option>
+              <option disabled selected value ="">Izaberite broj:</option>
               <option *ngFor="let nmb of numbers" [value]="">{{ nmb.broj }}</option>
             </select>
           </div>
@@ -122,7 +122,7 @@
             <div class="form-group">
               <label for="vrsta">Vrsta posla</label>
               <select id="vrsta" formControlName="vrsta">
-                <option disabled selected >Izaberite vrstu posla:</option>
+                <option disabled selected value ="">Izaberite vrstu posla:</option>
                 <option *ngFor="let item of vrste" [value]="item.id">{{ item.naziv }}</option>
               </select>
               <div class="validators" *ngIf="addAccountForm.get('posao.vrsta')?.hasError('required')  && addAccountForm.get('posao.vrsta')?.dirty">
@@ -133,7 +133,7 @@
             <div class="form-group">
               <label for="podvrsta">Podvrsta posla</label>
               <select id="podvrsta" formControlName="podvrsta">
-                <option disabled selected value="-">Izaberite podvrstu posla:</option>
+                <option disabled selected value="">Izaberite podvrstu posla:</option>
                 <option *ngFor="let item of podvrste" [value]="item.id">{{ item.naziv }}</option>
               </select>
               <div class="validators" *ngIf="addAccountForm.get('posao.podvrsta')?.hasError('required') && addAccountForm.get('posao.podvrsta')?.dirty">
@@ -144,7 +144,7 @@
             <div class="form-group" >
               <label for="jedinicemere">Jedinica mere</label>
               <select id="jedinicemere" formControlName="jedinicamere">
-                <option disabled selected value ="-">Izaberite jedinicu mere:</option>
+                <option disabled selected value ="">Izaberite jedinicu mere:</option>
                 <option *ngFor="let item of mere" [value]="item.oznaka">{{ item.naziv }} ({{ item.oznaka }})</option>
               </select>
               <div class="validators" *ngIf="addAccountForm.get('posao.jedinicamere')?.hasError('required') && addAccountForm.get('posao.jedinicamere')?.dirty">
@@ -270,20 +270,19 @@
                 <div class="combobox-row">
                   <div class="form-group">
                     <label for="predracun">Predracun</label>
-                    <select id="predracun" >
-                      <option disabled selected>Izaberite predračun:</option>
-                      <!-- <option   *ngFor="let pred of predracuni" [value]="pred.id">{{ pred.id }}</option> -->
-                   
+                    <select id="predracun" formControlName ="predracun">
+                      <option disabled selected value="">Izaberite predračun:</option>
+                      <option  *ngFor="let pred of predracuni" [value]="pred.id">{{ pred.id }}</option>
                     </select>
                   </div>
         
                   <div class="form-group">
                     <label for="izvodjac">Izvođač</label>
                     <select id="izvodajac" formControlName="izvodjac">
-                      <option disabled selected>Izaberite izvodjača:</option>
-                      <!-- <option *ngFor="let contractor of contractors" [value]="contractor.naziv">{{ contractor.naziv }}</option> -->
+                      <option disabled selected value="">Izaberite izvodjača:</option>
+                      <option *ngFor="let contractor of contractors" [value]="contractor.naziv" >{{ contractor.naziv }}</option>
                     </select>
-                    <div class="validators" *ngIf="editAccountForm.controls['izvodjac'].hasError('required') && editAccountForm.controls['izvodjac'].dirty">
+                    <div class="validators" *ngIf="addAccountForm.controls['izvodjac'].hasError('required') && addAccountForm.controls['izvodjac'].dirty">
                       {{ validationMessages.izvodjac.required }}
                     </div>
                   </div>
@@ -365,28 +364,31 @@
                       </div>
         
                       <p class="form-group">Adresa</p>
+
+
                       <div class="combobox-row-adress">
+                    
                         <div class="form-group">
-                          <div class="form-group">
-                            <label for="mesto">Mesto:</label>
-                            <select id="mesto" formControlName="mesto">
-                              <option disabled selected value ="-">Izaberite mesto:</option>
-                              <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
-                            </select>
-                          </div>
-                        </div>
+                          <label for="mesto">Mesto:</label>
+                          <select id="mesto" formControlName="mesto">
+                            <option value="" selected disabled>Izaberite grad:</option>
+                            <option *ngFor="let city of cities" [value]="city.naziv">{{ city.naziv }}</option>
+                          </select>
+              
+                        </div> 
                         <div class="form-group">
                           <label for="ulica">Ulica:</label>
                           <select id="ulica" formControlName="ulica">
-                            <option disabled selected value ="-">Izaberite ulicu:</option>
-                            <option *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
+                            <option value="" selected disabled>Izaberite ulicu:</option>
+                            <option *ngFor="let str of streets" [value]="str.naziv">{{ str.naziv }}</option>
                           </select>
                         </div>
+              
                         <div class="form-group">
                           <label for="broj">Broj:</label>
                           <select id="broj"  formControlName="broj">
-                            <option disabled selected value ="-">Izaberite broj:</option>
-                            <option *ngFor="let nmb of numbers" [value]="">{{ nmb.broj }}</option>
+                            <option value="" selected disabled>Izaberite broj:</option>
+                            <option *ngFor="let nmb of numbers" [value]="nmb.broj">{{ nmb.broj }}</option>
                           </select>
                         </div>
                       </div>
@@ -399,7 +401,7 @@
                           <div class="form-group">
                             <label for="vrsta">Vrsta posla</label>
                             <select id="vrsta" formControlName="vrsta">
-                              <option disabled selected value="-" >Izaberite vrstu posla:</option>
+                              <option disabled selected value="" >Izaberite vrstu posla:</option>
                               <option *ngFor="let item of vrste" [value]="item.id">{{ item.naziv }}</option>
                             </select>
                             <div class="validators" *ngIf="editAccountForm.get('posao.vrsta')?.hasError('required')  && editAccountForm.get('posao.vrsta')?.dirty">
@@ -410,7 +412,7 @@
                           <div class="form-group">
                             <label for="podvrsta">Podvrsta posla</label>
                             <select id="podvrsta" formControlName="podvrsta">
-                              <option disabled selected value="-">Izaberite podvrstu posla:</option>
+                              <option disabled selected value="">Izaberite podvrstu posla:</option>
                               <option *ngFor="let item of podvrste" [value]="item.id">{{ item.naziv }}</option>
                             </select>
                             <div class="validators" *ngIf="editAccountForm.get('posao.podvrsta')?.hasError('required') && editAccountForm.get('posao.podvrsta')?.dirty">
@@ -421,7 +423,7 @@
                           <div class="form-group" >
                             <label for="jedinicemere">Jedinica mere</label>
                             <select id="jedinicemere" formControlName="jedinicamere">
-                              <option disabled selected value ="-">Izaberite jedinicu mere:</option>
+                              <option disabled selected value ="">Izaberite jedinicu mere:</option>
                               <option *ngFor="let item of mere" [value]="item.oznaka">{{ item.naziv }} ({{ item.oznaka }})</option>
                             </select>
                             <div class="validators" *ngIf="editAccountForm.get('posao.jedinicamere')?.hasError('required') && editAccountForm.get('posao.jedinicamere')?.dirty">
@@ -439,6 +441,10 @@
                           <div  class="validators" *ngIf="editAccountForm.get('posao.kolicina')?.hasError('min') && editAccountForm.get('posao.kolicina')?.dirty">
                             {{ validationMessages.kolicina.min }}
                           </div>
+                        </div>
+
+                        <div class="form-group"  style="display: none;">
+                          <input type="number" id="idPosla" class="form-control" formControlName="idPosla" />
                         </div>
                         
                         <div class="form-group" >
@@ -509,8 +515,9 @@
                       || !editAccountForm.get('brojRacuna')?.valid || !editAccountForm.get('objekat')?.valid 
                       || !editAccountForm.get('investitor')?.valid || !editAccountForm.get('realizacija')?.valid
                       || !editAccountForm.get('datumIspos')?.valid || !editAccountForm.get('datumIzdav')?.valid
-                      || !editAccountForm.get('datumPromet')?.valid || !editAccountForm.get('izvodjac')?.valid"
-                         (click)="editAccount()">Zapamti račun</button>
+                      || !editAccountForm.get('datumPromet')?.valid || !editAccountForm.get('izvodjac')?.valid
+                      || !editAccountForm.get('predracun')?.valid "
+                         (click)="editAccount($event)">Zapamti račun</button>
                       <button type="submit" class="btn-addC" (click)="toggleForm()">Dodaj novi račun</button>
                       </div>
                     </form>

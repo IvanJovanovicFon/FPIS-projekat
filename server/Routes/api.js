@@ -47,6 +47,16 @@ router.post('/izvodjaci', async (req, res) => {
       }
     });
 
+    router.get('/izvodjac/:name', async (req, res) => {
+      try {
+        const izvodjac = await IzvodjacController.findIzvodjacByName(req, res);     
+        res.json(izvodjac);
+      } catch (error) {
+        console.error('Error retrieving izvodjac:', error);
+        res.status(500).json({ error: 'Unable to retrieve izvodjac.' });
+      }
+    });
+
     router.put('/izvodjaci/:id', async (req, res) => {
       try {
         const updatedIzvodjac = await IzvodjacController.updateIzvodjac(req.body);
@@ -170,6 +180,18 @@ router.post('/izvodjaci', async (req, res) => {
       res.status(500).json({ error: 'Unable to retrieve accounts.' });
     }
   });
+
+  router.put('/racun/:id', async (req, res) => {
+    try {
+      const updatedRacun = await RacunController.updateRacun(req.body);
+
+      res.json(updatedRacun);
+    } catch (error) {
+      console.error('Error updating Izvodjac:', error);
+      res.status(500).json({ error: 'Unable to update Izvodjac.' });
+    }
+  });
+
   
   
 module.exports = router;

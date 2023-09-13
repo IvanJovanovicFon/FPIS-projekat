@@ -28,11 +28,17 @@ export class ContractorService {
     }
 
     getAllContractors(): Observable<Contractor[]> {
+      this.apiUrl = `http://localhost:3000/api/izvodjaci`;
       return this.http.get<Contractor[]>(this.apiUrl);
     }
 
     getContracorById(id: string): Observable<Contractor> {
       this.apiUrl = `http://localhost:3000/api/izvodjaci/${id}`;
+      return this.http.get<Contractor>(this.apiUrl);
+    }
+
+    getContracorByName(name: string): Observable<Contractor> {
+      this.apiUrl = `http://localhost:3000/api/izvodjac/${name}`;
       return this.http.get<Contractor>(this.apiUrl);
     }
 

@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, take } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, forkJoin, map, switchMap, take } from 'rxjs';
 import { Accounting } from 'src/app/model/Accounting';
 import { Job } from 'src/app/model/Job';
 import { Account } from 'src/app/model/account';
@@ -140,8 +140,8 @@ export class AccountPageComponent implements OnInit {
     this.jobs = [];
     this.addedJobs = false;
     this.ukupnaCena = 0;
-    this.addAccountForm.get('posao.podvrsta')?.disable();
-    this.editAccountForm.get('posao.podvrsta')?.disable();
+    //this.addAccountForm.get('posao.podvrsta')?.disable();
+    //this.editAccountForm.get('posao.podvrsta')?.disable();
     this.initializeForms();
   }
 
@@ -198,6 +198,7 @@ export class AccountPageComponent implements OnInit {
       ulica: [{ value: '', disabled: true }, Validators.required], 
       broj: [{ value: '', disabled: true }, Validators.required],
       posao: this.fb.group({
+        idPosla:[''],
         vrsta: ['', Validators.required],
         podvrsta: [{ value: '', disabled: true}, Validators.required],
         jedinicamere: ['', Validators.required],
@@ -224,8 +225,9 @@ export class AccountPageComponent implements OnInit {
       ulica: [{ value: '', disabled: true }, Validators.required], 
       broj: [{ value: '', disabled: true }, Validators.required],
       posao: this.fb.group({
+        idPosla:[uuidv4()],
         vrsta: ['', Validators.required],
-        podvrsta: [{ value: '', disabled: true}, Validators.required],
+        podvrsta: [{ value: ''}, Validators.required],
         jedinicamere: ['', Validators.required],
         kolicina: ['', [Validators.required, Validators.min(0)]],
         cena: ['', [Validators.required, Validators.min(0)]],
@@ -234,13 +236,8 @@ export class AccountPageComponent implements OnInit {
     });
     
         let posaoGroup: AbstractControl | null;
-   if (this.showAddForm) {
       posaoGroup = this.addAccountForm.get('posao');
       this.form = this.addAccountForm;
-    } else {
-      posaoGroup = this.editAccountForm.get('posao');
-      this.form = this.editAccountForm;
-    }
 
     this.form.get('mesto')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
       if (value) {
@@ -273,12 +270,18 @@ export class AccountPageComponent implements OnInit {
           })
         })
       } 
-
     });
 
+    if(this.showAddForm){
+      posaoGroup = this.addAccountForm.get('posao')
+    }
+    else{
+      posaoGroup = this.editAccountForm.get('posao');
+    }
     if (posaoGroup) {
       posaoGroup?.get('vrsta')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange    
       if (value) {
+        posaoGroup?.get('podvrsta')?.enable();
         const selectedVrsta = posaoGroup?.get('vrsta')?.value
         this.podvrste = [];
         posaoGroup?.get('podvrsta')?.reset();
@@ -290,45 +293,57 @@ export class AccountPageComponent implements OnInit {
       })
       } 
     });
-    posaoGroup.get('podvrsta')?.enable();
-
     }
+
+
   }
   
-  editAccount(): void {
-    let izvodjacId: string = this.editAccountForm.get('izvodjac')?.value;
-    this.conService.getAllContractors().subscribe(izvodjaci => {
-      const foundContractor = izvodjaci.find(contractor => {
-        return contractor.naziv === izvodjacId || contractor.pib === izvodjacId;
-      });
-      
+  editAccount(event:Event): void {
+    event.preventDefault();
+    let izvodjacName: string = this.editAccountForm.get('izvodjac')?.value;
+    this.conService.getContracorByName(izvodjacName)
+    .subscribe((foundContractor)=>{
       if (foundContractor) {
-        const editedAccount: Account = {
-          izvodjac: foundContractor,
-          idIzvodjac:foundContractor.id,
-          idPredracun: this.editAccountForm.get('predracun')?.value,
-          id: this.editAccountForm.get('id')?.value,
-          brojRacuna: this.editAccountForm.get('broj')?.value,
-          objekat: this.editAccountForm.get('objekat')?.value,
-          realizacija: this.editAccountForm.get('realizacija')?.value,
-          investitor: this.editAccountForm.get('investitor')?.value,
-          datumIspostavljanja: this.editAccountForm.get('datumIspos')?.value,
-          datumIzdavanja: this.editAccountForm.get('datumIzdav')?.value,
-          datumPrometaDobaraIUsluga: this.editAccountForm.get('datumPromet')?.value,
-          ukupnaCena: this.editAccountForm.get('ukupnaCena')?.value,
-          mesto:'1',
-          idUlica:'1',
-          brojUlice:'1',
-          poslovi: this.jobs
-        };      
-        this.accService.editAccount(editedAccount);
+ 
+
+        const grad = this.cities.find((g)=>g.naziv === this.editAccountForm.get('mesto')?.value)
+ 
+        if(grad){
+          console.log("da vidim;00 ",grad, this.streets, this.editAccountForm.get('ulica')?.value)
+
+          const ulica = this.streets.find((u)=>u.id == this.editAccountForm.get('ulica')?.value)
+          if(ulica){
+            console.log(ulica)
+            const broj = this.numbers.find((b)=>b.broj === this.editAccountForm.get('broj')?.value)
+            console.log("bbb",broj)
+            
+            if(broj){
+              console.log(broj)
+              const editedAccount: Account = {
+                izvodjac: foundContractor,
+                idIzvodjac:foundContractor.id,
+                idPredracun: this.editAccountForm.get('predracun')?.value,
+                id: this.editAccountForm.get('id')?.value,
+                brojRacuna: this.editAccountForm.get('brojRacuna')?.value,
+                objekat: this.editAccountForm.get('objekat')?.value,
+                realizacija: this.editAccountForm.get('realizacija')?.value,
+                investitor: this.editAccountForm.get('investitor')?.value,
+                datumIspostavljanja: this.editAccountForm.get('datumIspos')?.value,
+                datumIzdavanja: this.editAccountForm.get('datumIzdav')?.value,
+                datumPrometaDobaraIUsluga: this.editAccountForm.get('datumPromet')?.value,
+                ukupnaCena: this.editAccountForm.get('ukupnaCena')?.value,
+                mesto:  grad.ptt,
+                idUlica:ulica.id,
+                brojUlice:broj.broj,
+                poslovi: this.jobs
+              };    
+              this.accService.editAccount(editedAccount);
+            }}}
       } else {
         console.log('Contractor not found');
         return;
       }
-    });
-
-
+    });    
   }
   
   addAccount(): void {
@@ -403,84 +418,93 @@ selectSearchResult(valueId:Account) {
   this.searchResults = [];
   this.streets = [];
   this.numbers = [];
+  this.editAccountForm.get('podvrsta')?.enable()
   this.editAccountForm.get('mesto')?.enable()
   this.editAccountForm.get('ulica')?.enable()
   this.editAccountForm.get('broj')?.enable()
  
+  console.log(this.predracuni)
 
 
-
-this.accService.getAccountById(valueId.id).subscribe((result: Result) => {//videti nesto sa switch mapom
-console.log("rezz:",result)
-
-this.searchResults = [];
-let selectedJobs: Job[] = [];
-selectedJobs = result.account.poslovi;
-this.jobs = selectedJobs
-this.conService.getContracorById(result.account.idIzvodjac).subscribe((contractor)=>{
-
-  const selectedMesto = this.cities.find((city) => city.ptt === result.account.mesto) as city;
-  let selectedUlica: street  = new street("1","1","1");
-  let selectedBroj :streetNumber = new streetNumber("1","1","1");
-  if(selectedMesto){
-    this.adressService.getAllStreetsByPTT(selectedMesto.ptt).subscribe((data: street[]) => {
-      Object.values(data).forEach((str: street) => {
-        this.streets.push(str);
-      });     
-     
-      this.streets.forEach(str => {
-        if(str.id.toString() === result.account.idUlica){
-         selectedUlica = str as street;
-        }
-      });
-      if (selectedUlica) {
-        const ulicaIdString = (selectedUlica as { id: string }).id;
-        const ulicaId = parseInt(ulicaIdString, 10);
-        console.log("broojevii: ", selectedMesto.ptt, ulicaId)
-        this.adressService.getAllNumbersByPTTAndId(selectedMesto.ptt, ulicaId).subscribe((data: streetNumber[]) => {
-          console.log(data)
-          Object.values(data).forEach((num: streetNumber) => {
-            this.numbers.push(num);
-          });
-          let num =  null;
-          this.numbers.forEach((nmb)=>{
-            if(nmb.broj == result.account.brojUlice){
-              num = nmb as streetNumber
+  this.accService.getAccountById(valueId.id).subscribe((result: Result) => {//videti nesto sa switch mapom
+    console.log("rezz:",result)
+    
+    this.searchResults = [];
+    let selectedJobs: Job[] = [];
+    selectedJobs = result.account.poslovi;
+    this.jobs = selectedJobs
+    this.conService.getContracorById(result.account.idIzvodjac).subscribe((contractor)=>{
+    
+      const selectedMesto = this.cities.find((city) => city.ptt === result.account.mesto) as city;
+      let selectedUlica: street  = new street("1","1","1");
+      let selectedBroj :streetNumber = new streetNumber("1","1","1");
+      if(selectedMesto){
+        this.adressService.getAllStreetsByPTT(selectedMesto.ptt).subscribe((data: street[]) => {
+          Object.values(data).forEach((str: street) => {
+            this.streets.push(str);
+          });     
+         
+          this.streets.forEach(str => {
+            if(str.id.toString() === result.account.idUlica){
+             selectedUlica = str as street;
             }
-          })          
-          if(num){
-            selectedBroj = num;
-          }
-          this.editAccountForm.patchValue({
-            id: result.account.id,
-            izvodjac:contractor.naziv,
-            broj: result.account.brojRacuna,
-            objekat: result.account.objekat,
-            realizacija:result.account.realizacija,
-            investitor: result.account.investitor,
-            datumIspos: formatDate(new Date(result.account.datumIspostavljanja), 'yyyy-MM-dd', 'en'),
-            datumIzdav: formatDate(new Date(result.account.datumIzdavanja), 'yyyy-MM-dd', 'en'),
-            datumPromet: formatDate(new Date(result.account.datumPrometaDobaraIUsluga), 'yyyy-MM-dd', 'en')
-           });
-            this.jobs.forEach(job => {
-              this.ukupnaCena+=job.cena*job.kolicina;
-            });
-            this.editAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
-            this.addedJobs = true;
+          });
+          if (selectedUlica) {
+            const ulicaIdString = (selectedUlica as { id: string }).id;
+            const ulicaId = parseInt(ulicaIdString, 10);
+            console.log("broojevii: ", selectedMesto.ptt, ulicaId)
+            this.adressService.getAllNumbersByPTTAndId(selectedMesto.ptt, ulicaId).subscribe((data: streetNumber[]) => {
+              console.log(data)
+              Object.values(data).forEach((num: streetNumber) => {
+                this.numbers.push(num);
+              });
+              let num =  null;
+              this.numbers.forEach((nmb)=>{
+                if(nmb.broj == result.account.brojUlice){
+                  num = nmb as streetNumber
+                }
+              })          
+              if(num){
+                selectedBroj = num;
+              }
+              this.editAccountForm.patchValue({
+                id: result.account.id,
+                izvodjac:contractor.naziv,
+                predracun: result.account.idPredracun,
+                brojRacuna: result.account.brojRacuna,
+                objekat: result.account.objekat,
+                realizacija:result.account.realizacija,
+                investitor: result.account.investitor,
+                datumIspos: formatDate(new Date(result.account.datumIspostavljanja), 'yyyy-MM-dd', 'en'),
+                datumIzdav: formatDate(new Date(result.account.datumIzdavanja), 'yyyy-MM-dd', 'en'),
+                datumPromet: formatDate(new Date(result.account.datumPrometaDobaraIUsluga), 'yyyy-MM-dd', 'en'),
+                mesto: selectedMesto.naziv,
+                ulica: selectedUlica.naziv,
+                broj: selectedBroj.broj
+               });
+                this.jobs.forEach(job => {
+                  this.ukupnaCena+=job.cena*job.kolicina;
+                });
+                this.editAccountForm.get('ukupnaCena')?.setValue(this.ukupnaCena);
+                this.addedJobs = true;
+    
+              this.selectedMesto = selectedMesto.naziv;
+              this.selectedUlica = selectedUlica.naziv;
+              this.selectedBroj = selectedBroj.broj;
+              // this.editAccountForm.get('mesto')?.setValue(selectedMesto.naziv);
+              // this.editAccountForm.get('ulica')?.setValue(selectedUlica.naziv);
+              // this.editAccountForm.get('broj')?.setValue(selectedBroj.broj);
+    
+            });          
+          }     
+        });
+      }
+        })
+      });
+    
 
-          this.selectedMesto = selectedMesto.naziv;
-          this.selectedUlica = selectedUlica.naziv;
-          this.selectedBroj = selectedBroj.broj;
-          this.editAccountForm.get('mesto')?.setValue(selectedMesto.naziv);
-          this.editAccountForm.get('ulica')?.setValue(selectedUlica.naziv);
-          this.editAccountForm.get('broj')?.setValue(selectedBroj.broj);
 
-        });          
-      }     
-    });
-  }
-    })
-  });
+
   }
 
   addJob(): void {
@@ -565,6 +589,9 @@ this.conService.getContracorById(result.account.idIzvodjac).subscribe((contracto
       }
   
       const newJob = this.getJobFromEditForm();
+      if(newJob.id === null){
+        newJob.id = uuidv4();
+      }
       this.jobs.push(newJob);
       this.ukupnaCena += newJob.cena * newJob.kolicina;
       if(this.showAddForm){
@@ -614,14 +641,13 @@ this.conService.getContracorById(result.account.idIzvodjac).subscribe((contracto
       posaoGroup.patchValue({
         kolicina: editedJob.kolicina,
         cena: editedJob.cena,
-        jedinicaMere: editedJob.oznakaJedinicaMere,
+        jedinicamere: editedJob.oznakaJedinicaMere,
         vrsta: editedJob.idVrstaPosla,
         podvrsta: editedJob.idPodvrstaPosla,
         opis: editedJob.opis,
-        id:editedJob.id     
+        idPosla: editedJob.id
       });
     }
-  
     this.addedJobs = true;
   }
 
@@ -631,7 +657,7 @@ this.conService.getContracorById(result.account.idIzvodjac).subscribe((contracto
     if (this.showAddForm) {
       posaoGroup = this.addAccountForm.get('posao');
        const job: Job = {
-        id: uuidv4(),
+        id:uuidv4(),
         idVrstaPosla: posaoGroup?.get('vrsta')?.value ,
         idPodvrstaPosla: posaoGroup?.get('podvrsta')?.value ,
         oznakaJedinicaMere: posaoGroup?.get('jedinicamere')?.value ,
@@ -645,7 +671,7 @@ this.conService.getContracorById(result.account.idIzvodjac).subscribe((contracto
       posaoGroup = this.editAccountForm.get('posao');
 
        const job: Job = {
-        id: uuidv4(),
+        id: posaoGroup?.get('idPosla')?.value,
         idVrstaPosla: posaoGroup?.get('vrsta')?.value ,
         idPodvrstaPosla: posaoGroup?.get('podvrsta')?.value ,
         oznakaJedinicaMere: posaoGroup?.get('jedinicamere')?.value ,

@@ -131,3 +131,75 @@ console.log(result)
     return ({ error: 'Internal server error' });
   }
 };
+
+exports.updateRacun = async (account) => {
+  let posloviData = account.poslovi;
+  let racunData = {
+    id: account.id,
+    idIzvodjac: account.idIzvodjac,
+    idPredracun: account.idPredracun,
+    brojRacuna: account.brojRacuna,
+    objekat: account.objekat,
+    realizacija: account.realizacija,
+    datumIspostavljanja: account.datumIspostavljanja,
+    datumIzdavanja: account.datumIzdavanja,
+    datumPrometaDobaraIUsluga: account.datumPrometaDobaraIUsluga,
+    ukupnaCena: account.ukupnaCena,
+    investitor: account.investitor,
+    mesto: account.mesto,
+    idUlica: account.idUlica,
+    brojUlice: account.brojUlice
+  };
+
+  const t = await sequelize.transaction();
+  try {
+
+    const [updatedRacun] = await Racun.update(racunData, {
+      where: { id: account.id },
+      returning: true, 
+      transaction: t,
+    });
+
+    console.log(updatedRacun)
+
+    // Fetch existing jobs associated with the racun
+    const existingJobs = await Posao.findAll({
+      where: { idRacun: account.id },
+      transaction: t,
+    });
+
+    // Compare existing job IDs with new job IDs
+    const existingJobIds = existingJobs.map((job) => job.id);
+    const newJobIds = posloviData.map((job) => job.id);
+
+    // Identify jobs to update, insert, or delete
+    const jobsToUpdate = existingJobs.filter((job) => newJobIds.includes(job.id));
+    const jobsToInsert = posloviData.filter((job) => !existingJobIds.includes(job.id));
+    const jobsToDelete = existingJobs.filter((job) => !newJobIds.includes(job.id));
+
+    // Update existing jobs with different values
+    for (const job of jobsToUpdate) {
+      const updatedJobData = posloviData.find((newJob) => newJob.id === job.id);
+      await job.update(updatedJobData, { transaction: t });
+    }
+
+    // Insert new jobs
+    await Posao.bulkCreate(jobsToInsert, { transaction: t });
+
+    // Delete jobs that are no longer present
+    for (const job of jobsToDelete) {
+      await job.destroy({ transaction: t });
+    }
+
+    await t.commit();
+
+    console.log('Racun and Poslovi records updated successfully.');
+
+    return { racun: account, poslovi: posloviData };
+  } catch (error) {
+    await t.rollback();
+    console.error('Error updating Racun and Poslovi records:', error);
+    throw error;
+  }
+};
+
