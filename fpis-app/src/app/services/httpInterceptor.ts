@@ -23,13 +23,11 @@ export class ErrorIntercept implements HttpInterceptor {
                         
                     } else {
                         // server-side error
-                        console.log("greskaa: ",error.error)
                         if(error.error.error == 'Ovaj broj računa već postoji, pokušajte ponovo!')
-                        alert("Ovaj broj računa već postoji!")
+                            alert("Ovaj broj računa već postoji!")
                     
-                    if(error.error.error == 'PIB, broj računa i naziv moraju biti jedinstveni!')
-                    alert(error.error.error)
-
+                        if(error.error.error == 'PIB, broj računa i naziv moraju biti jedinstveni!')
+                            alert(error.error.error)
                         errorMessage = `Error Status: ${error.status}\nMessage: ${error.message}`;
                     }
                    console.log(errorMessage);

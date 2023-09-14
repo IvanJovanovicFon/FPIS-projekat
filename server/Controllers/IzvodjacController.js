@@ -1,5 +1,6 @@
 const { response } = require("express");
 const Izvodjac = require("../Models/Izvodjac");
+const { Op } = require('sequelize');
 
 
 exports.createIzvodjac = async(data) =>{
@@ -74,49 +75,37 @@ exports.findIzvodjacByName = async (req, res) => {
   }
 };
 
-// exports.updateIzvodjac = async(contractorData)=> {
-//   try {
-//     console.log(contractorData)
-//     const izvodjac = await Izvodjac.findByPk(contractorData.id);
-
-//     if (!izvodjac) {
-//       throw new Error('Izvodjac not found'); 
-//     }
-
-//     izvodjac.set(contractorData);
-
-  
-//     await izvodjac.save();
-
-//     return izvodjac; 
-//   } catch (error) {
-//     throw error; 
-//   }
-// }
-
 exports.updateIzvodjac = async (contractorData) => {
   try {
+    console.log(contractorData)
     const izvodjac = await Izvodjac.findByPk(contractorData.id);
 
     if (!izvodjac) {
       throw new Error('Izvodjac not found');
     }
 
-    // Check if 'naziv', 'brojRacuna', or 'PIB' have changed
+
     if (
       contractorData.naziv !== izvodjac.naziv ||
-      contractorData.brojRacuna !== izvodjac.brojRacuna ||
-      contractorData.PIB !== izvodjac.PIB
+      contractorData.tekuciRacun !== izvodjac.tekuciRacun
     ) {
-      // Check if a record with the same 'naziv', 'brojRacuna', and 'PIB' already exists
+    
       const existingIzvodjac = await Izvodjac.findOne({
         where: {
-          [Op.or]: [
-            { naziv: contractorData.naziv },
-            { brojRacuna: contractorData.brojRacuna },
-            { PIB: contractorData.PIB },
-          ],
-        },
+          [Op.and]: [
+            {
+              [Op.or]: [
+                { naziv: contractorData.naziv },
+                { tekuciRacun: contractorData.tekuciRacun }
+              ]
+            },
+            {
+              id: {
+                [Op.not]: izvodjac.id
+              }
+            }
+          ]
+        }
       });
 
       if (existingIzvodjac) {
@@ -124,14 +113,21 @@ exports.updateIzvodjac = async (contractorData) => {
       }
     }
 
-    // Update the 'Izvodjac' record with the new data
+
     izvodjac.set(contractorData);
 
     await izvodjac.save();
 
     return izvodjac;
   } catch (error) {
-    throw error;
+    if (error.code === 'ER_DUP_ENTRY') {
+     
+      return({ error: 'Duplicate' });
+     } else {
+ 
+       console.error('Error creating contracotr:', error);
+       return({ error: 'Server error' });
+     }
   }
 };
 

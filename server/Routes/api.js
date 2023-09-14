@@ -11,6 +11,8 @@ const PodvrstaPosla = require('../Models/PodvrstaPosla');
 const JedinicaMere = require('../Models/JedinicaMere');
 const Izvodjac = require('../Models/Izvodjac');
 const app = express();
+
+
 app.use(express.json());
 
 
@@ -65,8 +67,12 @@ router.post('/izvodjaci', async (req, res) => {
     router.put('/izvodjaci/:id', async (req, res) => {
       try {
         const updatedIzvodjac = await IzvodjacController.updateIzvodjac(req.body);
-
-        res.json(updatedIzvodjac);
+        if (updatedIzvodjac.error) {
+          console.log("Duplicate entry error detected.");
+          return res.status(400).json({ error: "PIB, broj računa i naziv moraju biti jedinstveni!" });
+        } else {
+          return res.status(201).json(updatedIzvodjac);
+        }
       } catch (error) {
         console.error('Error updating Izvodjac:', error);
         res.status(500).json({ error: 'Unable to update Izvodjac.' });
