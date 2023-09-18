@@ -33,15 +33,12 @@ await t.commit();
     console.log('Racun and Poslovi records created successfully.');
     return { racun, poslovi };
   }catch (error) {
- 
-    if (error.code === 'ER_DUP_ENTRY') {
-     
-     return({ error: 'Duplicate brojRacuna' });
-    } else {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return({ error: 'uniqueConstraintError' });
+     } else {
+       return({ error: 'ServerError' });
+     }
 
-      console.error('Error creating account:', error);
-      return({ error: 'Server error' });
-    }
   }
 
 };
@@ -67,7 +64,6 @@ exports.findAllIdAndNumberOfAccounts = async (req, res) => {
   }
 };
 
-
 exports.findAllIdAndNumberOfAccounts = async (req, res) => {
   try {
     const accounts = await Racun.findAll({
@@ -88,7 +84,6 @@ exports.findAllIdAndNumberOfAccounts = async (req, res) => {
     return ({ error: 'Internal server error' });
   }
 };
-
 
 exports.findRacunById = async (req, res) => {
   const { id } = req.params;
@@ -168,25 +163,20 @@ exports.updateRacun = async (account) => {
       transaction: t,
     });
 
-    // Compare existing job IDs with new job IDs
     const existingJobIds = existingJobs.map((job) => job.id);
     const newJobIds = posloviData.map((job) => job.id);
 
-    // Identify jobs to update, insert, or delete
     const jobsToUpdate = existingJobs.filter((job) => newJobIds.includes(job.id));
     const jobsToInsert = posloviData.filter((job) => !existingJobIds.includes(job.id));
     const jobsToDelete = existingJobs.filter((job) => !newJobIds.includes(job.id));
 
-    // Update existing jobs with different values
     for (const job of jobsToUpdate) {
       const updatedJobData = posloviData.find((newJob) => newJob.id === job.id);
       await job.update(updatedJobData, { transaction: t });
     }
 
-    // Insert new jobs
     await Posao.bulkCreate(jobsToInsert, { transaction: t });
-
-    // Delete jobs that are no longer present
+  
     for (const job of jobsToDelete) {
       await job.destroy({ transaction: t });
     }
@@ -198,13 +188,10 @@ exports.updateRacun = async (account) => {
     return { racun: account, poslovi: posloviData };
   } catch (error) {
     await t.rollback();
-    if (error.code === 'ER_DUP_ENTRY') {
-     
-      return({ error: 'Duplicate brojRacuna' });
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return({ error: 'uniqueConstraintError' });
      } else {
- 
-       console.error('Error creating account:', error);
-       return({ error: 'Server error' });
+       return({ error: 'ServerError' });
      }
   }
 };

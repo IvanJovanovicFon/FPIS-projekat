@@ -5,7 +5,7 @@
    
         <div class="combobox-row">
           <div class="form-group">
-            <label for="predracun">Predracun</label>
+            <label for="predracun">Predračun</label>
             <select id="predracun" formControlName ="predracun">
               <option disabled selected value ="">Izaberite predračun:</option>
               <option   *ngFor="let pred of predracuni" [value]="pred.id">{{ pred.id }}</option>
@@ -25,7 +25,7 @@
           
           
           <div class="form-group">
-            <label for="id">Id racuna</label>
+            <label for="id">Id računa</label>
             <input type="text" id="id" class="form-control" formControlName="id" [readonly]="true" [ngClass]="{'readonly-field': true}" />
             <div class="validators" *ngIf="addAccountForm.controls['id'].hasError('required') && addAccountForm.controls['id'].dirty">
               {{ validationMessages.id.required }}
@@ -33,7 +33,7 @@
           </div>
 
           <div class="form-group">       
-              <label for="brojRacuna">Broj racuna</label>
+              <label for="brojRacuna">Broj računa</label>
             <input type="text" id="brojRacuna" class="form-control" formControlName="brojRacuna" />
             <div class="validators" *ngIf="addAccountForm.controls['brojRacuna'].hasError('required') && addAccountForm.controls['brojRacuna'].dirty">
               {{ validationMessages.broj.required }}
@@ -89,7 +89,7 @@
               <input type="date" id="datumPromet" class="form-control" formControlName="datumPromet" />
             </div>
 
-            <p class="form-group">Adresa</p>
+            <p class="form-group">Račun izdat u:</p>
         <div class="combobox-row-adress">
           <div class="form-group">
             <label for="mesto">Mesto:</label>
@@ -269,7 +269,7 @@
               
                 <div class="combobox-row">
                   <div class="form-group">
-                    <label for="predracun">Predracun</label>
+                    <label for="predracun">Predračun</label>
                     <select id="predracun" formControlName ="predracun">
                       <option disabled selected value="">Izaberite predračun:</option>
                       <option  *ngFor="let pred of predracuni" [value]="pred.id">{{ pred.id }}</option>
@@ -289,7 +289,7 @@
                     
                     
                     <div class="form-group">
-                      <label for="id">Id racuna</label>
+                      <label for="id">Id računa</label>
                       <input type="text" id="id" class="form-control" formControlName="id" [readonly]="true" [ngClass]="{'readonly-field': true}" />
                       <div class="validators" *ngIf="editAccountForm.controls['id'].hasError('required') && editAccountForm.controls['id'].dirty">
                         {{ validationMessages.id.required }}
@@ -297,7 +297,7 @@
                     </div>
         
                     <div class="form-group">       
-                        <label for="brojRacuna">Broj racuna</label>
+                        <label for="brojRacuna">Broj računa</label>
                       <input type="text" [readonly]="true" [ngClass]="{'readonly-field': true}" id="brojRacuna" class="form-control" formControlName="brojRacuna" />
                       <div class="validators" *ngIf="editAccountForm.controls['brojRacuna'].hasError('required') && editAccountForm.controls['brojRacuna'].dirty">
                         {{ validationMessages.broj.required }}
@@ -363,7 +363,7 @@
                         </div>
                       </div>
         
-                      <p class="form-group">Adresa</p>
+                      <p class="form-group">Račun izdat u:</p>
 
 
                       <div class="combobox-row-adress">

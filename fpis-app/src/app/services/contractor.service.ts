@@ -12,6 +12,7 @@ export class ContractorService {
 
     private apiUrl = 'http://localhost:3000/api/izvodjaci';
 
+
     constructor(private http: HttpClient) {}
 
     addContractor(contractor: Contractor) {
@@ -22,10 +23,11 @@ export class ContractorService {
       };
       this.apiUrl = `http://localhost:3000/api/izvodjaci`;
       this.http.post(this.apiUrl, contractor, httpOptions)
-      .pipe(
-        map((response: any) => response)
-        ).subscribe();
-        console.log("added new contractor!");
+      .pipe(catchError((error: any): Observable<any> => {
+        console.error('There was an error!', error);
+        return of();
+    }))
+    .subscribe();
     }
 
     getAllContractors(): Observable<Contractor[]> {

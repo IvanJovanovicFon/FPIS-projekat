@@ -5,17 +5,13 @@ const { Op } = require('sequelize');
 
 exports.createIzvodjac = async(data) =>{
   try {
-    console.log("controler: ", data);
     const newIzvodjac = await Izvodjac.create(data); 
     return newIzvodjac;
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-     
-      return({ error: 'Duplicate' });
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return({ error: 'uniqueConstraintError' });
      } else {
- 
-       console.error('Error creating contracotr:', error);
-       return({ error: 'Server error' });
+       return({ error: 'ServerError' });
      }
   }
 }
@@ -109,24 +105,18 @@ exports.updateIzvodjac = async (contractorData) => {
       });
 
       if (existingIzvodjac) {
-        throw new Error('Duplicate entry');
+        throw new Error('uniqueConstraintError');
       }
     }
-
-
     izvodjac.set(contractorData);
-
     await izvodjac.save();
 
     return izvodjac;
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-     
-      return({ error: 'Duplicate' });
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return({ error: 'uniqueConstraintError' });
      } else {
- 
-       console.error('Error creating contracotr:', error);
-       return({ error: 'Server error' });
+       return({ error: 'ServerError' });
      }
   }
 };

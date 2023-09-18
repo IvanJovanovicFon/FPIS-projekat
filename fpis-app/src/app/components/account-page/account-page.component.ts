@@ -223,8 +223,8 @@ export class AccountPageComponent implements OnInit {
       datumPromet: [currentDate, Validators.required],
       ukupnaCena: [0],
       mesto: ['', Validators.required], 
-      ulica: [{ value: '', disabled: true }, Validators.required], 
-      broj: [{ value: '', disabled: true }, Validators.required],
+      ulica: [{  disabled: true }, Validators.required], 
+      broj: [{  disabled: true }, Validators.required],
       posao: this.fb.group({
         idPosla:[uuidv4()],
         vrsta: ['', Validators.required],
@@ -304,21 +304,7 @@ this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) =
       this.adressService.getAllStreetsByPTT(selectedCity.ptt).subscribe((data) => {
         this.streets = data;
 
-
-        if (this.skipInitialChange) {
-          this.skipInitialChange = false;
-          return;
-        }
-
-        this.editAccountForm.get('broj')?.reset();
-        this.editAccountForm.get('broj')?.disable();
-
         this.editAccountForm.get('ulica')?.valueChanges.subscribe((value) => {
-
-          if (this.skipInitialChange) {
-            this.skipInitialChange = false;
-            return;
-          }
 
           const selectedStreet = this.streets.find((st) => st.naziv === value);
 
@@ -344,7 +330,6 @@ this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) =
     }
   }
 });
-
   }
   
   editAccount(event:Event): void {
@@ -388,6 +373,8 @@ this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) =
               };    
               console.log("ajmoo menjaj")
               this.accService.editAccount(editedAccount);
+              this.jobs =[];
+              this.initializeForms();
             }}}
       } else {
         console.log('Contractor not found');
@@ -427,6 +414,7 @@ this.editAccountForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) =
         const [ptt, id] = newAccount.idUlica.split(',');
         newAccount.idUlica = id;
         this.accService.addAccount(newAccount);
+        this.initializeForms();
       } else {
         console.log('Contractor not found');
         return;
