@@ -1,14 +1,18 @@
 const { response } = require("express");
 const Izvodjac = require("../Models/Izvodjac");
 const { Op } = require('sequelize');
+const sequelize = require('../Config/database');
 
 
 exports.createIzvodjac = async(data) =>{
+  const t = await sequelize.transaction();
   try {
-    const newIzvodjac = await Izvodjac.create(data); 
+    const newIzvodjac = await Izvodjac.create(data, t);
+    await t.commit();
     return newIzvodjac;
   } catch (error) {
-    if (error.name === 'SequelizeUniqueConstraintError') {
+    await t.rollback();
+       if (error.name === 'SequelizeUniqueConstraintError') {
       return({ error: 'uniqueConstraintError' });
      } else {
        return({ error: 'ServerError' });
