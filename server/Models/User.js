@@ -23,10 +23,10 @@ const Ulica = sequelize.define('user', {
     type: DataTypes.STRING,
     allowNull: false,
    },
-   // role: {
-   //    type: String,
-   //    enum: ["regular", "admin"]
-   // }
+   role: {
+      type: String,
+      enum: ["", "admin"]
+   }
 },
 {
   timestamps: false, 

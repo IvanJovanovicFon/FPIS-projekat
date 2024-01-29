@@ -48,7 +48,8 @@ router.post("/login",
             token = jwt.sign(
                 {
                     userId: existingUser.id,
-                    email: existingUser.email
+                    role: existingUser.role,
+                    firstname: existingUser.firstname
                 },
                 "secretkeyappearshere",
                 { expiresIn: "1h" }
@@ -73,9 +74,11 @@ router.post("/login",
                 data: {
                     userId: existingUser.id,
                     email: existingUser.email,
+                    role: existingUser.role,
                     token: token,
                 },
             });
+            console.log(existingUser.role)
     });
 
 router.post("/register", async (req, res, next) => {
