@@ -12,6 +12,7 @@ import { CarouselModule } from '@coreui/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { ErrorIntercept } from './services/httpInterceptor';
+import { LoginComponent } from './components/login/login.component';
  
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ErrorIntercept } from './services/httpInterceptor';
     NavbarComponent,
     ContractorComponent,
     AccountPageComponent,
-    CarouselComponent
+    CarouselComponent,
+    LoginComponent
 
   ],
   imports: [

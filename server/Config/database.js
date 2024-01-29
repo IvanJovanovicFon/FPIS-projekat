@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-// Replace these values with your database configuration
+
 const databaseName = 'fpis';
 const username = 'ivan';
 const password = 'ivan';

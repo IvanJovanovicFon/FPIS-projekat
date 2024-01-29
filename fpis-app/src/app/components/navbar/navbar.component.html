@@ -1,8 +1,20 @@
 <nav>
-    <ul>
-      <li><a routerLink="/">Home</a></li>
-      <li><a routerLink="/contractors" routerLinkActive="active">Izvođači</a></li>
-      <li><a routerLink="accounts">Računi</a></li>
+
+    <ul class="navbar-nav ml-auto">
+      <ng-container *ngIf="auth.isAuthenticated(); then authenticated else notAuthenticated"></ng-container>
+  
+      <ng-template #notAuthenticated>
+        <li><a routerLink="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/register">Register</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/login">Login</a></li>
+      </ng-template>
+  
+      <ng-template #authenticated>
+        <li><a routerLink="/">Home</a></li>
+        <li><a routerLink="/contractors" routerLinkActive="active">Izvođači</a></li>
+        <li><a routerLink="accounts">Računi</a></li>
+        <li class="nav-item"><a class="nav-link" (click)="logout()">Logout</a></li>
+      </ng-template>
     </ul>
   </nav>
   
