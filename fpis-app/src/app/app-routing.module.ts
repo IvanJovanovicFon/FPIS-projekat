@@ -5,6 +5,7 @@ import { ContractorComponent } from './components/add-contractor/add-contractor.
 import { AccountPageComponent } from './components/account-page/account-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
+import { RegisterComponent } from './components/register/register.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -12,7 +13,7 @@ const routes: Routes = [
   { path: 'contractors', component: ContractorComponent },
   { path: 'accounts', component: AccountPageComponent },
   { path: 'login', component: LoginComponent },
- // { path: 'register', component: RegisterComponent },
+  { path: 'register', component: RegisterComponent },
  
 //  { path: 'home', component: HomeComponent,
 

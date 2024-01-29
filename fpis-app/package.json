@@ -21,6 +21,7 @@
     "@coreui/angular": "^4.5.15",
     "@coreui/icons-angular": "^4.5.15",
     "@wessberg/ts-evaluator": "^0.0.29",
+    "jwt-decode": "^4.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "uuid": "^9.0.0",

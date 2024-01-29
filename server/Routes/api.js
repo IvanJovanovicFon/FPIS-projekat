@@ -10,10 +10,115 @@ const VrstaPosla = require('../Models/VrstaPosla');
 const PodvrstaPosla = require('../Models/PodvrstaPosla');
 const JedinicaMere = require('../Models/JedinicaMere');
 const Izvodjac = require('../Models/Izvodjac');
+const mongoose = require("mongoose");
 const app = express();
+const User = require("../Models/User");
+const jwt = require('jsonwebtoken');
 
 
 app.use(express.json());
+
+router.post("/login",
+    async (req, res, next) => {
+        let { email, password } = req.body;
+ 
+        let existingUser;
+        try {
+            existingUser =
+                await User.findOne({ email: email });
+        } catch {
+            const error =
+                new Error(
+                    "Error! Something went wrong."
+                );
+            return next(error);
+        }
+        if (!existingUser
+            || existingUser.password
+            != password) {
+            const error =
+                Error(
+                    "Wrong details please check at once"
+                );
+            return next(error);
+        }
+        let token;
+        try {
+            //Creating jwt token
+            token = jwt.sign(
+                {
+                    userId: existingUser.id,
+                    email: existingUser.email
+                },
+                "secretkeyappearshere",
+                { expiresIn: "1h" }
+            );
+            // if (employee.role !== role) {
+            //   return res.status(403).json({
+            //     message: "Please make sure you are logging in from the right portal.",
+            //     success: false,
+            //   });
+            // }
+        } catch (err) {
+            console.log(err);
+            const error =
+                new Error("Error! Something went wrong.");
+            return next(error);
+        }
+ 
+        res
+            .status(200)
+            .json({
+                success: true,
+                data: {
+                    userId: existingUser.id,
+                    email: existingUser.email,
+                    token: token,
+                },
+            });
+    });
+
+router.post("/register", async (req, res, next) => {
+  const { firstname, lastname, email, password, birthdate } = req.body;
+
+const newUser = new User({
+  firstname,
+  lastname,
+  email,
+  password,
+  birthdate,
+});
+
+try {
+  await newUser.save();
+} catch (error) {
+  console.error(error);
+  const errorMessage = "Error! Something went wrong.";
+  return res.status(500).json({ success: false, error: errorMessage });
+}
+
+let token;
+try {
+  token = jwt.sign(
+    { userId: newUser.id, email: newUser.email },
+    "secretkeyappearshere",
+    { expiresIn: "1h" }
+  );
+} catch (err) {
+  console.error(err);
+  const errorMessage = "Error! Something went wrong.";
+  return res.status(500).json({ success: false, error: errorMessage });
+}
+
+res.status(201).json({
+  success: true,
+  data: {
+    userId: newUser.id,
+    email: newUser.email,
+    token: token,
+  },
+});
+});
 
 
 const port = 3000;
