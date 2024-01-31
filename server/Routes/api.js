@@ -10,119 +10,151 @@ const VrstaPosla = require('../Models/VrstaPosla');
 const PodvrstaPosla = require('../Models/PodvrstaPosla');
 const JedinicaMere = require('../Models/JedinicaMere');
 const Izvodjac = require('../Models/Izvodjac');
-const mongoose = require("mongoose");
 const app = express();
 const User = require("../Models/User");
 const jwt = require('jsonwebtoken');
-
+const j = require('crypto').randomBytes(64).toString('hex')
+const { check, validationResult } = require('express-validator');
+const port = 3000;
 
 app.use(express.json());
 
-router.post("/login",
-    async (req, res, next) => {
-        let { email, password } = req.body;
- 
-        let existingUser;
-        try {
-            existingUser =
-                await User.findOne({ email: email });
-        } catch {
-            const error =
-                new Error(
-                    "Error! Something went wrong."
-                );
-            return next(error);
-        }
-        if (!existingUser
-            || existingUser.password
-            != password) {
-            const error =
-                Error(
-                    "Wrong details please check at once"
-                );
-            return next(error);
-        }
-        let token;
-        try {
-            //Creating jwt token
-            token = jwt.sign(
-                {
-                    userId: existingUser.id,
-                    role: existingUser.role,
-                    firstname: existingUser.firstname
-                },
-                "secretkeyappearshere",
-                { expiresIn: "1h" }
-            );
-        } catch (err) {
-            console.log(err);
-            const error =
-                new Error("Error! Something went wrong.");
-            return next(error);
-        }
- 
-        res
-            .status(200)
-            .json({
-                success: true,
-                data: {
-                    userId: existingUser.id,
-                    email: existingUser.email,
-                    role: existingUser.role,
-                    token: token,
-                },
-            });
-            console.log(existingUser.role)
-    });
+const bcrypt = require('bcrypt');
 
+router.post("/login", async (req, res, next) => {
+  const { email, password } = req.body;
 
-router.post("/register", async (req, res, next) => {
-  const { firstname, lastname, email, password, birthdate } = req.body;
-const newUser = new User({
-  firstname,
-  lastname,
-  email,
-  password,
-  birthdate,
-});
+  try {
+      // Find the user by email
+      const existingUser = await User.findOne({ where: { email: email } });
 
-try {
-  await newUser.save();
-} catch (error) {
-  console.error(error);
-  const errorMessage = "Error! Something went wrong.";
-  return res.status(500).json({ success: false, error: errorMessage });
-}
+      // Check if the user exists
+      if (existingUser) {
+          // Compare the provided password with the hashed password stored in the database
+          const isPasswordValid = await bcrypt.compare(password.trim(), existingUser.password);
+          if (isPasswordValid) {
+              // Creating jwt token
+              const token = jwt.sign(
+                  {
+                      userId: existingUser.id,
+                      role: existingUser.role,
+                      firstname: existingUser.firstname
+                  },
+                  "secretkeyappearshere",
+                  { expiresIn: "1h" }
+              );
 
-res.status(201).json({
-  success: true,
-  data: {
-    userId: newUser.id,
-    email: newUser.email,
-  },
-});
-});
+              // Send the token and user data in the response
+              res.status(200).json({
+                  success: true,
+                  data: {
+                      userId: existingUser.id,
+                      email: existingUser.email,
+                      token: token,
+                    },
+              });
 
-
-const port = 3000;
-
-    router.post('/izvodjaci', async (req, res) => {
-      try {
-        const newIzvodjac = await IzvodjacController.createIzvodjac(req.body);
-        if (newIzvodjac.error === "ServerError") {
-          res.status(500).json({ error: 'Unable to create contractor.' });
-        }
-        else if(newIzvodjac.error === "uniqueConstraintError"){
-          return res.status(400).json({ error: "PIB, broj računa i naziv moraju biti jedinstveni!" });
-        }
-        else {
-          return res.status(201);
-        }
-      } catch (error) {
-        console.error('Error creating Izvodjac:', error);
-        res.status(500).json({ error: 'Unable to create contractor.' });
+              console.log("12312312:",existingUser.role); // Log the role if needed
+          } else {
+              // If password is incorrect, return an error
+              return next(new Error("Wrong email or password. Please check and try again."));
+          }
+      } else {
+          // If user does not exist, return an error
+          return next(new Error("User not found. Please check the email."));
       }
-    });
+  } catch (error) {
+      console.error(error);
+      return next(new Error("Error! Something went wrong."));
+  }
+});
+
+
+  router.post("/register", async (req, res, next) => {
+    const { firstname, lastname, email, password, birthdate } = req.body;
+  
+    try {
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Create a new User instance with the hashed password
+      const newUser = new User({
+        firstname,
+        lastname,
+        email,
+        password: hashedPassword,
+        birthdate,
+        role: "regular"
+      });
+  
+      // Save the user to the database
+      await newUser.save();
+  
+      res.status(201).json({
+        success: true,
+        data: {
+          userId: newUser.id,
+          email: newUser.email,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      const errorMessage = "Error! Something went wrong.";
+      return res.status(500).json({ success: false, error: errorMessage });
+    }
+  });
+  
+
+
+
+router.post("/register", [
+  // Validation middleware using express-validator
+  check('firstname').notEmpty().withMessage('First name is required'),
+  check('lastname').notEmpty().withMessage('Last name is required'),
+  check('email').isEmail().withMessage('Invalid email address'),
+  check('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  check('birthdate').isISO8601().withMessage('Invalid birthdate'),
+
+  // Custom middleware to handle validation errors
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+    next();
+  }
+], async (req, res, next) => {
+  const { firstname, lastname, email, password, birthdate } = req.body;
+
+  // Hash the password before saving it
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = new User({
+    firstname,
+    lastname,
+    email,
+    password: hashedPassword,
+    birthdate,
+    role: "regular"
+  });
+
+  try {
+    await newUser.save();
+  } catch (error) {
+    console.error(error);
+    const errorMessage = "Error! Something went wrong.";
+    return res.status(500).json({ success: false, error: errorMessage });
+  }
+
+  res.status(201).json({
+    success: true,
+    data: {
+      userId: newUser.id,
+      email: newUser.email,
+    },
+  });
+});
+
 
     router.get('/izvodjaci', async (req, res) => {
         try {

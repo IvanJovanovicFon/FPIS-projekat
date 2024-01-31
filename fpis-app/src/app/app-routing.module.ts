@@ -19,11 +19,11 @@ const routes: Routes = [
   { path: 'contractorView', component: EditContractorComponent },
   { path: 'accountsView', component: ViewAccountsComponent },
  
-//  { path: 'home', component: HomeComponent,
+ { path: 'home', component: HomeComponent,
 
-//  canActivate: [AuthGuard],
+ canActivate: [AuthGuard],
 
-// },
+},
 ];
 
 @NgModule({
