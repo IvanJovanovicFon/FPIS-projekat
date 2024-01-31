@@ -14,6 +14,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { ErrorIntercept } from './services/httpInterceptor';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { EditContractorComponent } from './components/edit-contractor/edit-contractor.component';
+import { ViewAccountsComponent } from './components/view-accounts/view-accounts.component';
  
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { RegisterComponent } from './components/register/register.component';
     AccountPageComponent,
     CarouselComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    EditContractorComponent,
+    ViewAccountsComponent
 
   ],
   imports: [

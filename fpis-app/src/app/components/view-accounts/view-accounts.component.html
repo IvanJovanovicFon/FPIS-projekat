@@ -1,0 +1,257 @@
+<div class="accounts-page">
+   
+<form [formGroup]="editAccountForm" class="add-account-form" >
+          
+    <h4 class="text-on-form">Pretrazite racun.</h4>
+
+    <div class="search-container">
+      <input type="text" formControlName="searchQuery" (input)="onSearch()">
+      <ul *ngIf="searchResults.length > 0 && editAccountForm.value.searchQuery">
+        <li *ngFor="let result of searchResults"
+            (click)="selectSearchResult(result)">
+          {{ result.id }} || {{result.brojRacuna}}
+        </li>
+      </ul>
+    </div>
+    
+  
+    <div class="combobox-row">
+      <div class="form-group">
+        <label for="predracun">Predračun</label>
+        <select id="predracun" formControlName ="predracun">
+          <option disabled selected value="">Izaberite predračun:</option>
+          <option  *ngFor="let pred of predracuni" [value]="pred.id" disabled>{{ pred.id }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="izvodjac">Izvođač</label>
+        <select id="izvodajac" formControlName="izvodjac">
+          <option disabled selected value="">Izaberite izvodjača:</option>
+          <option disabled *ngFor="let contractor of contractors" [value]="contractor.naziv" >{{ contractor.naziv }}</option>
+        </select>
+        <div class="validators" *ngIf="addAccountForm.controls['izvodjac'].hasError('required') && addAccountForm.controls['izvodjac'].dirty">
+          {{ validationMessages.izvodjac.required }}
+        </div>
+      </div>
+        
+        
+        <div class="form-group">
+          <label for="id">Id računa</label>
+          <input type="text" id="id" class="form-control" formControlName="id" [readonly]="true" [ngClass]="{'readonly-field': true}" />
+          <div class="validators" *ngIf="editAccountForm.controls['id'].hasError('required') && editAccountForm.controls['id'].dirty">
+            {{ validationMessages.id.required }}
+          </div>
+        </div>
+
+        <div class="form-group">       
+            <label for="brojRacuna">Broj računa</label>
+          <input type="text" [readonly]="true" [ngClass]="{'readonly-field': true}" id="brojRacuna" class="form-control" formControlName="brojRacuna" />
+          <div class="validators" *ngIf="editAccountForm.controls['brojRacuna'].hasError('required') && editAccountForm.controls['brojRacuna'].dirty">
+            {{ validationMessages.broj.required }}
+          </div>
+          <div class="validators" *ngIf="editAccountForm.controls['brojRacuna'].hasError('pattern') && editAccountForm.controls['brojRacuna'].dirty">
+            {{ validationMessages.broj.pattern }}
+          </div>
+        </div>
+        </div>
+
+        <div class="form-group">       
+            <label for="objekat">Objekat</label>
+            <input [readOnly]="true" type="text" id="objekat" class="form-control" formControlName="objekat" />
+            <div class="validators" *ngIf="editAccountForm.controls['objekat'].hasError('required') && editAccountForm.controls['objekat'].dirty">
+              {{ validationMessages.objekat.required }}
+            </div>
+          </div>
+
+        <div class="form-group">       
+            <label for="id">Investitor</label>
+          <input  [readOnly]="true" type="text" id="investitor" class="form-control" formControlName="investitor" />
+          <div class="validators" *ngIf="editAccountForm.controls['investitor'].hasError('required') && editAccountForm.controls['investitor'].dirty">
+            {{ validationMessages.investitor.required }}
+          </div>          
+        </div>
+
+
+        <div class="form-group">       
+            <label for="id">Realizacija</label>
+          <input  [readOnly]="true" type="number" id="realizacija" class="form-control" formControlName="realizacija" />
+          <div class="validators" *ngIf="editAccountForm.controls['realizacija'].hasError('required') && editAccountForm.controls['realizacija'].dirty">
+            {{ validationMessages.realizacija.required }}
+          </div>
+          <div class="validators" *ngIf="editAccountForm.controls['realizacija'].hasError('pattern') && editAccountForm.controls['realizacija'].dirty">
+            {{ validationMessages.realizacija.pattern }}
+          </div>
+          <div  class="validators" *ngIf="editAccountForm.controls['realizacija'].hasError('min') && editAccountForm.controls['realizacija'].dirty">
+            {{ validationMessages.realizacija.min }}
+          </div>
+        </div>
+
+        <div class="form-group">
+            <label for="datumIspos">Datum ispostavljanja računa</label>
+            <input  [readOnly]="true" type="date" id="datumIspos" class="form-control" formControlName="datumIspos" />
+            <div class="validators" *ngIf="editAccountForm.controls['datumIspos'].hasError('required') && editAccountForm.controls['datumIspos'].dirty">
+              Datum ispostavljanja je obavezan!
+            </div>
+          </div>
+
+        <div class="form-group">
+            <label for="datumIzdav">Datum izdavanja računa</label>
+            <input  [readOnly]="true" type="date" id="datumIzdav" class="form-control" formControlName="datumIzdav" />
+            <div class="validators" *ngIf="editAccountForm.controls['datumIzdav'].hasError('required') && editAccountForm.controls['datumIzdav'].dirty">
+              Datun izdavanja je obavezan!
+            </div>
+          </div>
+
+        <div class="form-group">
+            <label for="datumPromet">Datum prometa dobara i usluga</label>
+            <input [readOnly]="true" type="date" id="datumPromet" class="form-control" formControlName="datumPromet" />
+            <div class="validators" *ngIf="editAccountForm.controls['datumPromet'].hasError('required') && editAccountForm.controls['datumPromet'].dirty">
+              Datum prometa dobara i usluga je obavezan!
+            </div>
+          </div>
+
+          <p class="form-group">Račun izdat u:</p>
+
+
+          <div class="combobox-row-adress">
+        
+            <div class="form-group">
+              <label for="mesto">Mesto:</label>
+              <select id="mesto" formControlName="mesto">
+                <option value="" selected disabled>Izaberite grad:</option>
+                <option disabled *ngFor="let city of cities" [value]="city.naziv">{{ city.naziv }}</option>
+              </select>
+  
+            </div> 
+            <div class="form-group">
+              <label for="ulica">Ulica:</label>
+              <select id="ulica" formControlName="ulica">
+                <option value="" selected disabled>Izaberite ulicu:</option>
+                <option disabled *ngFor="let str of streets" [value]="str.naziv">{{ str.naziv }}</option>
+              </select>
+            </div>
+  
+            <div class="form-group">
+              <label for="broj">Broj:</label>
+              <select id="broj"  formControlName="broj">
+                <option value="" selected disabled>Izaberite broj:</option>
+                <option disabled *ngFor="let nmb of numbers" [value]="nmb.broj">{{ nmb.broj }}</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="form-group">Unos posla</p>
+
+          <div class="posao" formGroupName="posao">
+            <div class="combobox-row">
+              
+              <div class="form-group">
+                <label for="vrsta">Vrsta posla</label>
+                <select id="vrsta" formControlName="vrsta">
+                  <option disabled selected value="" >Izaberite vrstu posla:</option>
+                  <option disabled *ngFor="let item of vrste" [value]="item.id">{{ item.naziv }}</option>
+                </select>
+                <div class="validators" *ngIf="editAccountForm.get('posao.vrsta')?.hasError('required')  && editAccountForm.get('posao.vrsta')?.dirty">
+                  {{ validationMessages.vrsta.required }}
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label for="podvrsta">Podvrsta posla</label>
+                <select id="podvrsta" formControlName="podvrsta">
+                  <option disabled selected value="">Izaberite podvrstu posla:</option>
+                  <option disabled *ngFor="let item of podvrste" [value]="item.id">{{ item.naziv }}</option>
+                </select>
+                <div class="validators" *ngIf="editAccountForm.get('posao.podvrsta')?.hasError('required') && editAccountForm.get('posao.podvrsta')?.dirty">
+                  {{ validationMessages.podvrsta.required }}
+                </div>
+              </div>
+          
+              <div class="form-group" >
+                <label for="jedinicemere">Jedinica mere</label>
+                <select id="jedinicemere" formControlName="jedinicamere">
+                  <option disabled selected value ="">Izaberite jedinicu mere:</option>
+                  <option disabled *ngFor="let item of mere" [value]="item.oznaka">{{ item.naziv }} ({{ item.oznaka }})</option>
+                </select>
+                <div class="validators" *ngIf="editAccountForm.get('posao.jedinicamere')?.hasError('required') && editAccountForm.get('posao.jedinicamere')?.dirty">
+                  {{ validationMessages.jedinicamere.required }}
+                </div>
+              </div>
+            </div>
+          
+            <div class="form-group" >
+              <label for="kolicina">Količina</label>
+              <input readonly type="number" id="kolicina" class="form-control" formControlName="kolicina" />
+              <div class="validators" *ngIf="editAccountForm.get('posao.kolicina')?.hasError('required') && editAccountForm.get('posao.kolicina')?.dirty">
+                {{ validationMessages.kolicina.required }}
+              </div> 
+              <div  class="validators" *ngIf="editAccountForm.get('posao.kolicina')?.hasError('min') && editAccountForm.get('posao.kolicina')?.dirty">
+                {{ validationMessages.kolicina.min }}
+              </div>
+            </div>
+
+            <div class="form-group"  style="display: none;">
+              <input type="number" id="idPosla" class="form-control" formControlName="idPosla" />
+            </div>
+            
+            <div class="form-group" >
+              <label for="cena">Cena (u dinarima)</label>
+              <input [readOnly]="true" type="number" id="cena" class="form-control" formControlName="cena" />
+              <div class="validators" *ngIf="editAccountForm.get('posao.cena')?.hasError('required') && editAccountForm.get('posao.cena')?.dirty">
+                {{ validationMessages.cena.required }}
+              </div> 
+              <div  class="validators" *ngIf="editAccountForm.get('posao.cena')?.hasError('min') && editAccountForm.get('posao.cena')?.dirty">
+                {{ validationMessages.cena.min }}
+              </div>
+            </div>
+
+            <div class="form-group">
+            <label for="description">Opis</label>
+            <textarea [readOnly]="true" class="form-control" name="description" rows="4" cols="50" formControlName="opis"></textarea>
+            </div>
+            
+            <div class="btn-container">
+
+           
+             </div>
+             
+             <div class="table-of-jobs">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rb</th>
+                    <th>Vrsta posla</th>
+                    <th>Podvrsta posla</th>
+                    <th>Jedinica mere</th>
+                    <th>Količina</th>
+                    <th>Cena (u dinarima)</th>
+                    <th>Opis</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let job of jobs; let i = index">
+                    <td>{{ i+1 }}</td>
+                    <td>{{ job.idVrstaPosla }}</td>
+                    <td>{{ job.idPodvrstaPosla }}</td>
+                    <td>{{ job.oznakaJedinicaMere }}</td>
+                    <td>{{ job.kolicina }}</td>
+                    <td>{{ job.cena }}</td>
+                    <td>{{ job.opis }}</td>
+ 
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+            
+          <div class="form-group" >
+            <label for="ukupnaCena">Ukupna cena(u dinarima)</label>
+            <input type="number" id="ukupnaCena" [readonly]="true" [ngClass]="{'readonly-field': true}" class="form-control" formControlName="ukupnaCena" />
+            </div>
+          <div class="btn-container">
+          </div>
+        </form>
+      </div>
+

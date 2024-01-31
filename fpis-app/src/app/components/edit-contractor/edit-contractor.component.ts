@@ -12,12 +12,14 @@ import { streetNumber } from 'src/app/model/streetNumber';
 import { street } from 'src/app/model/street';
 
 
+
 @Component({
-  selector: 'app-add-contractor',
-  templateUrl: './add-contractor.component.html',
-  styleUrls: ['./add-contractor.component.scss']
+  selector: 'app-edit-contractor',
+  templateUrl: './edit-contractor.component.html',
+  styleUrls: ['./edit-contractor.component.scss']
 })
-export class ContractorComponent implements OnInit {
+export class EditContractorComponent {
+
   contractorForm!: FormGroup;
   searchForm!: FormGroup;
   showAddForm = true;
@@ -270,19 +272,6 @@ private skipInitialChange = true;
   initializeForms(): void {
     this.skipInitialChange = true;
     
-    this.contractorForm = this.fb.group({
-      pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
-      naziv: ['', Validators.required],
-      tekracun: ['', [Validators.required, Validators.minLength(18), Validators.maxLength(18), 
-        Validators.pattern('^[0-9]*$')]],
-      sifra: ['', [Validators.pattern('^[0-9]*$')]],
-      ime: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$'), Validators.minLength(2)]],
-      jmbg: ['', [Validators.required, Validators.minLength(13), Validators.maxLength(13), Validators.pattern('^[0-9]*$')]],
-      mesto: ['', Validators.required], 
-      ulica: [{ value: '', disabled: true }, Validators.required], 
-      broj: [{ value: '', disabled: true }, Validators.required]
-    });
-
     this.searchForm = this.fb.group({
       searchQuery: [''],
       pib: ['', [Validators.minLength(9), Validators.maxLength(9), Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -297,39 +286,7 @@ private skipInitialChange = true;
       broj: [{ disabled: true }, Validators.required]
     });
 
-    this.contractorForm.get('mesto')?.valueChanges.subscribe((value) => {//ima bag kad promenis grad ulica postane izabrana prva i ne radi onChange
-      if (value) {
-        const selectedCityPtt = this.contractorForm.get('mesto')?.value
-        this.streets=[];
-        this.numbers=[];
-        this.contractorForm.get('broj')?.reset();
-        this.contractorForm.get('broj')?.setValue('');
-        this.contractorForm.get('ulica')?.setValue('');
-        this.adressService.getAllStreetsByPTT(selectedCityPtt).subscribe((data: street[])=>{
-          Object.values(data).forEach((str:street)=>{
-            this.streets.push(str)
-          })
-       })
-       this.contractorForm.get('ulica')?.enable();
-        this.contractorForm.get('broj')?.disable();
-      } 
-    });
-
-    this.contractorForm.get('ulica')?.valueChanges.subscribe((value) => {
-      if (value) {
-        this.contractorForm.get('broj')?.enable();
-        const selected = this.contractorForm.get('ulica')?.value
-        const [ptt, id] = selected.split(',');
-        this.numbers=[];
-        this.contractorForm.get('broj')?.reset();
-        this.adressService.getAllNumbersByPTTAndId(ptt, id).subscribe((data: streetNumber[])=>{
-          Object.values(data).forEach((num:streetNumber)=>{
-            this.numbers.push(num)
-          })
-        })
-      } 
-
-    });
+    
     
     //*****************************************search form*********************************************************** *
 this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
@@ -374,4 +331,5 @@ this.searchForm.get('mesto')?.valueChanges.subscribe((selectedMestoNaziv) => {
     this.searchForm.get('ulica')?.disable()
     this.searchForm.get('broj')?.disable()
   }  
+
 }

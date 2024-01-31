@@ -54,12 +54,6 @@ router.post("/login",
                 "secretkeyappearshere",
                 { expiresIn: "1h" }
             );
-            // if (employee.role !== role) {
-            //   return res.status(403).json({
-            //     message: "Please make sure you are logging in from the right portal.",
-            //     success: false,
-            //   });
-            // }
         } catch (err) {
             console.log(err);
             const error =
@@ -81,9 +75,9 @@ router.post("/login",
             console.log(existingUser.role)
     });
 
+
 router.post("/register", async (req, res, next) => {
   const { firstname, lastname, email, password, birthdate } = req.body;
-
 const newUser = new User({
   firstname,
   lastname,
@@ -100,25 +94,11 @@ try {
   return res.status(500).json({ success: false, error: errorMessage });
 }
 
-let token;
-try {
-  token = jwt.sign(
-    { userId: newUser.id, email: newUser.email },
-    "secretkeyappearshere",
-    { expiresIn: "1h" }
-  );
-} catch (err) {
-  console.error(err);
-  const errorMessage = "Error! Something went wrong.";
-  return res.status(500).json({ success: false, error: errorMessage });
-}
-
 res.status(201).json({
   success: true,
   data: {
     userId: newUser.id,
     email: newUser.email,
-    token: token,
   },
 });
 });
