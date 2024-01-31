@@ -117,20 +117,20 @@ private skipInitialChange = true;
       
       if(grad){
         const ulica = this.streets.find((u)=>u.naziv === contractorData.ulica)
-       
+        
         if(ulica){
           const broj = this.numbers.find((b)=>b.broj === contractorData.broj)
-         
+          
           if(broj){
-
+            
+            console.log("daanaas")
             this.conService.getAllContractors().subscribe((c) => {
               
               const contractors: Contractor[] = c;
               console.log(contractors)
               const izvodjacOriginal = contractors.find((con)=> con.pib === contractorData.pib);
-              
               if(izvodjacOriginal){
-
+                
                 const contractor = new Contractor(
                   izvodjacOriginal?.id,
                   contractorData.pib,
@@ -155,9 +155,10 @@ private skipInitialChange = true;
             }
           }
         }
-  }
-
-  addContractor(event: Event): void {
+      }
+      
+      
+      addContractor(event: Event): void {
     event.preventDefault();
     if (this.contractorForm.valid) {
       const contractorData = this.contractorForm.value;

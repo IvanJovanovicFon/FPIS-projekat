@@ -16,6 +16,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { EditContractorComponent } from './components/edit-contractor/edit-contractor.component';
 import { ViewAccountsComponent } from './components/view-accounts/view-accounts.component';
+import { JwtInterceptor } from './services/interceptor'
  
 @NgModule({
   declarations: [
@@ -45,6 +46,11 @@ import { ViewAccountsComponent } from './components/view-accounts/view-accounts.
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorIntercept,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
       multi: true
     }
   ],

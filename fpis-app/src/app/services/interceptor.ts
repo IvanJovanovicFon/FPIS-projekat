@@ -18,17 +18,18 @@ export class JwtInterceptor
         // check if the current user is logged in
         // if the user making the request is logged in, he will have JWT token in it's local storage, which is set by Authorization Service during the login process
         const storedUser = localStorage.getItem('currentUser');
-
         if (storedUser) {
             const currentUser = JSON.parse(storedUser);
-
-            if (currentUser && currentUser.token) {
+            if (currentUser && currentUser.data.token) {
                 // clone the incoming request and add JWT token in the cloned request's Authorization Header
                 request = request.clone({
                     setHeaders: {
-                        Authorization: `Bearer ${currentUser.token}`
+                        Authorization: `Bearer ${currentUser.data.token}`
                     }
                 });
+            }
+            else{
+                console.log("Greska u interceptoru jwt")
             }
         }
 
