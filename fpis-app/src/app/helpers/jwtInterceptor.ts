@@ -21,7 +21,6 @@ export class JwtInterceptor
         if (storedUser) {
             const currentUser = JSON.parse(storedUser);
             if (currentUser && currentUser.data.token) {
-                // clone the incoming request and add JWT token in the cloned request's Authorization Header
                 request = request.clone({
                     setHeaders: {
                         Authorization: `Bearer ${currentUser.data.token}`

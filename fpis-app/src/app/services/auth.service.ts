@@ -2,15 +2,41 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
+import { JwtService } from './jwt.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private jwtService: JwtService
+  ) {}
 
   isAuthenticated(): boolean {
     return localStorage.getItem('currentUser') !== null;
+  }
+
+  getRole(): string {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      const currentUser = JSON.parse(storedUser);
+      if (currentUser && currentUser.data.token) {
+        const role = this.jwtService.getRoleFromToken(currentUser.data.token);
+        console.log('role', role);
+
+        if (role === 'admin') {
+          return 'admin';
+        } else if (role === 'regular') {
+          return 'regular';
+        } else {
+          return '';
+        }
+      }
+      return '';
+    }
+    return '';
   }
 
   register(

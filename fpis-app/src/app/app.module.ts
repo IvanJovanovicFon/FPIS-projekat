@@ -11,12 +11,12 @@ import { CarouselComponent } from './components/carousel/carousel.component';
 import { CarouselModule } from '@coreui/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
-import { ErrorIntercept } from './services/httpInterceptor';
+import { ErrorIntercept } from './helpers/httpInterceptor';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { EditContractorComponent } from './components/edit-contractor/edit-contractor.component';
 import { ViewAccountsComponent } from './components/view-accounts/view-accounts.component';
-import { JwtInterceptor } from './services/jwtInterceptor'
+import { JwtInterceptor } from './helpers/jwtInterceptor'
  
 @NgModule({
   declarations: [

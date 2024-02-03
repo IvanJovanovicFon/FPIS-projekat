@@ -6,7 +6,7 @@
         
         <div class="form-group">       
             <label for="PIB">PIB</label>
-          <input type="text" id="pib" class="form-control" formControlName="pib" />
+          <input  [readonly]="!permit" type="text" id="pib" class="form-control" formControlName="pib" />
           <div class="validators" *ngIf="contractorForm.controls['pib'].hasError('required') && contractorForm.controls['pib'].dirty">
            {{validationMessages.pib.required}}
           </div>
@@ -17,7 +17,7 @@
 
         <div class="form-group">
           <label for="NAZIV">Naziv</label>
-          <input type="text" id="naziv" class="form-control" formControlName="naziv" />
+          <input [readonly]="!permit" type="text" id="naziv" class="form-control" formControlName="naziv" />
           <div class="validators" *ngIf="contractorForm.controls['naziv'].hasError('required') && contractorForm.controls['naziv'].dirty">
             {{validationMessages.naziv.required}}
           </div>
@@ -25,7 +25,7 @@
 
         <div class="form-group">
             <label for="TEKRACUN">Tekući račun</label>
-            <input type="text" id="tekracun" class="form-control" formControlName="tekracun" />
+            <input [readonly]="!permit" type="text" id="tekracun" class="form-control" formControlName="tekracun" />
             <div class="validators" *ngIf="contractorForm.controls['tekracun'].hasError('required') && contractorForm.controls['tekracun'].dirty">
               {{validationMessages.tekracun.required}}
             </div>
@@ -42,7 +42,7 @@
 
           <div class="form-group">
             <label for="SIFRA">Šifra delatnosti</label>
-            <input type="text" id="sifra" class="form-control" formControlName="sifra" />
+            <input [readonly]="!permit" type="text" id="sifra" class="form-control" formControlName="sifra" />
             <div class="validators" *ngIf="contractorForm.controls['sifra'].hasError('pattern') && contractorForm.controls['sifra'].dirty">
               {{validationMessages.sifra.pattern}}
             </div>
@@ -53,7 +53,7 @@
 
           <div class="form-group">
             <label for="ime">Ime i prezime direktora</label>
-            <input type="text" id="ime" class="form-control" formControlName="ime" />
+            <input [readonly]="!permit" type="text" id="ime" class="form-control" formControlName="ime" />
             <div class="validators" *ngIf="contractorForm.controls['ime'].hasError('pattern') && contractorForm.controls['ime'].dirty">
               {{validationMessages.ime.pattern}}
             </div>
@@ -64,7 +64,7 @@
           
           <div class="form-group">
             <label for="JMBG">JMBG direktora</label>
-            <input type="text" id="jmbg" class="form-control" formControlName="jmbg" />
+            <input [readonly]="!permit" type="text" id="jmbg" class="form-control" formControlName="jmbg" />
             <div class="validators" *ngIf="contractorForm.controls['jmbg'].hasError('pattern') && contractorForm.controls['jmbg'].dirty">
               {{validationMessages.jmbg.pattern}}
             </div>
@@ -86,7 +86,7 @@
             <label for="mesto">Mesto:</label>
             <select id="mesto" formControlName="mesto">
               <option disabled selected value ="-">Izaberite mesto:</option>
-              <option *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
+              <option  disabled="!permit" *ngFor="let city of cities" [value]="city.ptt">{{ city.naziv }}</option>
             </select>
 
           </div>
@@ -94,14 +94,14 @@
             <label for="ulica">Ulica:</label>
             <select id="ulica" formControlName="ulica">
               <option disabled selected value ="-">Izaberite ulicu:</option>
-              <option *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
+              <option  disabled="!permit" *ngFor="let str of streets" [value]="str.ptt + ',' + str.id">{{ str.naziv }}</option>
             </select>
           </div>
           <div class="form-group">
             <label for="broj">Broj:</label>
             <select id="broj"  formControlName="broj">
               <option disabled selected value ="-">Izaberite broj:</option>
-              <option *ngFor="let nmb of numbers" [value]="">{{ nmb.broj }}</option>
+              <option  disabled="!permit" *ngFor="let nmb of numbers" [value]="">{{ nmb.broj }}</option>
             </select>
           </div>
         </div>
@@ -155,7 +155,7 @@
 
         <div class="form-group">
           <label for="NAZIV">Naziv</label>
-          <input type="text" id="naziv" class="form-control" formControlName="naziv" />
+          <input [readonly]="!permit" type="text" id="naziv" class="form-control" formControlName="naziv" />
           <div class="validators" *ngIf="searchForm.controls['naziv'].hasError('required') && searchForm.controls['naziv'].dirty">
             {{validationMessages.naziv.required}}
           </div>
@@ -163,7 +163,7 @@
 
         <div class="form-group">
             <label for="TEKRACUN">Tekući račun</label>
-            <input type="text" id="tekracun" class="form-control" formControlName="tekracun" />
+            <input [readonly]="!permit" type="text" id="tekracun" class="form-control" formControlName="tekracun" />
             <div class="validators" *ngIf="searchForm.controls['tekracun'].hasError('required') && searchForm.controls['tekracun'].dirty">
               {{validationMessages.tekracun.required}}
             </div>
@@ -180,7 +180,7 @@
 
           <div class="form-group">
             <label for="SIFRA">Šifra delatnosti</label>
-            <input type="text" id="sifra" class="form-control" formControlName="sifra" 
+            <input  type="text" id="sifra" class="form-control" formControlName="sifra" 
             [readonly]=true [ngClass]="{'readonly-field': true}"/>
             <div class="validators" *ngIf="searchForm.controls['sifra'].hasError('pattern') && searchForm.controls['sifra'].dirty">
               {{validationMessages.sifra.pattern}}
@@ -192,7 +192,7 @@
           
           <div class="form-group">
             <label for="ime">Ime i prezime direktora</label>
-            <input type="text" id="ime" class="form-control" formControlName="ime" />
+            <input [readonly]="!permit" type="text" id="ime" class="form-control" formControlName="ime" />
             <div class="validators" *ngIf="searchForm.controls['ime'].hasError('pattern') && searchForm.controls['ime'].dirty">
               {{validationMessages.ime.pattern}}
             </div>
@@ -203,7 +203,7 @@
           
           <div class="form-group">
             <label for="JMBG">JMBG direktora</label>
-            <input type="text" id="jmbg" class="form-control" formControlName="jmbg" />
+            <input [readonly]="!permit" type="text" id="jmbg" class="form-control" formControlName="jmbg" />
             <div class="validators" *ngIf="searchForm.controls['jmbg'].hasError('pattern') && searchForm.controls['jmbg'].dirty">
               {{validationMessages.jmbg.pattern}}
             </div>
@@ -225,7 +225,7 @@
             <label for="mesto">Mesto:</label>
             <select id="mesto" formControlName="mesto">
               <option value="" selected disabled>Izaberite grad:</option>
-              <option *ngFor="let city of cities" [value]="city.naziv">{{ city.naziv }}</option>
+              <option  *ngFor="let city of cities" [value]="city.naziv">{{ city.naziv }}</option>
             </select>
           </div> 
 
@@ -233,7 +233,7 @@
             <label for="ulica">Ulica:</label>
             <select id="ulica" formControlName="ulica">
               <option value="" selected disabled>Izaberite ulicu:</option>
-              <option *ngFor="let str of streets" [value]="str.naziv">{{ str.naziv }}</option>
+              <option  *ngFor="let str of streets" [value]="str.naziv">{{ str.naziv }}</option>
             </select>
           </div>
           
@@ -242,13 +242,13 @@
             <label for="broj">Broj:</label>
             <select id="broj"  formControlName="broj">
               <option value="" selected disabled>Izaberite broj:</option>
-              <option *ngFor="let nmb of numbers" [value]="nmb.broj">{{ nmb.broj }}</option>
+              <option   *ngFor="let nmb of numbers" [value]="nmb.broj">{{ nmb.broj }}</option>
             </select>
           </div>
         </div>
 
         <div class="btn-container">
-            <button type="submit" class="btn-addC" [disabled]="!searchForm.valid" (click)="editContractor($event)">Zapamti izmene</button>
+            <button type="submit" class="btn-addC" [disabled]="!searchForm.valid || !permit" (click)="editContractor($event)">Zapamti izmene</button>
             <button type="reset" class="btn-ponisti" (click)="onReset()" >Poništi</button>
             <button type="submit" class="btn-addC" (click)="toggleForm()" >Dodaj novog izvođača</button>
           </div>

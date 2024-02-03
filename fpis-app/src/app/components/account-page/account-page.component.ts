@@ -14,6 +14,7 @@ import { TypeOfJob } from 'src/app/model/typeOfjob';
 import { UnitOfMeasure } from 'src/app/model/unit-of-measure';
 import { AccountService } from 'src/app/services/account.service';
 import { AdressService } from 'src/app/services/adress.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { ContractorService } from 'src/app/services/contractor.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -50,8 +51,8 @@ interface Result {
 export class AccountPageComponent implements OnInit {
 
   public constructor(private conService: ContractorService, private fb: FormBuilder
-    , private accService: AccountService, private adressService:AdressService){}
-
+    , private accService: AccountService, private adressService:AdressService, private authService: AuthService){}
+  permit: boolean = false;
   contractors: Contractor[] = [];
   addAccountForm!: FormGroup;
   editAccountForm!: FormGroup;
@@ -124,6 +125,17 @@ export class AccountPageComponent implements OnInit {
   };
   
   ngOnInit(): void {
+
+    const role = this.authService.getRole();
+    if (role === 'regular') {
+      console.log('Regular users are not allowed to edit contractors.');
+      this.permit = false;
+    } else if (role === '') {
+      this.permit = false;
+    } else if (role === 'admin') {
+      this.permit = true;
+    }
+
     this.initializeForms();
     
     this.searchTrigger

@@ -12,18 +12,14 @@ import { ViewAccountsComponent } from './components/view-accounts/view-accounts.
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'contractors', component: ContractorComponent },
-  { path: 'accounts', component: AccountPageComponent },
+  { path: 'contractors', component: ContractorComponent,  canActivate: [AuthGuard] },
+  { path: 'accounts', component: AccountPageComponent,  canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'contractorView', component: EditContractorComponent },
   { path: 'accountsView', component: ViewAccountsComponent },
- 
- { path: 'home', component: HomeComponent,
-
- canActivate: [AuthGuard],
-
-},
+  { path: 'home', component: HomeComponent,
+    canActivate: [AuthGuard]},
 ];
 
 @NgModule({

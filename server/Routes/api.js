@@ -136,7 +136,7 @@ router.post('/izvodjaci', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/izvodjaci', authenticateUser, async (req, res) => {
+router.get('/izvodjaci', async (req, res) => {
   try {
     const izvodjaci = await IzvodjacController.findAllIzvodjaci(req, res);
     res.json(izvodjaci);
@@ -185,7 +185,7 @@ router.put('/izvodjaci/:id', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/mesta', authenticateUser, async (req, res) => {
+router.get('/mesta', async (req, res) => {
   try {
     const mesta = await Mesto.findAll();
     res.json(mesta);
@@ -195,7 +195,7 @@ router.get('/mesta', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/ulice/:ptt', authenticateUser, async (req, res) => {
+router.get('/ulice/:ptt', async (req, res) => {
   const ptt = req.params.ptt; // Use req.params.ptt to access the value
   try {
     const ulice = await Ulica.findAll({ where: { ptt: ptt } });
@@ -206,7 +206,7 @@ router.get('/ulice/:ptt', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/brojevi/:ptt/:id', authenticateUser, async (req, res) => {
+router.get('/brojevi/:ptt/:id', async (req, res) => {
   const { ptt, id } = req.params;
   const idAsInt = parseInt(id, 10);
 
@@ -224,7 +224,7 @@ router.get('/brojevi/:ptt/:id', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/predracuni', authenticateUser, async (req, res) => {
+router.get('/predracuni', async (req, res) => {
   try {
     const predracuni = await Predracun.findAll();
     res.json(predracuni);
@@ -234,7 +234,7 @@ router.get('/predracuni', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/vrsta', authenticateUser, async (req, res) => {
+router.get('/vrsta', async (req, res) => {
   try {
     const vrste = await VrstaPosla.findAll();
     res.json(vrste);
@@ -244,7 +244,7 @@ router.get('/vrsta', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/podvrsta/:id', authenticateUser, async (req, res) => {
+router.get('/podvrsta/:id', async (req, res) => {
   try {
     const idVrste = req.params.id;
     const podvrste = await PodvrstaPosla.findAll({ where: { idVrstaPosla: idVrste } });
@@ -255,7 +255,7 @@ router.get('/podvrsta/:id', authenticateUser, async (req, res) => {
   }
 });
 
-router.get('/mere', authenticateUser, async (req, res) => {
+router.get('/mere', async (req, res) => {
   try {
     const mere = await JedinicaMere.findAll();
     res.json(mere);
