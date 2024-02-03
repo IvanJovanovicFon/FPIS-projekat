@@ -16,7 +16,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { EditContractorComponent } from './components/edit-contractor/edit-contractor.component';
 import { ViewAccountsComponent } from './components/view-accounts/view-accounts.component';
-import { JwtInterceptor } from './services/interceptor'
+import { JwtInterceptor } from './services/jwtInterceptor'
  
 @NgModule({
   declarations: [

@@ -32,7 +32,6 @@ export class JwtInterceptor
                 console.log("Greska u interceptoru jwt")
             }
         }
-
         // handle any other requests which went unhandled
         return next.handle(request);
     }
