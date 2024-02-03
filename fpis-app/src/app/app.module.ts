@@ -17,6 +17,10 @@ import { RegisterComponent } from './components/register/register.component';
 import { EditContractorComponent } from './components/edit-contractor/edit-contractor.component';
 import { ViewAccountsComponent } from './components/view-accounts/view-accounts.component';
 import { JwtInterceptor } from './helpers/jwtInterceptor'
+import { ToastrModule } from 'ngx-toastr';
+import { provideAnimations } from '@angular/platform-browser/animations';
+
+import { provideToastr } from 'ngx-toastr';
  
 @NgModule({
   declarations: [
@@ -40,9 +44,13 @@ import { JwtInterceptor } from './helpers/jwtInterceptor'
     CarouselModule,
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule
   ],
   providers: [  
+    provideAnimations(), // required animations providers
+    provideToastr(),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorIntercept,

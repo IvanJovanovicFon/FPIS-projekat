@@ -55,21 +55,20 @@ router.post("/login", async (req, res, next) => {
             token: token,
           },
         });
-
-        console.log("12312312:", existingUser.role); // Log the role if needed
       } else {
         // If password is incorrect, return an error
-        return next(new Error("Wrong email or password. Please check and try again."));
+        res.status(401).json({ success: false, error: "Wrong email or password. Please check and try again." });
       }
     } else {
       // If user does not exist, return an error
-      return next(new Error("User not found. Please check the email."));
+      res.status(404).json({ success: false, error: "User not found. Please check the email." });
     }
   } catch (error) {
     console.error(error);
-    return next(new Error("Error! Something went wrong."));
+    res.status(500).json({ success: false, error: "Error! Something went wrong." });
   }
 });
+
 
 router.post("/register", [
 

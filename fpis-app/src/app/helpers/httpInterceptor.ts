@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import {
     HttpEvent,
     HttpHandler,
@@ -7,7 +8,20 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+
+@Injectable({
+    providedIn: 'root',
+  })
 export class ErrorIntercept implements HttpInterceptor {
+
+    constructor(private toastr: ToastrService) {}
+
+  showAlert(error: string)
+   {
+    this.toastr.error('error: ', error);
+  }
+
     intercept(
         request: HttpRequest<any>,
         next: HttpHandler
@@ -24,10 +38,10 @@ export class ErrorIntercept implements HttpInterceptor {
                     } else {
                         // server-side error
                         if(error.error.error == 'Ovaj broj računa već postoji, pokušajte ponovo!')
-                            alert("Ovaj broj računa već postoji!")
+                            this.showAlert("Ovaj broj računa već postoji!")
                     
                         if(error.error.error == 'PIB, broj računa i naziv moraju biti jedinstveni!')
-                            alert(error.error.error)
+                        this.showAlert(error.error.error)
                         errorMessage = `Error Status: ${error.status}\nMessage: ${error.message}`;
                     }
                    console.log(errorMessage);
