@@ -9,22 +9,24 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  registerForm: FormGroup;
+  form!: FormGroup;
+  loading = false;
+  errorMessage!: string;
   formdata = {name:"",surname:"",email:"", password:"", birthdate: new Date()};
   submit=false;
-  errorMessage="";
-  loading=false;
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
-    this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required]
-    });
+
   }
 
   ngOnInit(): void {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      surname: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      birthdate: ['', Validators.required],
+    });
   }
 
   onSubmit(): void {
@@ -44,7 +46,7 @@ export class RegisterComponent implements OnInit {
         console.log('Greskaaa!', error);
       }
     });
-    console.log('Registration successful!', this.registerForm.value);
+    console.log('Registration successful!', this.form.value);
   }
 }
 

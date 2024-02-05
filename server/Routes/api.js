@@ -54,7 +54,7 @@ router.post("/login", async (req, res, next) => {
             email: existingUser.email,
             token: token,
           },
-        });
+        }); 
       } else {
         // If password is incorrect, return an error
         res.status(401).json({ success: false, error: "Wrong email or password. Please check and try again." });
@@ -68,7 +68,6 @@ router.post("/login", async (req, res, next) => {
     res.status(500).json({ success: false, error: "Error! Something went wrong." });
   }
 });
-
 
 router.post("/register", [
 

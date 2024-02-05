@@ -1,69 +1,63 @@
-.login {
+.login-container {
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #FAF3F0;
-  box-sizing: border-box;
-  padding: 20px;
-}
-
-.form {
-  width: 80%; // Adjust the width as needed
-  max-width: 400px; // Set a max-width to limit the form width
-  margin: auto; // Center the form horizontally
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  box-sizing: border-box;
-}
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../../assets/10.jpg'); 
+  background-size: cover;
+  background-position: center;
+  opacity: 0.9;
 
-legend {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: rgb(96, 108, 93);
-}
+  form {
+    background-color: rgb(96, 108, 93);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 
-.form-field {
-  margin-bottom: 15px;
+    legend {
+      color: rgb(247, 230, 196);
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
 
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: rgb(96, 108, 93);
-  }
+    .form-field {
+      color: rgb(255, 244, 244);
+      margin-bottom: 10px;
+      margin-left: 10px;
+      margin-right: 10px;
+      flex-direction: column;
 
-  input {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 1em;
-  }
-}
+      label {
+        margin-right: 5px;
+      }
 
-.form-buttons {
-  text-align: center;
+      input {
+        padding: 5px;
+        background-color: rgb(255, 244, 244);
+        border: 1px solid rgb(96, 108, 93);
+        border-radius: 5px;
+      }
 
-  .button {
-    padding: 10px 20px;
-    font-size: 1em;
-    background-color: #D4E2D4; // Use the card background color
-    color: rgb(96, 108, 93);
-    border: 3px dotted rgb(96, 108, 93); // Use the card border color
-    border-radius: 5px;
-    cursor: pointer;
+      .error-message {
+        color: rgb(225, 152, 152);
+        font-size: small;
+        font-family: Arial, Helvetica, sans-serif;
+        font-style: italic;
+      }
+    }
 
-    &-primary {
-      background-color: rgb(96, 108, 93); // Use the background color from home
-      color: #fff;
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+
+      button {
+        opacity: 0.8;
+
+      }
     }
   }
 }
